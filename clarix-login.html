@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clarix — Sign In</title>
+<link rel="preconnect" href="https://api.fontshare.com">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@800,700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;-webkit-font-smoothing:antialiased}
+:root{
+  --bg:#060B12;--bg2:#080E17;--s1:#0D1520;--s2:#111C2C;
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.11);
+  --teal:#00D4B4;--teal-dim:#00A890;--teal-faint:rgba(0,212,180,0.08);
+  --t1:#EDF2FF;--t2:#7A90B0;--t3:#4A6080;
+  --red:#EF4444;--red-faint:rgba(239,68,68,0.08);
+  --green:#22C55E;--green-faint:rgba(34,197,94,0.08);
+  --fd:'Cabinet Grotesk',sans-serif;--fb:'Plus Jakarta Sans',sans-serif;
+}
+body{font-family:var(--fb);color:var(--t1);background:var(--bg);min-height:100vh;display:grid;grid-template-columns:1fr 1fr}
+a{text-decoration:none;color:var(--teal)}
+
+/* LEFT — auth form */
+.auth-left{display:flex;align-items:center;justify-content:center;padding:48px;position:relative;border-right:1px solid var(--border)}
+.auth-box{width:100%;max-width:400px}
+.back{display:inline-flex;align-items:center;gap:6px;font-size:.8125rem;color:var(--t3);margin-bottom:36px;transition:color .15s}
+.back:hover{color:var(--t2)}
+.back svg{width:14px;height:14px}
+.logo{display:flex;align-items:center;gap:10px;font-family:var(--fd);font-weight:800;font-size:1.2rem;color:var(--t1);margin-bottom:40px;letter-spacing:-.03em}
+.logo-mark{width:32px;height:32px;background:var(--teal);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.auth-title{font-family:var(--fd);font-weight:800;font-size:1.875rem;letter-spacing:-.03em;color:var(--t1);margin-bottom:6px}
+.auth-sub{font-size:.9375rem;color:var(--t2);margin-bottom:32px;line-height:1.5}
+.btn-google{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:12px 20px;background:var(--s1);border:1px solid var(--border2);border-radius:10px;font-family:var(--fb);font-size:.9375rem;font-weight:500;color:var(--t1);cursor:pointer;transition:all .15s}
+.btn-google:hover{background:var(--s2);border-color:rgba(255,255,255,.18)}
+.btn-google svg{width:18px;height:18px;flex-shrink:0}
+.divider{display:flex;align-items:center;gap:12px;margin:20px 0;color:var(--t3);font-size:.8125rem}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.form-label{display:block;font-size:.8125rem;font-weight:600;color:var(--t2);margin-bottom:6px;letter-spacing:.02em}
+.form-input{width:100%;padding:11px 14px;font-family:var(--fb);font-size:.9375rem;color:var(--t1);background:var(--s1);border:1px solid var(--border2);border-radius:10px;outline:none;transition:all .15s;margin-bottom:16px}
+.form-input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,212,180,0.12)}
+.form-input::placeholder{color:var(--t3)}
+.btn-submit{width:100%;padding:13px;background:var(--teal);color:#060B12;border:none;border-radius:10px;font-family:var(--fb);font-size:.9375rem;font-weight:700;cursor:pointer;transition:all .15s;margin-top:4px;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-submit:hover{background:var(--teal-dim);transform:translateY(-1px)}
+.btn-submit:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.spinner{width:16px;height:16px;border:2px solid rgba(6,11,18,.3);border-top-color:#060B12;border-radius:50%;animation:spin .6s linear infinite;display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+.auth-switch{text-align:center;margin-top:20px;font-size:.875rem;color:var(--t2)}
+.auth-switch a{color:var(--teal);font-weight:600}
+.auth-error{display:none;padding:11px 14px;background:var(--red-faint);color:#FCA5A5;border:1px solid rgba(239,68,68,.2);border-radius:8px;font-size:.875rem;margin-bottom:16px}
+.auth-success{display:none;padding:11px 14px;background:var(--green-faint);color:#86EFAC;border:1px solid rgba(34,197,94,.2);border-radius:8px;font-size:.875rem;margin-bottom:16px}
+
+/* RIGHT — feature showcase */
+.auth-right{background:var(--bg2);display:flex;align-items:center;justify-content:center;padding:64px;position:relative;overflow:hidden}
+.auth-right-bg{position:absolute;bottom:-200px;right:-200px;width:500px;height:500px;background:radial-gradient(ellipse,rgba(0,212,180,0.06) 0%,transparent 70%);pointer-events:none}
+.auth-right-content{max-width:400px;position:relative;z-index:1}
+.auth-badge{display:inline-flex;align-items:center;gap:7px;background:var(--teal-faint);border:1px solid rgba(0,212,180,.18);padding:5px 12px;border-radius:99px;font-size:.75rem;font-weight:700;color:var(--teal);letter-spacing:.05em;text-transform:uppercase;margin-bottom:24px}
+.auth-badge-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);animation:pd 2s ease infinite}
+@keyframes pd{0%,100%{opacity:1}50%{opacity:.4}}
+.auth-right h2{font-family:var(--fd);font-weight:800;font-size:2.25rem;letter-spacing:-.04em;line-height:1.1;color:var(--t1);margin-bottom:14px}
+.auth-right h2 em{font-style:normal;color:var(--teal)}
+.auth-right p{font-size:.9375rem;color:var(--t2);line-height:1.7;margin-bottom:36px}
+.feat-list{display:flex;flex-direction:column;gap:14px;margin-bottom:36px}
+.feat-item{display:flex;align-items:flex-start;gap:12px}
+.feat-icon{width:34px;height:34px;min-width:34px;border-radius:9px;display:flex;align-items:center;justify-content:center}
+.feat-icon svg{width:16px;height:16px}
+.feat-text{padding-top:2px}
+.feat-title{font-size:.9375rem;font-weight:600;color:var(--t1);margin-bottom:2px}
+.feat-desc{font-size:.8125rem;color:var(--t2);line-height:1.5}
+
+/* Stats mini strip */
+.mini-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border2);border-radius:12px;overflow:hidden}
+.mini-stat{background:var(--s1);padding:14px 12px;text-align:center}
+.mini-stat-val{font-family:var(--fd);font-weight:800;font-size:1.375rem;letter-spacing:-.04em;color:var(--t1);line-height:1}
+.mini-stat-val em{color:var(--teal);font-style:normal}
+.mini-stat-lbl{font-size:.625rem;color:var(--t3);margin-top:3px;line-height:1.3}
+
+@media(max-width:768px){body{grid-template-columns:1fr}.auth-right{display:none}.auth-left{padding:32px 24px}}
+</style>
+</head>
+<body>
+
+<!-- LEFT: AUTH FORM -->
+<div class="auth-left">
+  <div class="auth-box">
+    <a href="index.html" class="back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Back to Clarix
+    </a>
+
+    <a href="index.html" class="logo">
+      <div class="logo-mark">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="3" fill="#060B12"/>
+          <path d="M12 5C8.13 5 5 8.13 5 12s3.13 7 7 7" stroke="#060B12" stroke-width="2" stroke-linecap="round"/>
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10" stroke="#060B12" stroke-width="1.5" stroke-linecap="round" opacity=".45"/>
+          <circle cx="19" cy="8" r="2" fill="#060B12"/>
+          <circle cx="19" cy="16" r="2" fill="#060B12"/>
+          <line x1="12" y1="12" x2="17.5" y2="8.8" stroke="#060B12" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="12" y1="12" x2="17.5" y2="15.2" stroke="#060B12" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      Clarix
+    </a>
+
+    <h1 class="auth-title" id="auth-title">Welcome back</h1>
+    <p class="auth-sub" id="auth-sub">Sign in to your growth engine</p>
+
+    <div class="auth-error" id="auth-error"></div>
+    <div class="auth-success" id="auth-success"></div>
+
+    <button class="btn-google" onclick="signInWithGoogle()">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
+        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+      </svg>
+      Continue with Google
+    </button>
+
+    <div class="divider">or</div>
+
+    <form id="auth-form" onsubmit="handleAuth(event)">
+      <label class="form-label" for="email">Email address</label>
+      <input type="email" id="email" class="form-input" placeholder="you@company.com" required>
+      <label class="form-label" for="password">Password</label>
+      <input type="password" id="password" class="form-input" placeholder="At least 6 characters" required minlength="6">
+      <button type="submit" class="btn-submit" id="btn-submit">
+        <span class="spinner" id="spinner"></span>
+        <span id="btn-text">Sign In</span>
+      </button>
+    </form>
+
+    <div class="auth-switch" id="auth-switch">
+      Don't have an account? <a href="#" onclick="toggleMode(event)">Sign up free</a>
+    </div>
+  </div>
+</div>
+
+<!-- RIGHT: FEATURE PANEL -->
+<div class="auth-right">
+  <div class="auth-right-bg"></div>
+  <div class="auth-right-content">
+    <div class="auth-badge"><div class="auth-badge-dot"></div>AI Growth Engine</div>
+    <h2>Turn data into<br><em>revenue.</em></h2>
+    <p>Upload your customer and transaction data. Clarix AI segments, analyses, and generates campaign playbooks — in under 8 minutes.</p>
+
+    <div class="feat-list">
+      <div class="feat-item">
+        <div class="feat-icon" style="background:rgba(0,212,180,0.1)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#00D4B4" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+        </div>
+        <div class="feat-text">
+          <div class="feat-title">Customer segmentation</div>
+          <div class="feat-desc">RFM scoring builds Champions, Loyalists, At Risk, and Lost segments automatically</div>
+        </div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-icon" style="background:rgba(245,158,11,0.1)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+        </div>
+        <div class="feat-text">
+          <div class="feat-title">Upsell & cross-sell intelligence</div>
+          <div class="feat-desc">Ranked opportunities with customer counts and revenue estimates per play</div>
+        </div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-icon" style="background:rgba(239,68,68,0.1)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div class="feat-text">
+          <div class="feat-title">Churn prediction & win-back</div>
+          <div class="feat-desc">Identify at-risk customers before they leave, with revenue at stake</div>
+        </div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-icon" style="background:rgba(59,130,246,0.1)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </div>
+        <div class="feat-text">
+          <div class="feat-title">Campaign playbooks</div>
+          <div class="feat-desc">Email, push, and paid social briefs per segment — ready to hand to your team</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mini-stats">
+      <div class="mini-stat"><div class="mini-stat-val">34<em>%</em></div><div class="mini-stat-lbl">avg revenue lift</div></div>
+      <div class="mini-stat"><div class="mini-stat-val">6</div><div class="mini-stat-lbl">parallel analyses</div></div>
+      <div class="mini-stat"><div class="mini-stat-val">&lt;8<em>m</em></div><div class="mini-stat-lbl">to full playbook</div></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-client.js"></script>
+<script>
+let isSignUp = new URLSearchParams(location.search).get('mode') === 'signup';
+if (isSignUp) updateUI();
+
+(async () => {
+  const s = await getSession();
+  if (s) location.href = 'dashboard.html';
+})();
+
+function toggleMode(e) { e.preventDefault(); isSignUp = !isSignUp; updateUI(); }
+
+function updateUI() {
+  document.getElementById('auth-title').textContent = isSignUp ? 'Create your account' : 'Welcome back';
+  document.getElementById('auth-sub').textContent = isSignUp ? 'Start analysing your customer data' : 'Sign in to your growth engine';
+  document.getElementById('btn-text').textContent = isSignUp ? 'Create Account' : 'Sign In';
+  document.getElementById('auth-switch').innerHTML = isSignUp
+    ? 'Already have an account? <a href="#" onclick="toggleMode(event)">Sign in</a>'
+    : "Don't have an account? <a href=\"#\" onclick=\"toggleMode(event)\">Sign up free</a>";
+  clearMessages();
+}
+
+async function signInWithGoogle() {
+  const { error } = await supabaseClient.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: location.origin + '/dashboard.html' } });
+  if (error) showError(error.message);
+}
+
+async function handleAuth(e) {
+  e.preventDefault();
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+  setLoading(true);
+  try {
+    if (isSignUp) {
+      const { data, error } = await supabaseClient.auth.signUp({ email, password });
+      if (error) throw error;
+      if (data.user && !data.session) { showSuccess('Account created! Check your email to confirm, then sign in.'); isSignUp = false; updateUI(); }
+      else location.href = 'dashboard.html';
+    } else {
+      const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+      location.href = 'dashboard.html';
+    }
+  } catch (err) { showError(err.message); }
+  finally { setLoading(false); }
+}
+
+function setLoading(v) {
+  document.getElementById('btn-submit').disabled = v;
+  document.getElementById('spinner').style.display = v ? 'block' : 'none';
+}
+function showError(m) { const e = document.getElementById('auth-error'); e.textContent = m; e.style.display = 'block'; document.getElementById('auth-success').style.display = 'none'; }
+function showSuccess(m) { const e = document.getElementById('auth-success'); e.textContent = m; e.style.display = 'block'; document.getElementById('auth-error').style.display = 'none'; }
+function clearMessages() { document.getElementById('auth-error').style.display = 'none'; document.getElementById('auth-success').style.display = 'none'; }
+</script>
+</body>
+</html>

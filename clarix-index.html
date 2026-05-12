@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clarix — AI Growth Engine for E-commerce</title>
+<meta name="description" content="Upload your customer data. Clarix AI finds every upsell, cross-sell, and churn risk hiding in your transactions — and tells you exactly what to do.">
+<link rel="preconnect" href="https://api.fontshare.com">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@800,700,500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+
+:root{
+  --bg:#060B12;
+  --bg2:#080E17;
+  --s1:#0D1520;
+  --s2:#111C2C;
+  --border:rgba(255,255,255,0.06);
+  --border2:rgba(255,255,255,0.11);
+  --teal:#00D4B4;
+  --teal-dim:#00A890;
+  --teal-faint:rgba(0,212,180,0.06);
+  --teal-glow:rgba(0,212,180,0.18);
+  --amber:#F59E0B;
+  --amber-faint:rgba(245,158,11,0.08);
+  --purple:#A855F7;
+  --purple-faint:rgba(168,85,247,0.08);
+  --blue:#3B82F6;
+  --blue-faint:rgba(59,130,246,0.08);
+  --red:#EF4444;
+  --red-faint:rgba(239,68,68,0.08);
+  --green:#22C55E;
+  --green-faint:rgba(34,197,94,0.08);
+  --t1:#EDF2FF;
+  --t2:#7A90B0;
+  --t3:#4A6080;
+  --fd:'Cabinet Grotesk',sans-serif;
+  --fb:'Plus Jakarta Sans',sans-serif;
+}
+
+body{font-family:var(--fb);color:var(--t1);background:var(--bg);line-height:1.6;overflow-x:hidden}
+a{text-decoration:none}
+svg{display:block}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:500;padding:0}
+.nav-inner{max-width:1280px;margin:0 auto;padding:16px 32px;display:flex;align-items:center;border-bottom:1px solid var(--border);background:rgba(6,11,18,0.8);backdrop-filter:blur(24px)}
+.logo{display:flex;align-items:center;gap:10px;color:var(--t1);font-family:var(--fd);font-weight:800;font-size:1.25rem;letter-spacing:-.03em}
+.logo-mark{width:34px;height:34px;border-radius:9px;background:var(--teal);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.nav-mid{display:flex;align-items:center;gap:2px;margin:0 auto}
+.nav-mid a{font-size:.8125rem;font-weight:500;color:var(--t2);padding:6px 14px;border-radius:7px;transition:all .15s}
+.nav-mid a:hover{color:var(--t1);background:var(--s1)}
+.nav-right{display:flex;align-items:center;gap:8px}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:8px 18px;font-family:var(--fb);font-size:.8125rem;font-weight:600;border-radius:8px;border:none;cursor:pointer;transition:all .15s;line-height:1}
+.btn-ghost{background:transparent;color:var(--t2);border:1px solid var(--border2)}.btn-ghost:hover{color:var(--t1);border-color:var(--teal)}
+.btn-teal{background:var(--teal);color:#060B12}.btn-teal:hover{background:var(--teal-dim);transform:translateY(-1px)}
+.btn-lg{padding:13px 30px;font-size:.9375rem;border-radius:10px}
+.btn-xl{padding:16px 40px;font-size:1.0625rem;border-radius:12px}
+
+/* ── HERO ── */
+.hero{position:relative;min-height:100vh;display:grid;grid-template-columns:1fr 1fr;align-items:center;max-width:1280px;margin:0 auto;padding:120px 32px 80px;gap:80px}
+
+/* Canvas BG */
+#hero-canvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:.5}
+
+.hero-left{position:relative;z-index:2}
+.hero-right{position:relative;z-index:2}
+
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;background:var(--teal-faint);border:1px solid rgba(0,212,180,0.18);padding:5px 14px;border-radius:999px;font-size:.75rem;font-weight:700;color:var(--teal);letter-spacing:.06em;text-transform:uppercase;margin-bottom:28px}
+.pulse-dot{width:7px;height:7px;border-radius:50%;background:var(--teal);animation:pd 2s ease infinite}
+@keyframes pd{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+
+.hero-h1{font-family:var(--fd);font-weight:800;font-size:clamp(3rem,4.5vw,4.5rem);line-height:1.03;letter-spacing:-.04em;color:var(--t1);margin-bottom:6px}
+.hero-h1 .line2{color:var(--teal)}
+.hero-h1 .line3{color:var(--t2);font-size:clamp(1.75rem,2.8vw,2.75rem)}
+
+.hero-desc{font-size:1.0625rem;color:var(--t2);line-height:1.75;max-width:480px;margin:28px 0 36px}
+
+.hero-actions{display:flex;align-items:center;gap:12px;margin-bottom:48px}
+.hero-note{font-size:.8125rem;color:var(--t3)}
+.hero-note span{color:var(--t2)}
+
+/* Hero KPI strip */
+.kpi-strip{display:flex;gap:28px;padding-top:40px;border-top:1px solid var(--border)}
+.kpi{display:flex;flex-direction:column;gap:3px}
+.kpi-val{font-family:var(--fd);font-weight:800;font-size:2rem;letter-spacing:-.04em;color:var(--t1);line-height:1}
+.kpi-val em{font-style:normal;color:var(--teal);font-size:1.5rem}
+.kpi-lbl{font-size:.75rem;color:var(--t3);line-height:1.4;max-width:100px}
+
+/* ── HERO RIGHT: LIVE DASHBOARD CARD ── */
+.dashboard-card{background:var(--s1);border:1px solid var(--border2);border-radius:20px;overflow:hidden;box-shadow:0 32px 64px rgba(0,0,0,.6)}
+.dc-header{background:#161F30;border-bottom:1px solid var(--border2);padding:12px 18px;display:flex;align-items:center;gap:10px}
+.dc-dots{display:flex;gap:5px}
+.dc-dot{width:10px;height:10px;border-radius:50%}
+.dc-title{font-size:.6875rem;color:#9DB0CC;margin-left:6px;font-family:monospace;letter-spacing:.01em}
+.dc-status{margin-left:auto;display:flex;align-items:center;gap:6px;font-size:.6875rem;font-weight:600;color:var(--teal)}
+.dc-status-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);animation:pd 1.5s ease infinite}
+
+.dc-body{padding:20px}
+
+/* Segment bars */
+.seg-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.seg-label{font-size:.6875rem;font-weight:500;color:var(--t1);width:80px;flex-shrink:0}
+.seg-bar-track{flex:1;height:8px;background:var(--border);border-radius:99px;overflow:hidden}
+.seg-bar-fill{height:8px;border-radius:99px;animation:barGrow 1.2s ease forwards;transform-origin:left}
+@keyframes barGrow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.seg-val{font-size:.6875rem;font-weight:700;color:var(--t1);width:32px;text-align:right;flex-shrink:0}
+
+/* Opportunity cards */
+.opp-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px}
+.opp-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px 14px}
+.opp-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.opp-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center}
+.opp-badge{font-size:.5625rem;font-weight:700;padding:2px 7px;border-radius:99px;letter-spacing:.04em;text-transform:uppercase}
+.opp-amount{font-family:var(--fd);font-weight:800;font-size:1.1rem;letter-spacing:-.03em;color:var(--t1);line-height:1;margin-bottom:2px}
+.opp-desc{font-size:.625rem;color:var(--t2);line-height:1.4}
+
+/* Churn alert */
+.churn-alert{margin-top:12px;background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.14);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px}
+.churn-icon{width:30px;height:30px;background:var(--red-faint);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.churn-text-main{font-size:.75rem;font-weight:600;color:var(--t1)}
+.churn-text-sub{font-size:.625rem;color:var(--t2);margin-top:2px;opacity:.85}
+.churn-action{margin-left:auto;font-size:.625rem;font-weight:700;color:var(--red);background:var(--red-faint);padding:4px 9px;border-radius:5px;white-space:nowrap;flex-shrink:0}
+
+/* Campaign pill */
+.campaign-pill{margin-top:10px;background:var(--teal-faint);border:1px solid rgba(0,212,180,0.14);border-radius:10px;padding:11px 14px;display:flex;align-items:center;gap:10px}
+.campaign-icon{width:28px;height:28px;background:rgba(0,212,180,0.12);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.campaign-text{font-size:.6875rem;color:var(--t1);line-height:1.5;flex:1}
+.campaign-text strong{color:var(--teal);font-weight:600}
+.campaign-send{font-size:.5625rem;font-weight:700;color:var(--teal);background:rgba(0,212,180,0.12);padding:4px 9px;border-radius:5px;flex-shrink:0;cursor:pointer;transition:background .15s}
+
+/* ── MARQUEE ── */
+.marquee-wrap{border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--s1);padding:18px 0;overflow:hidden;position:relative;z-index:2}
+.marquee-track{display:flex;gap:0;animation:mq 30s linear infinite;width:max-content}
+.mq-item{display:flex;align-items:center;gap:32px;padding:0 32px;white-space:nowrap}
+.mq-label{font-size:.75rem;font-weight:600;color:var(--t2);letter-spacing:.1em;text-transform:uppercase}
+.mq-dot{width:4px;height:4px;border-radius:50%;background:var(--teal);flex-shrink:0;opacity:.7}
+@keyframes mq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ── PROOF STRIP ── */
+.proof-strip{max-width:1280px;margin:0 auto;padding:72px 32px;display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.proof-card{background:var(--bg);padding:36px 28px}
+.proof-num{font-family:var(--fd);font-weight:800;font-size:2.75rem;letter-spacing:-.05em;color:var(--t1);line-height:1;margin-bottom:8px}
+.proof-num span{color:var(--teal)}
+.proof-desc{font-size:.875rem;color:var(--t2);line-height:1.6;margin-bottom:8px}
+.proof-src{font-size:.6875rem;color:var(--t2);margin-top:4px}
+
+/* ── BENTO GRID ── */
+.bento-section{max-width:1280px;margin:0 auto;padding:100px 32px}
+.section-kicker{font-size:.6875rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);margin-bottom:12px}
+.section-h2{font-family:var(--fd);font-weight:800;font-size:clamp(2.25rem,3.5vw,3.25rem);letter-spacing:-.04em;color:var(--t1);line-height:1.08;margin-bottom:16px}
+.section-sub{font-size:1rem;color:var(--t2);max-width:520px;line-height:1.7;margin-bottom:56px}
+
+.bento{display:grid;grid-template-columns:repeat(12,1fr);grid-template-rows:auto;gap:12px}
+
+.bc{background:var(--s1);border:1px solid var(--border2);border-radius:18px;padding:28px;overflow:hidden;position:relative;transition:border-color .2s;display:flex;flex-direction:column}
+.bc:hover{border-color:var(--border2)}
+.bc-tag{display:inline-flex;align-items:center;font-size:.6875rem;font-weight:600;letter-spacing:.04em;padding:4px 12px;border-radius:6px;margin-bottom:16px;width:fit-content}
+.bc h3{font-family:var(--fd);font-weight:700;font-size:1.25rem;letter-spacing:-.025em;color:var(--t1);margin-bottom:8px;line-height:1.2}
+.bc p{font-size:.875rem;color:var(--t2);line-height:1.65}
+.bc-outputs{margin-top:16px;display:flex;flex-direction:column;gap:6px}
+.bc-out{font-size:.8125rem;color:var(--t3);display:flex;align-items:flex-start;gap:8px;line-height:1.4}
+.bc-out-arrow{color:var(--teal);font-size:.6875rem;margin-top:2px;flex-shrink:0}
+.bc-visual{margin-top:20px}
+
+/* Bento spans */
+.bc-1{grid-column:span 5;min-height:320px}
+.bc-2{grid-column:span 7;min-height:320px}
+.bc-3{grid-column:span 4;min-height:280px}
+.bc-4{grid-column:span 4;min-height:280px}
+.bc-5{grid-column:span 4;min-height:280px}
+.bc-6{grid-column:span 12}
+
+/* Bento mini visuals */
+.mini-rfm{display:flex;gap:6px;margin-top:16px}
+.rfm-seg{flex:1;border-radius:8px;padding:10px 8px;text-align:center}
+.rfm-seg-val{font-family:var(--fd);font-weight:800;font-size:1.25rem;letter-spacing:-.03em;color:var(--t1);line-height:1}
+.rfm-seg-lbl{font-size:.5625rem;font-weight:600;color:rgba(255,255,255,.5);margin-top:3px;text-transform:uppercase;letter-spacing:.05em}
+
+.mini-bar-chart{display:flex;align-items:flex-end;gap:5px;height:60px;margin-top:16px}
+.bar{border-radius:4px 4px 0 0;flex:1;transition:opacity .2s}
+
+.mini-geo{display:flex;flex-direction:column;gap:5px;margin-top:16px}
+.geo-row{display:flex;align-items:center;gap:8px}
+.geo-name{font-size:.6875rem;color:var(--t2);width:60px;flex-shrink:0}
+.geo-track{flex:1;height:6px;background:var(--border);border-radius:99px;overflow:hidden}
+.geo-fill{height:100%;border-radius:99px;background:var(--teal)}
+.geo-val{font-size:.6875rem;font-weight:700;color:var(--t1);width:28px;text-align:right;flex-shrink:0}
+
+.mini-campaign{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px;margin-top:16px}
+.mc-subject{font-size:.75rem;font-weight:600;color:var(--t1);margin-bottom:4px}
+.mc-meta{font-size:.625rem;color:var(--t2);margin-bottom:8px}
+.mc-stats{display:flex;gap:12px}
+.mc-stat{font-size:.6875rem;color:var(--t2)}
+.mc-stat em{font-style:normal;font-weight:700;color:var(--teal)}
+
+/* ── DATA SECTION ── */
+.data-section{background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:100px 0}
+.data-inner{max-width:1280px;margin:0 auto;padding:0 32px}
+.data-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:56px}
+.data-card{background:var(--bg);border:1px solid var(--border2);border-radius:16px;padding:24px;transition:border-color .2s,transform .2s}
+.data-card:hover{border-color:var(--teal);transform:translateY(-3px)}
+.dc-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:16px}
+.data-card h4{font-family:var(--fd);font-weight:700;font-size:1rem;letter-spacing:-.02em;color:var(--t1);margin-bottom:4px}
+.data-card p{font-size:.8125rem;color:var(--t2);line-height:1.6;margin-bottom:14px}
+.field-list{display:flex;flex-direction:column;gap:4px}
+.field{font-family:monospace;font-size:.6875rem;padding:4px 8px;background:var(--s1);border-radius:5px;display:flex;justify-content:space-between;align-items:center;color:var(--t2)}
+.field-badge{font-size:.5rem;font-weight:700;padding:2px 5px;border-radius:3px;flex-shrink:0}
+.fr{background:rgba(0,212,180,.12);color:var(--teal)}
+.fo{background:var(--s2);color:var(--t3)}
+
+.ai-strip{margin-top:20px;background:var(--teal-faint);border:1px solid rgba(0,212,180,.14);border-radius:12px;padding:18px 20px;display:flex;gap:14px;align-items:flex-start}
+.ai-strip-icon{width:38px;height:38px;border-radius:9px;background:rgba(0,212,180,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ai-strip-title{font-size:.875rem;font-weight:600;color:var(--teal);margin-bottom:4px}
+.ai-strip-desc{font-size:.8125rem;color:var(--t2);line-height:1.6}
+
+/* ── CTA ── */
+.cta{padding:140px 32px;text-align:center;position:relative;overflow:hidden}
+.cta-glow{position:absolute;bottom:-200px;left:50%;transform:translateX(-50%);width:800px;height:400px;background:radial-gradient(ellipse,rgba(0,212,180,0.1) 0%,transparent 70%);pointer-events:none}
+.cta h2{font-family:var(--fd);font-weight:800;font-size:clamp(2.5rem,5vw,4.5rem);letter-spacing:-.05em;color:var(--t1);line-height:1.05;margin-bottom:20px}
+.cta h2 em{font-style:normal;color:var(--teal)}
+.cta p{font-size:1.125rem;color:var(--t2);margin-bottom:40px}
+.cta-badges{display:flex;justify-content:center;gap:28px;margin-top:28px;flex-wrap:wrap}
+.cta-badge{font-size:.8125rem;color:var(--t3);display:flex;align-items:center;gap:7px}
+.cta-badge::before{content:'';width:14px;height:14px;border-radius:50%;background:var(--teal-faint);border:1px solid rgba(0,212,180,.25);display:flex;align-items:center;justify-content:center}
+
+/* ── FOOTER ── */
+footer{border-top:1px solid var(--border);padding:28px 32px;max-width:1280px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
+.footer-links{display:flex;align-items:center;gap:8px}
+.footer-links a{font-size:.8125rem;color:var(--t3);transition:color .15s}.footer-links a:hover{color:var(--t1)}
+.fsep{color:var(--t3)}
+
+@media(max-width:1024px){.hero{grid-template-columns:1fr;gap:48px;padding-top:100px}.hero-right{display:none}.bento .bc-1,.bento .bc-2,.bento .bc-3,.bento .bc-4,.bento .bc-5,.bento .bc-6{grid-column:span 12}.proof-strip,.data-grid{grid-template-columns:1fr 1fr}.nav-mid{display:none}}
+@media(max-width:640px){.proof-strip,.data-grid{grid-template-columns:1fr}.kpi-strip{flex-wrap:wrap;gap:20px}}
+</style>
+</head>
+<body>
+
+<canvas id="hero-canvas"></canvas>
+
+<!-- NAV -->
+<nav>
+<div class="nav-inner">
+  <a href="#" class="logo">
+    <div class="logo-mark">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="3" fill="#060B12"/>
+        <path d="M12 5C8.13 5 5 8.13 5 12s3.13 7 7 7" stroke="#060B12" stroke-width="2" stroke-linecap="round"/>
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10" stroke="#060B12" stroke-width="1.5" stroke-linecap="round" opacity=".45"/>
+        <circle cx="19" cy="8" r="2" fill="#060B12"/>
+        <circle cx="19" cy="16" r="2" fill="#060B12"/>
+        <line x1="12" y1="12" x2="17.5" y2="8.8" stroke="#060B12" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="12" y1="12" x2="17.5" y2="15.2" stroke="#060B12" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+    Clarix
+  </a>
+  <div class="nav-mid">
+    <a href="#engine">AI Engine</a>
+    <a href="#data">Data</a>
+    <a href="#proof">Research</a>
+  </div>
+  <div class="nav-right">
+    <a href="login.html" class="btn btn-ghost">Sign In</a>
+    <a href="login.html?mode=signup" class="btn btn-teal">Start Free →</a>
+  </div>
+</div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-eyebrow">
+      <div class="pulse-dot"></div>
+      AI Growth Engine · Live
+    </div>
+
+    <h1 class="hero-h1">
+      Your customers<br>
+      <span class="line2">are telling you</span><br>
+      <span class="line3">where the money is.</span>
+    </h1>
+
+    <p class="hero-desc">Upload your transactions. Clarix AI reads every pattern — who's about to churn, which products to upsell, which segments to target — and writes your campaign playbooks.</p>
+
+    <div class="hero-actions">
+      <a href="login.html?mode=signup" class="btn btn-teal btn-xl">Analyse My Data →</a>
+      <a href="#engine" class="btn btn-ghost btn-lg">See How It Works</a>
+    </div>
+
+    <p class="hero-note">No credit card · <span>Free to start</span> · Your data never leaves your browser</p>
+
+    <div class="kpi-strip">
+      <div class="kpi">
+        <div class="kpi-val"><span id="k1">0</span><em>%</em></div>
+        <div class="kpi-lbl">avg revenue lift from AI-targeted campaigns</div>
+      </div>
+      <div class="kpi" style="border-left:1px solid var(--border);padding-left:28px">
+        <div class="kpi-val"><span id="k2">0</span><em>x</em></div>
+        <div class="kpi-lbl">faster than manual analyst segmentation</div>
+      </div>
+      <div class="kpi" style="border-left:1px solid var(--border);padding-left:28px">
+        <div class="kpi-val"><span id="k3">0</span><em>min</em></div>
+        <div class="kpi-lbl">from raw CSV to full growth playbook</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LIVE DASHBOARD CARD -->
+  <div class="hero-right">
+    <div class="dashboard-card">
+      <div class="dc-header">
+        <div class="dc-dots">
+          <div class="dc-dot" style="background:#FF5F56"></div>
+          <div class="dc-dot" style="background:#FFBD2E"></div>
+          <div class="dc-dot" style="background:#27C93F"></div>
+        </div>
+        <div class="dc-title">clarix_analysis · 847 customers · 12,430 orders</div>
+        <div class="dc-status"><div class="dc-status-dot"></div>Live</div>
+      </div>
+
+      <div class="dc-body">
+        <!-- Customer Segments -->
+        <div style="font-size:.6875rem;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px">Customer segments</div>
+
+        <div class="seg-row">
+          <div class="seg-label">Champions</div>
+          <div class="seg-bar-track"><div class="seg-bar-fill" style="width:100%;background:var(--teal);animation-delay:.1s"></div></div>
+          <div class="seg-val" style="color:var(--teal)">142</div>
+        </div>
+        <div class="seg-row">
+          <div class="seg-label">Loyalists</div>
+          <div class="seg-bar-track"><div class="seg-bar-fill" style="width:74%;background:#3B82F6;animation-delay:.2s"></div></div>
+          <div class="seg-val">218</div>
+        </div>
+        <div class="seg-row">
+          <div class="seg-label">At Risk</div>
+          <div class="seg-bar-track"><div class="seg-bar-fill" style="width:56%;background:#F59E0B;animation-delay:.3s"></div></div>
+          <div class="seg-val">89</div>
+        </div>
+        <div class="seg-row">
+          <div class="seg-label">New</div>
+          <div class="seg-bar-track"><div class="seg-bar-fill" style="width:88%;background:#A855F7;animation-delay:.4s"></div></div>
+          <div class="seg-val">234</div>
+        </div>
+        <div class="seg-row" style="margin-bottom:0">
+          <div class="seg-label">Lost</div>
+          <div class="seg-bar-track"><div class="seg-bar-fill" style="width:32%;background:var(--t3);animation-delay:.5s"></div></div>
+          <div class="seg-val" style="color:var(--t3)">164</div>
+        </div>
+
+        <!-- Opportunity cards -->
+        <div class="opp-grid">
+          <div class="opp-card">
+            <div class="opp-card-top">
+              <div class="opp-icon" style="background:rgba(245,158,11,.1)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+              </div>
+              <div class="opp-badge" style="background:rgba(245,158,11,.1);color:#F59E0B">Upsell</div>
+            </div>
+            <div class="opp-amount">$94,000</div>
+            <div class="opp-desc">312 customers ready for premium upgrade</div>
+          </div>
+          <div class="opp-card">
+            <div class="opp-card-top">
+              <div class="opp-icon" style="background:rgba(168,85,247,.1)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A855F7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>
+              </div>
+              <div class="opp-badge" style="background:rgba(168,85,247,.1);color:#A855F7">Cross-sell</div>
+            </div>
+            <div class="opp-amount">$71,000</div>
+            <div class="opp-desc">178 footwear buyers missing accessories</div>
+          </div>
+        </div>
+
+        <!-- Churn alert -->
+        <div class="churn-alert">
+          <div class="churn-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <div>
+            <div class="churn-text-main">67 champions went silent — $21,000 at risk</div>
+            <div class="churn-text-sub">No purchase in 90+ days · Previously 3+ orders</div>
+          </div>
+          <div class="churn-action">Win-back →</div>
+        </div>
+
+        <!-- Campaign pill -->
+        <div class="campaign-pill">
+          <div class="campaign-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00D4B4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </div>
+          <div class="campaign-text"><strong>Top campaign ready:</strong> "We miss you — 20% back on us" · At Risk Champions · Tuesday 10am IST</div>
+          <div class="campaign-send">Send →</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <div class="mq-item"><span class="mq-label">RFM Segmentation</span><span class="mq-dot"></span><span class="mq-label">Upsell Engine</span><span class="mq-dot"></span><span class="mq-label">Cross-sell Mapping</span><span class="mq-dot"></span><span class="mq-label">Churn Prediction</span><span class="mq-dot"></span><span class="mq-label">Email Playbooks</span><span class="mq-dot"></span><span class="mq-label">Push Campaigns</span><span class="mq-dot"></span><span class="mq-label">Loyalty Analysis</span><span class="mq-dot"></span><span class="mq-label">Basket Intelligence</span><span class="mq-dot"></span><span class="mq-label">Geographic Gaps</span><span class="mq-dot"></span><span class="mq-label">Acquisition Signals</span><span class="mq-dot"></span><span class="mq-label">Margin Analysis</span><span class="mq-dot"></span><span class="mq-label">Discount Impact</span><span class="mq-dot"></span></div>
+    <div class="mq-item"><span class="mq-label">RFM Segmentation</span><span class="mq-dot"></span><span class="mq-label">Upsell Engine</span><span class="mq-dot"></span><span class="mq-label">Cross-sell Mapping</span><span class="mq-dot"></span><span class="mq-label">Churn Prediction</span><span class="mq-dot"></span><span class="mq-label">Email Playbooks</span><span class="mq-dot"></span><span class="mq-label">Push Campaigns</span><span class="mq-dot"></span><span class="mq-label">Loyalty Analysis</span><span class="mq-dot"></span><span class="mq-label">Basket Intelligence</span><span class="mq-dot"></span><span class="mq-label">Geographic Gaps</span><span class="mq-dot"></span><span class="mq-label">Acquisition Signals</span><span class="mq-dot"></span><span class="mq-label">Margin Analysis</span><span class="mq-dot"></span><span class="mq-label">Discount Impact</span><span class="mq-dot"></span></div>
+  </div>
+</div>
+
+<!-- PROOF STRIP -->
+<div class="proof-strip" id="proof">
+  <div class="proof-card">
+    <div class="proof-num">3–5<span>wks</span></div>
+    <div class="proof-desc">Average time to manually segment customers and build campaign strategy in enterprise retail</div>
+    <div class="proof-src">PMI Benchmarking Study</div>
+  </div>
+  <div class="proof-card">
+    <div class="proof-num">68<span>%</span></div>
+    <div class="proof-desc">Of e-commerce marketing campaigns miss their revenue target due to poor segmentation</div>
+    <div class="proof-src">Standish Group CHAOS Report</div>
+  </div>
+  <div class="proof-card">
+    <div class="proof-num">34<span>%</span></div>
+    <div class="proof-desc">Average revenue lift when personalised campaigns replace batch-and-blast email marketing</div>
+    <div class="proof-src">McKinsey Personalisation Report</div>
+  </div>
+  <div class="proof-card">
+    <div class="proof-num">&lt;8<span>min</span></div>
+    <div class="proof-desc">Time to generate a complete growth playbook with Clarix — from CSV upload to campaign brief</div>
+    <div class="proof-src">Clarix benchmark · 6 parallel analyses</div>
+  </div>
+</div>
+
+<!-- BENTO GRID — AI Engine -->
+<section class="bento-section" id="engine">
+  <div class="section-kicker">AI Engine · 6 modules</div>
+  <h2 class="section-h2">Every growth lever.<br>Analysed. Actioned.</h2>
+  <p class="section-sub">Six parallel AI analyses covering every dimension of e-commerce revenue — from who's about to leave to what to sell them next.</p>
+
+  <div class="bento">
+
+    <!-- Module 1: Segments — WIDE -->
+    <div class="bc bc-1">
+      <div class="bc-tag" style="background:var(--teal-faint);color:var(--teal);border:1px solid rgba(0,212,180,0.2)">01 · Segments</div>
+      <h3>Customer Segments</h3>
+      <p>RFM scoring builds 5–7 behavioural segments with exact counts, average order value, preferred categories, and a specific recommended action for each.</p>
+      <div class="mini-rfm">
+        <div class="rfm-seg" style="background:rgba(0,212,180,.1)"><div class="rfm-seg-val" style="color:var(--teal)">142</div><div class="rfm-seg-lbl">Champions</div></div>
+        <div class="rfm-seg" style="background:rgba(59,130,246,.08)"><div class="rfm-seg-val" style="color:#3B82F6">218</div><div class="rfm-seg-lbl">Loyalists</div></div>
+        <div class="rfm-seg" style="background:rgba(245,158,11,.08)"><div class="rfm-seg-val" style="color:#F59E0B">89</div><div class="rfm-seg-lbl">At Risk</div></div>
+        <div class="rfm-seg" style="background:rgba(168,85,247,.08)"><div class="rfm-seg-val" style="color:#A855F7">234</div><div class="rfm-seg-lbl">New</div></div>
+        <div class="rfm-seg" style="background:rgba(255,255,255,.04)"><div class="rfm-seg-val" style="color:var(--t3)">164</div><div class="rfm-seg-lbl">Lost</div></div>
+      </div>
+    </div>
+
+    <!-- Module 2: Upsell — WIDE -->
+    <div class="bc bc-2">
+      <div class="bc-tag" style="background:var(--amber-faint);color:var(--amber);border:1px solid rgba(245,158,11,0.2)">02 · Upsell Engine</div>
+      <h3>Upsell & Revenue Expansion</h3>
+      <p>Identifies which customers buy entry-level products and match the profile of premium buyers — ranked by revenue opportunity with email and push copy angles.</p>
+      <div class="bc-outputs">
+        <div class="bc-out"><span class="bc-out-arrow">→</span>Top 10 upsell opportunities ranked by revenue potential</div>
+        <div class="bc-out"><span class="bc-out-arrow">→</span>Customer count eligible per opportunity with conversion estimate</div>
+        <div class="bc-out"><span class="bc-out-arrow">→</span>Ready-to-send email subject lines and push copy per play</div>
+      </div>
+      <div class="mini-bar-chart">
+        <div class="bar" style="height:45%;background:var(--teal)"></div>
+        <div class="bar" style="height:72%;background:var(--teal)"></div>
+        <div class="bar" style="height:55%;background:var(--teal)"></div>
+        <div class="bar" style="height:90%;background:var(--amber)"></div>
+        <div class="bar" style="height:68%;background:var(--teal)"></div>
+        <div class="bar" style="height:40%;background:var(--teal)"></div>
+        <div class="bar" style="height:82%;background:var(--amber)"></div>
+        <div class="bar" style="height:60%;background:var(--teal)"></div>
+      </div>
+    </div>
+
+    <!-- Module 3: Cross-sell -->
+    <div class="bc bc-3">
+      <div class="bc-tag" style="background:var(--purple-faint);color:var(--purple);border:1px solid rgba(168,85,247,0.2)">03 · Cross-sell</div>
+      <h3>Cross-sell Intelligence</h3>
+      <p>Market basket analysis finds products bought together — then targets customers who bought one but not the other.</p>
+      <div class="bc-outputs">
+        <div class="bc-out"><span class="bc-out-arrow">→</span>Product affinity pairs with confidence scores</div>
+        <div class="bc-out"><span class="bc-out-arrow">→</span>Category gap analysis per segment</div>
+      </div>
+    </div>
+
+    <!-- Module 4: Churn -->
+    <div class="bc bc-4">
+      <div class="bc-tag" style="background:var(--red-faint);color:var(--red);border:1px solid rgba(239,68,68,0.2)">04 · Churn Risk</div>
+      <h3>Churn & Retention</h3>
+      <p>Identifies customers with declining signals before they leave — with revenue at stake and win-back triggers.</p>
+      <div class="bc-outputs">
+        <div class="bc-out"><span class="bc-out-arrow">→</span>At-risk list with churn score and days silent</div>
+        <div class="bc-out"><span class="bc-out-arrow">→</span>Revenue at stake if no action taken</div>
+      </div>
+    </div>
+
+    <!-- Module 5: Loyalty -->
+    <div class="bc bc-5">
+      <div class="bc-tag" style="background:var(--green-faint);color:var(--green);border:1px solid rgba(34,197,94,0.2)">05 · Loyalty</div>
+      <h3>Loyalty Intelligence</h3>
+      <p>Analyses which loyalty tiers drive real revenue, who's near the next tier, and where discounts are being wasted.</p>
+      <div class="bc-outputs">
+        <div class="bc-out"><span class="bc-out-arrow">→</span>Revenue per tier and upgrade candidate list</div>
+        <div class="bc-out"><span class="bc-out-arrow">→</span>Discount cannibalisation analysis</div>
+      </div>
+    </div>
+
+    <!-- Module 6: Campaigns — FULL WIDTH -->
+    <div class="bc bc-6" style="display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start">
+      <div>
+        <div class="bc-tag" style="background:var(--blue-faint);color:var(--blue);border:1px solid rgba(59,130,246,0.2)">06 · Campaigns</div>
+        <h3>Campaign Playbooks</h3>
+        <p>Per-segment, channel-specific campaign briefs — not generic advice but specific subject lines, push copy, audience parameters, send timing, and offer mechanics your team can use today.</p>
+        <div class="bc-outputs" style="margin-top:16px">
+          <div class="bc-out"><span class="bc-out-arrow">→</span>Email: subject, body angle, CTA, optimal send time</div>
+          <div class="bc-out"><span class="bc-out-arrow">→</span>Push: copy, trigger event, send window, deep link</div>
+          <div class="bc-out"><span class="bc-out-arrow">→</span>Paid social: audience brief, creative angle, offer</div>
+          <div class="bc-out"><span class="bc-out-arrow">→</span>In-app: banner copy and personalisation logic</div>
+        </div>
+      </div>
+      <div>
+        <div class="mini-campaign">
+          <div class="mc-subject">"We miss you — here's 20% back on us"</div>
+          <div class="mc-meta">Segment: At Risk Champions · Send: Tuesday 10am IST</div>
+          <div class="mc-stats">
+            <div class="mc-stat">Est. open rate <em>42%</em></div>
+            <div class="mc-stat">Revenue <em>$7,600</em></div>
+            <div class="mc-stat">Reach <em>67</em></div>
+          </div>
+        </div>
+        <div class="mini-campaign" style="margin-top:8px">
+          <div class="mc-subject">"Your next level is closer than you think 🎯"</div>
+          <div class="mc-meta">Segment: Near-Gold Loyalists · Push notification · Fri 7pm</div>
+          <div class="mc-stats">
+            <div class="mc-stat">Est. CTR <em>18%</em></div>
+            <div class="mc-stat">Revenue <em>$12,000</em></div>
+            <div class="mc-stat">Reach <em>84</em></div>
+          </div>
+        </div>
+        <div style="margin-top:12px">
+          <div class="mini-geo">
+            <div style="font-size:.6875rem;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Geographic opportunity</div>
+            <div class="geo-row"><div class="geo-name">Mumbai</div><div class="geo-track"><div class="geo-fill" style="width:82%"></div></div><div class="geo-val">$41,000</div></div>
+            <div class="geo-row"><div class="geo-name">Bangalore</div><div class="geo-track"><div class="geo-fill" style="width:65%"></div></div><div class="geo-val">$32,000</div></div>
+            <div class="geo-row"><div class="geo-name">Delhi</div><div class="geo-track"><div class="geo-fill" style="width:48%"></div></div><div class="geo-val">$24,000</div></div>
+            <div class="geo-row"><div class="geo-name">Pune</div><div class="geo-track"><div class="geo-fill" style="width:30%"></div></div><div class="geo-val">$15,000</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- DATA SECTION -->
+<section class="data-section" id="data">
+  <div class="data-inner">
+    <div class="section-kicker">Data input</div>
+    <h2 class="section-h2">Four files.<br>Complete picture.</h2>
+    <p class="section-sub">Upload what you have. AI normalises messy formats, missing fields, and column name variations automatically.</p>
+
+    <div class="data-grid">
+      <div class="data-card">
+        <div class="dc-icon" style="background:var(--teal-faint)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00D4B4" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <h4>customers.csv</h4>
+        <p>Who your customers are — identity, location, loyalty tier, channel preference.</p>
+        <div class="field-list">
+          <div class="field">customer_id <span class="field-badge fr">PK</span></div>
+          <div class="field">email <span class="field-badge fr">Required</span></div>
+          <div class="field">signup_date <span class="field-badge fr">Required</span></div>
+          <div class="field">city / country <span class="field-badge fo">Optional</span></div>
+          <div class="field">loyalty_tier <span class="field-badge fo">Optional</span></div>
+        </div>
+      </div>
+      <div class="data-card">
+        <div class="dc-icon" style="background:var(--purple-faint)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A855F7" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+        </div>
+        <h4>products.csv</h4>
+        <p>Your catalogue — categories, pricing, and cost data for margin analysis.</p>
+        <div class="field-list">
+          <div class="field">product_id <span class="field-badge fr">PK</span></div>
+          <div class="field">product_name <span class="field-badge fr">Required</span></div>
+          <div class="field">category_l1 <span class="field-badge fr">Required</span></div>
+          <div class="field">selling_price <span class="field-badge fr">Required</span></div>
+          <div class="field">cost_price <span class="field-badge fo">Optional</span></div>
+        </div>
+      </div>
+      <div class="data-card">
+        <div class="dc-icon" style="background:var(--amber-faint)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        </div>
+        <h4>transactions.csv</h4>
+        <p>Every order header — date, amount, channel, and delivery location.</p>
+        <div class="field-list">
+          <div class="field">transaction_id <span class="field-badge fr">PK</span></div>
+          <div class="field">customer_id <span class="field-badge fr">FK</span></div>
+          <div class="field">transaction_date <span class="field-badge fr">Required</span></div>
+          <div class="field">total_amount <span class="field-badge fr">Required</span></div>
+          <div class="field">channel <span class="field-badge fo">Optional</span></div>
+        </div>
+      </div>
+      <div class="data-card">
+        <div class="dc-icon" style="background:var(--blue-faint)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        </div>
+        <h4>line_items.csv</h4>
+        <p>Every product per order — required for basket analysis and upsell mapping.</p>
+        <div class="field-list">
+          <div class="field">transaction_id <span class="field-badge fr">FK</span></div>
+          <div class="field">product_id <span class="field-badge fr">FK</span></div>
+          <div class="field">quantity <span class="field-badge fr">Required</span></div>
+          <div class="field">unit_price <span class="field-badge fr">Required</span></div>
+          <div class="field">discount_amount <span class="field-badge fo">Optional</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ai-strip">
+      <div class="ai-strip-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00D4B4" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+      </div>
+      <div>
+        <div class="ai-strip-title">AI transformation layer — handles any format automatically</div>
+        <div class="ai-strip-desc">Any date format, currency symbols, column name variations, combined name fields, gender abbreviations, nested category paths, missing derived fields — all normalised before analysis begins. You'll see a field-by-field transformation report before the engine runs. Upload what you have.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <div class="cta-glow"></div>
+  <h2>Stop guessing.<br>Start <em>growing.</em></h2>
+  <p>Your transaction data already knows who's about to churn, what to upsell, and which campaigns will work. Clarix reads it.</p>
+  <a href="login.html?mode=signup" class="btn btn-teal btn-xl">Analyse My Data Free →</a>
+  <div class="cta-badges">
+    <div class="cta-badge">No credit card</div>
+    <div class="cta-badge">Data stays in browser</div>
+    <div class="cta-badge">Results in minutes</div>
+    <div class="cta-badge">Free to start</div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <a href="#" class="logo" style="font-size:1.1rem">
+    <div class="logo-mark">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="3" fill="#060B12"/>
+        <path d="M12 5C8.13 5 5 8.13 5 12s3.13 7 7 7" stroke="#060B12" stroke-width="2" stroke-linecap="round"/>
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10" stroke="#060B12" stroke-width="1.5" stroke-linecap="round" opacity=".45"/>
+        <circle cx="19" cy="8" r="2" fill="#060B12"/>
+        <circle cx="19" cy="16" r="2" fill="#060B12"/>
+        <line x1="12" y1="12" x2="17.5" y2="8.8" stroke="#060B12" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="12" y1="12" x2="17.5" y2="15.2" stroke="#060B12" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+    Clarix
+  </a>
+  <div class="footer-links">
+    <span style="font-size:.8125rem;color:var(--t3)">Built by</span>
+    <a href="https://www.linkedin.com/in/ashutosh-tiwari0021" target="_blank" style="color:var(--t2)">Ashutosh Tiwari</a>
+    <span class="fsep">·</span>
+    <a href="https://pm21.notion.site/Ashutosh-Product-Management-270a1d6b6af980e5951dc13633f9087f" target="_blank" style="color:var(--t2)">Portfolio</a>
+    <span class="fsep">·</span>
+    <a href="https://github.com/ashutosh-tiwari-pm" target="_blank" style="color:var(--t2)">GitHub</a>
+  </div>
+</footer>
+
+<script>
+// ── Particle canvas background ──
+const canvas = document.getElementById('hero-canvas');
+const ctx = canvas.getContext('2d');
+let W, H, particles = [], connections = [];
+const TEAL = '0,212,180';
+
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+
+class Particle {
+  constructor() { this.reset(); }
+  reset() {
+    this.x = Math.random() * W;
+    this.y = Math.random() * H;
+    this.vx = (Math.random() - .5) * .4;
+    this.vy = (Math.random() - .5) * .4;
+    this.r = Math.random() * 2 + 1;
+    this.life = Math.random();
+    this.maxLife = .6 + Math.random() * .4;
+  }
+  update() {
+    this.x += this.vx; this.y += this.vy;
+    this.life += .003;
+    if (this.life > this.maxLife || this.x < 0 || this.x > W || this.y < 0 || this.y > H) this.reset();
+  }
+  draw() {
+    const alpha = Math.sin((this.life / this.maxLife) * Math.PI) * .5;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(${TEAL},${alpha})`;
+    ctx.fill();
+  }
+}
+
+function init() {
+  resize();
+  particles = Array.from({length: 80}, () => new Particle());
+}
+
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+  particles.forEach(p => { p.update(); p.draw(); });
+  for (let i = 0; i < particles.length; i++) {
+    for (let j = i + 1; j < particles.length; j++) {
+      const dx = particles[i].x - particles[j].x;
+      const dy = particles[i].y - particles[j].y;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      if (dist < 120) {
+        const alpha = (1 - dist/120) * .12;
+        ctx.beginPath();
+        ctx.moveTo(particles[i].x, particles[i].y);
+        ctx.lineTo(particles[j].x, particles[j].y);
+        ctx.strokeStyle = `rgba(${TEAL},${alpha})`;
+        ctx.lineWidth = .8;
+        ctx.stroke();
+      }
+    }
+  }
+  requestAnimationFrame(draw);
+}
+
+window.addEventListener('resize', resize);
+init();
+draw();
+
+// ── Counter animation ──
+function counter(el, target, duration) {
+  let s = 0, step = target / (duration / 16);
+  const t = setInterval(() => {
+    s = Math.min(s + step, target);
+    el.textContent = Math.round(s);
+    if (s >= target) clearInterval(t);
+  }, 16);
+}
+setTimeout(() => {
+  counter(document.getElementById('k1'), 34, 1600);
+  counter(document.getElementById('k2'), 12, 1400);
+  counter(document.getElementById('k3'), 8, 1200);
+}, 800);
+</script>
+</body>
+</html>

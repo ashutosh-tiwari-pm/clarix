@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analysis — Clarix</title>
+<link rel="preconnect" href="https://api.fontshare.com">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@800,700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;-webkit-font-smoothing:antialiased}
+:root{
+  --bg:#060B12;--bg2:#080E17;--s1:#0D1520;--s2:#111C2C;
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.11);
+  --teal:#00D4B4;--teal-dim:#00A890;--teal-faint:rgba(0,212,180,0.08);
+  --amber:#F59E0B;--amber-faint:rgba(245,158,11,0.08);
+  --purple:#A855F7;--purple-faint:rgba(168,85,247,0.08);
+  --red:#EF4444;--red-faint:rgba(239,68,68,0.08);
+  --green:#22C55E;--green-faint:rgba(34,197,94,0.08);
+  --blue:#3B82F6;--blue-faint:rgba(59,130,246,0.08);
+  --t1:#EDF2FF;--t2:#7A90B0;--t3:#4A6080;
+  --fd:'Cabinet Grotesk',sans-serif;--fb:'Plus Jakarta Sans',sans-serif;
+}
+body{font-family:var(--fb);color:var(--t1);background:var(--bg);min-height:100vh}
+a{text-decoration:none;color:var(--teal)}
+
+/* NAV */
+.nav{background:var(--bg2);border-bottom:1px solid var(--border);padding:13px 0;position:sticky;top:0;z-index:100}
+.nav-inner{max-width:1200px;margin:0 auto;padding:0 28px;display:flex;align-items:center;gap:12px}
+.logo{display:flex;align-items:center;gap:8px;font-family:var(--fd);font-weight:800;font-size:1.1rem;color:var(--t1);letter-spacing:-.03em}
+.logo-mark{width:28px;height:28px;background:var(--teal);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.breadcrumb{color:var(--t3);font-size:.875rem}
+.proj-title-input{font-family:var(--fd);font-weight:700;font-size:.9375rem;color:var(--t1);background:transparent;border:none;outline:none;letter-spacing:-.02em;cursor:text;min-width:160px}
+.proj-title-input:focus{border-bottom:1px solid var(--teal)}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;font-family:var(--fb);font-size:.8125rem;font-weight:600;border-radius:8px;border:none;cursor:pointer;transition:all .15s;line-height:1}
+.btn-ghost{background:transparent;color:var(--t2);border:1px solid var(--border2)}.btn-ghost:hover{color:var(--t1)}
+.btn-teal{background:var(--teal);color:#060B12}.btn-teal:hover{background:var(--teal-dim)}
+.btn-teal:disabled{opacity:.4;cursor:not-allowed}
+
+/* LAYOUT */
+.workspace{max-width:1200px;margin:0 auto;padding:32px 28px;display:grid;grid-template-columns:280px 1fr;gap:24px;align-items:start}
+
+/* SIDEBAR */
+.sidebar{position:sticky;top:72px}
+.sidebar-section{margin-bottom:24px}
+.sidebar-label{font-size:.6875rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin-bottom:10px}
+
+/* Upload zones */
+.upload-zone{border:1px dashed var(--border2);border-radius:12px;padding:16px;cursor:pointer;transition:all .2s;margin-bottom:8px;position:relative}
+.upload-zone:hover{border-color:var(--teal);background:var(--teal-faint)}
+.upload-zone.has-file{border-style:solid;border-color:var(--teal);background:var(--teal-faint)}
+.upload-zone.drag-over{border-color:var(--teal);background:rgba(0,212,180,.12);transform:scale(1.01)}
+.upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.uz-top{display:flex;align-items:center;gap:10px}
+.uz-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.uz-name{font-size:.8125rem;font-weight:600;color:var(--t1)}
+.uz-hint{font-size:.6875rem;color:var(--t3);margin-top:2px}
+.uz-badge{margin-left:auto;font-size:.5625rem;font-weight:700;padding:2px 6px;border-radius:3px;flex-shrink:0}
+.uz-req{background:rgba(0,212,180,.12);color:var(--teal)}
+.uz-opt{background:var(--s2);color:var(--t3)}
+.uz-file-info{display:none;margin-top:8px;padding:6px 8px;background:var(--s2);border-radius:6px;font-size:.6875rem;color:var(--teal);display:flex;align-items:center;gap:6px}
+.upload-zone.has-file .uz-file-info{display:flex}
+.uz-remove{margin-left:auto;cursor:pointer;color:var(--t3);font-size:14px;line-height:1;padding:0 2px;background:none;border:none}
+.uz-remove:hover{color:var(--red)}
+
+/* Analysis mode tabs */
+.mode-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:16px}
+.mode-tab{padding:10px 8px;border:1px solid var(--border2);border-radius:9px;cursor:pointer;text-align:center;transition:all .2s;background:transparent}
+.mode-tab.active{border-color:var(--teal);background:var(--teal-faint)}
+.mode-tab-icon{font-size:1.125rem;margin-bottom:4px}
+.mode-tab-label{font-size:.75rem;font-weight:600;color:var(--t2)}
+.mode-tab.active .mode-tab-label{color:var(--teal)}
+
+/* Run button */
+.run-btn{width:100%;padding:13px;background:var(--teal);color:#060B12;border:none;border-radius:10px;font-family:var(--fb);font-size:.9375rem;font-weight:700;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:8px}
+.run-btn:hover{background:var(--teal-dim)}
+.run-btn:disabled{opacity:.4;cursor:not-allowed}
+.run-btn .spinner{width:16px;height:16px;border:2px solid rgba(6,11,18,.3);border-top-color:#060B12;border-radius:50%;animation:spin .6s linear infinite;display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Transform report */
+.transform-report{margin-top:12px;background:var(--s2);border:1px solid var(--border2);border-radius:10px;padding:12px;display:none}
+.transform-report.show{display:block}
+.tr-title{font-size:.6875rem;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+.tr-item{display:flex;align-items:flex-start;gap:6px;font-size:.6875rem;color:var(--t2);margin-bottom:4px;line-height:1.4}
+.tr-dot{width:5px;height:5px;border-radius:50%;margin-top:3px;flex-shrink:0}
+
+/* MAIN CONTENT */
+.content{min-width:0}
+
+/* Module tabs */
+.module-tabs{display:flex;gap:2px;background:var(--s1);border:1px solid var(--border2);border-radius:12px;padding:4px;margin-bottom:24px;overflow-x:auto}
+.mod-tab{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;cursor:pointer;transition:all .15s;white-space:nowrap;border:none;background:none;font-family:var(--fb);font-size:.8125rem;font-weight:500;color:var(--t3)}
+.mod-tab.active{background:var(--s2);color:var(--t1)}
+.mod-tab-dot{width:7px;height:7px;border-radius:50%}
+.mod-tab.locked{opacity:.4;cursor:default}
+
+/* Panel states */
+.panel{display:none}.panel.active{display:block}
+
+/* Welcome panel */
+.welcome-panel{text-align:center;padding:80px 40px;border:1px dashed var(--border2);border-radius:16px}
+.welcome-icon{width:72px;height:72px;background:var(--s1);border-radius:18px;display:flex;align-items:center;justify-content:center;margin:0 auto 24px}
+.welcome-panel h2{font-family:var(--fd);font-weight:800;font-size:1.75rem;letter-spacing:-.03em;color:var(--t1);margin-bottom:10px}
+.welcome-panel p{font-size:.9375rem;color:var(--t2);max-width:440px;margin:0 auto;line-height:1.7}
+
+/* Processing state */
+.processing-panel{padding:48px;border:1px solid var(--border2);border-radius:16px;text-align:center}
+.processing-steps{display:flex;flex-direction:column;gap:10px;max-width:420px;margin:32px auto 0;text-align:left}
+.proc-step{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--s1);border-radius:10px;border:1px solid var(--border)}
+.proc-step-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.875rem}
+.proc-step-text{font-size:.875rem;color:var(--t2)}
+.proc-step-text strong{color:var(--t1);display:block;font-weight:600;margin-bottom:1px}
+.proc-step.done .proc-step-icon{background:var(--green-faint)}
+.proc-step.active .proc-step-icon{background:var(--teal-faint);animation:procPulse 1.5s ease infinite}
+.proc-step.pending .proc-step-icon{background:var(--s2)}
+@keyframes procPulse{0%,100%{opacity:1}50%{opacity:.5}}
+.proc-ring{width:56px;height:56px;border:3px solid var(--border2);border-top-color:var(--teal);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 16px}
+.proc-label{font-family:var(--fd);font-weight:700;font-size:1.25rem;color:var(--t1);margin-bottom:6px;letter-spacing:-.02em}
+.proc-sub{font-size:.875rem;color:var(--t2)}
+
+/* Results panel shared styles */
+.result-header{margin-bottom:24px}
+.result-title{font-family:var(--fd);font-weight:800;font-size:1.5rem;letter-spacing:-.03em;color:var(--t1);margin-bottom:6px}
+.result-sub{font-size:.9375rem;color:var(--t2)}
+
+.insight-card{background:var(--s1);border:1px solid var(--border2);border-radius:14px;padding:22px;margin-bottom:14px}
+.insight-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.insight-card-title{font-family:var(--fd);font-weight:700;font-size:1.0625rem;color:var(--t1);letter-spacing:-.02em}
+.insight-badge{font-size:.6875rem;font-weight:700;padding:3px 9px;border-radius:99px}
+
+.seg-table{width:100%;border-collapse:collapse}
+.seg-table th{font-size:.6875rem;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;padding:0 12px 10px;text-align:left}
+.seg-table td{padding:10px 12px;border-top:1px solid var(--border);font-size:.875rem;color:var(--t2);vertical-align:top}
+.seg-table td:first-child{color:var(--t1);font-weight:500}
+.seg-count{font-family:var(--fd);font-weight:700;font-size:1.125rem;color:var(--t1)}
+.seg-bar-wrap{display:flex;align-items:center;gap:8px}
+.seg-bar-bg{flex:1;height:6px;background:var(--border);border-radius:99px;overflow:hidden}
+.seg-bar-f{height:100%;border-radius:99px}
+.action-tag{font-size:.6875rem;padding:3px 8px;border-radius:5px;background:var(--teal-faint);color:var(--teal);font-weight:500}
+
+.opp-list{display:flex;flex-direction:column;gap:10px}
+.opp-item{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center;padding:14px 16px;background:var(--s1);border:1px solid var(--border2);border-radius:10px}
+.opp-item-title{font-size:.9375rem;font-weight:600;color:var(--t1);margin-bottom:3px}
+.opp-item-desc{font-size:.8125rem;color:var(--t2)}
+.opp-value{text-align:right;flex-shrink:0}
+.opp-amount{font-family:var(--fd);font-weight:800;font-size:1.25rem;color:var(--teal);letter-spacing:-.03em}
+.opp-customers{font-size:.75rem;color:var(--t3);margin-top:1px}
+
+.campaign-card{background:var(--s1);border:1px solid var(--border2);border-radius:14px;padding:20px;margin-bottom:12px}
+.campaign-segment{font-size:.75rem;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
+.campaign-channel{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.channel-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.channel-label{font-size:.75rem;font-weight:600;color:var(--t2)}
+.campaign-content{font-size:.875rem;color:var(--t1);line-height:1.6;padding:10px 12px;background:var(--bg2);border-radius:8px;border:1px solid var(--border)}
+
+/* Loading skeleton */
+.skeleton{background:linear-gradient(90deg,var(--s1) 25%,var(--s2) 50%,var(--s1) 75%);background-size:400% 100%;animation:shimmer 1.5s ease infinite;border-radius:8px}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="dashboard.html" class="logo">
+      <div class="logo-mark">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="3" fill="#060B12"/>
+          <path d="M12 5C8.13 5 5 8.13 5 12s3.13 7 7 7" stroke="#060B12" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="19" cy="8" r="2" fill="#060B12"/>
+          <circle cx="19" cy="16" r="2" fill="#060B12"/>
+          <line x1="12" y1="12" x2="17.5" y2="8.8" stroke="#060B12" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="12" y1="12" x2="17.5" y2="15.2" stroke="#060B12" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      Clarix
+    </a>
+    <span class="breadcrumb">/</span>
+    <input type="text" class="proj-title-input" id="proj-title" value="New Analysis" onblur="saveTitle()">
+    <div class="nav-right">
+      <button class="btn btn-ghost" onclick="location.href='dashboard.html'">← Dashboard</button>
+      <button class="btn btn-teal" id="run-btn" onclick="runAnalysis()" disabled>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Run Analysis
+      </button>
+    </div>
+  </div>
+</nav>
+
+<div class="workspace">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Mode</div>
+      <div class="mode-tabs">
+        <div class="mode-tab active" id="tab-data" onclick="setMode('data')">
+          <div class="mode-tab-icon">📊</div>
+          <div class="mode-tab-label">Upload Data</div>
+        </div>
+        <div class="mode-tab" id="tab-research" onclick="setMode('research')">
+          <div class="mode-tab-icon">🔍</div>
+          <div class="mode-tab-label">Brand Research</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data upload mode -->
+    <div id="data-mode-panel">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Upload CSV Files</div>
+
+        <div class="upload-zone" id="uz-customers" ondragover="dragOver(event,'uz-customers')" ondragleave="dragLeave('uz-customers')" ondrop="handleDrop(event,'customers')">
+          <input type="file" accept=".csv" onchange="handleFile(event,'customers')" onclick="e=>e.stopPropagation()">
+          <div class="uz-top">
+            <div class="uz-icon" style="background:rgba(0,212,180,.1)">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00D4B4" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            </div>
+            <div>
+              <div class="uz-name">customers.csv</div>
+              <div class="uz-hint">customer_id, email, signup_date</div>
+            </div>
+            <span class="uz-badge uz-req">Required</span>
+          </div>
+          <div class="uz-file-info" id="fi-customers">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#00D4B4" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <span id="fn-customers">file.csv</span>
+            <button class="uz-remove" onclick="removeFile(event,'customers')">✕</button>
+          </div>
+        </div>
+
+        <div class="upload-zone" id="uz-products" ondragover="dragOver(event,'uz-products')" ondragleave="dragLeave('uz-products')" ondrop="handleDrop(event,'products')">
+          <input type="file" accept=".csv" onchange="handleFile(event,'products')" onclick="e=>e.stopPropagation()">
+          <div class="uz-top">
+            <div class="uz-icon" style="background:rgba(168,85,247,.1)">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A855F7" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+            </div>
+            <div>
+              <div class="uz-name">products.csv</div>
+              <div class="uz-hint">product_id, name, category, price</div>
+            </div>
+            <span class="uz-badge uz-opt">Optional</span>
+          </div>
+          <div class="uz-file-info" id="fi-products">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#00D4B4" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <span id="fn-products">file.csv</span>
+            <button class="uz-remove" onclick="removeFile(event,'products')">✕</button>
+          </div>
+        </div>
+
+        <div class="upload-zone" id="uz-transactions" ondragover="dragOver(event,'uz-transactions')" ondragleave="dragLeave('uz-transactions')" ondrop="handleDrop(event,'transactions')">
+          <input type="file" accept=".csv" onchange="handleFile(event,'transactions')" onclick="e=>e.stopPropagation()">
+          <div class="uz-top">
+            <div class="uz-icon" style="background:rgba(245,158,11,.1)">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+            </div>
+            <div>
+              <div class="uz-name">transactions.csv</div>
+              <div class="uz-hint">transaction_id, customer_id, date, amount</div>
+            </div>
+            <span class="uz-badge uz-req">Required</span>
+          </div>
+          <div class="uz-file-info" id="fi-transactions">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#00D4B4" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <span id="fn-transactions">file.csv</span>
+            <button class="uz-remove" onclick="removeFile(event,'transactions')">✕</button>
+          </div>
+        </div>
+
+        <div class="upload-zone" id="uz-lineitems" ondragover="dragOver(event,'uz-lineitems')" ondragleave="dragLeave('uz-lineitems')" ondrop="handleDrop(event,'lineitems')">
+          <input type="file" accept=".csv" onchange="handleFile(event,'lineitems')" onclick="e=>e.stopPropagation()">
+          <div class="uz-top">
+            <div class="uz-icon" style="background:rgba(59,130,246,.1)">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            </div>
+            <div>
+              <div class="uz-name">line_items.csv</div>
+              <div class="uz-hint">transaction_id, product_id, quantity, price</div>
+            </div>
+            <span class="uz-badge uz-opt">Optional</span>
+          </div>
+          <div class="uz-file-info" id="fi-lineitems">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#00D4B4" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <span id="fn-lineitems">file.csv</span>
+            <button class="uz-remove" onclick="removeFile(event,'lineitems')">✕</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI Transform report -->
+      <div class="transform-report" id="transform-report">
+        <div class="tr-title">AI Transformations Applied</div>
+        <div id="transform-items"></div>
+      </div>
+
+      <!-- Run button -->
+      <button class="run-btn" id="run-main" onclick="runAnalysis()" disabled>
+        <div class="spinner" id="run-spinner"></div>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" id="run-icon"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        <span id="run-label">Run Analysis</span>
+      </button>
+      <div style="margin-top:8px;font-size:.6875rem;color:var(--t3);text-align:center" id="modules-ready"></div>
+    </div>
+
+    <!-- Research mode -->
+    <div id="research-mode-panel" style="display:none">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Brand Details</div>
+        <input type="text" id="brand-name" placeholder="e.g. Myntra, Meesho, Nykaa" style="width:100%;padding:10px 12px;background:var(--s1);border:1px solid var(--border2);border-radius:9px;color:var(--t1);font-family:var(--fb);font-size:.875rem;outline:none;margin-bottom:8px;transition:border-color .15s" onfocus="this.style.borderColor='var(--teal)'" onblur="this.style.borderColor='var(--border2)'">
+        <input type="text" id="brand-url" placeholder="https://brand.com (optional)" style="width:100%;padding:10px 12px;background:var(--s1);border:1px solid var(--border2);border-radius:9px;color:var(--t1);font-family:var(--fb);font-size:.875rem;outline:none;margin-bottom:8px;transition:border-color .15s" onfocus="this.style.borderColor='var(--teal)'" onblur="this.style.borderColor='var(--border2)'">
+        <select id="brand-industry" style="width:100%;padding:10px 12px;background:var(--s1);border:1px solid var(--border2);border-radius:9px;color:var(--t2);font-family:var(--fb);font-size:.875rem;outline:none;margin-bottom:16px;cursor:pointer">
+          <option value="">Select industry...</option>
+          <option>Fashion & Apparel</option>
+          <option>Beauty & Personal Care</option>
+          <option>Electronics & Gadgets</option>
+          <option>Food & Grocery</option>
+          <option>Home & Furniture</option>
+          <option>Sports & Fitness</option>
+          <option>Jewellery & Accessories</option>
+          <option>Other</option>
+        </select>
+        <button class="run-btn" onclick="runResearch()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Research Brand
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="content">
+    <!-- Module tabs -->
+    <div class="module-tabs">
+      <button class="mod-tab active" data-panel="overview" onclick="switchTab(this)">
+        <div class="mod-tab-dot" style="background:var(--teal)"></div>
+        Overview
+      </button>
+      <button class="mod-tab locked" data-panel="segments" onclick="switchTab(this)">
+        <div class="mod-tab-dot" style="background:var(--teal)"></div>
+        Segments
+      </button>
+      <button class="mod-tab locked" data-panel="upsell" onclick="switchTab(this)">
+        <div class="mod-tab-dot" style="background:var(--amber)"></div>
+        Upsell
+      </button>
+      <button class="mod-tab locked" data-panel="crosssell" onclick="switchTab(this)">
+        <div class="mod-tab-dot" style="background:var(--purple)"></div>
+        Cross-sell
+      </button>
+      <button class="mod-tab locked" data-panel="churn" onclick="switchTab(this)">
+        <div class="mod-tab-dot" style="background:var(--red)"></div>
+        Churn
+      </button>
+      <button class="mod-tab locked" data-panel="loyalty" onclick="switchTab(this)">
+        <div class="mod-tab-dot" style="background:var(--green)"></div>
+        Loyalty
+      </button>
+      <button class="mod-tab locked" data-panel="campaigns" onclick="switchTab(this)">
+        <div class="mod-tab-dot" style="background:var(--blue)"></div>
+        Campaigns
+      </button>
+    </div>
+
+    <!-- OVERVIEW panel -->
+    <div class="panel active" id="panel-overview">
+      <div class="welcome-panel" id="welcome-state">
+        <div class="welcome-icon">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#00D4B4" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        </div>
+        <h2>Upload your data to begin</h2>
+        <p>Add at minimum <strong>customers.csv</strong> and <strong>transactions.csv</strong>. The AI engine will normalise your data, compute RFM scores, and run 6 parallel growth analyses.</p>
+      </div>
+      <div id="overview-results" style="display:none">
+        <!-- Populated after analysis -->
+      </div>
+    </div>
+
+    <!-- SEGMENTS panel -->
+    <div class="panel" id="panel-segments">
+      <div class="result-header">
+        <div class="result-title">Customer Segments</div>
+        <div class="result-sub">RFM-based behavioural segments with recommended actions</div>
+      </div>
+      <div id="segments-content"></div>
+    </div>
+
+    <!-- UPSELL panel -->
+    <div class="panel" id="panel-upsell">
+      <div class="result-header">
+        <div class="result-title">Upsell Opportunities</div>
+        <div class="result-sub">Ranked by revenue potential — customers ready for a premium upgrade</div>
+      </div>
+      <div id="upsell-content"></div>
+    </div>
+
+    <!-- CROSS-SELL panel -->
+    <div class="panel" id="panel-crosssell">
+      <div class="result-header">
+        <div class="result-title">Cross-sell Intelligence</div>
+        <div class="result-sub">Product affinity pairs and category gaps per segment</div>
+      </div>
+      <div id="crosssell-content"></div>
+    </div>
+
+    <!-- CHURN panel -->
+    <div class="panel" id="panel-churn">
+      <div class="result-header">
+        <div class="result-title">Churn Risk & Retention</div>
+        <div class="result-sub">At-risk customers and win-back strategies</div>
+      </div>
+      <div id="churn-content"></div>
+    </div>
+
+    <!-- LOYALTY panel -->
+    <div class="panel" id="panel-loyalty">
+      <div class="result-header">
+        <div class="result-title">Loyalty Intelligence</div>
+        <div class="result-sub">Tier ROI, upgrade candidates, and discount impact</div>
+      </div>
+      <div id="loyalty-content"></div>
+    </div>
+
+    <!-- CAMPAIGNS panel -->
+    <div class="panel" id="panel-campaigns">
+      <div class="result-header">
+        <div class="result-title">Campaign Playbooks</div>
+        <div class="result-sub">Ready-to-use briefs for email, push, and paid social</div>
+      </div>
+      <div id="campaigns-content"></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script src="js/supabase-client.js"></script>
+<script src="js/csv-engine.js"></script>
+<script src="js/analysis.js"></script>
+</body>
+</html>
