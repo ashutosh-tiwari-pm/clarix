@@ -327,6 +327,34 @@ a{text-decoration:none;color:var(--teal)}
 .dm-close:hover{background:var(--border2);color:var(--t1)}
 .dm-body{padding:0 24px 24px}
 
+
+/* SOCIAL INTELLIGENCE */
+.si-btn{display:flex;align-items:center;gap:7px;width:100%;padding:11px 14px;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:9px;font-family:var(--fb);font-size:.875rem;font-weight:600;color:#1E293B;cursor:pointer;transition:all .2s;margin-top:16px;justify-content:center}
+.si-btn:hover{background:#EFF6FF;border-color:#93C5FD;color:#1D4ED8}
+.si-btn:disabled{opacity:.5;cursor:not-allowed}
+.si-btn-loading{background:#EFF6FF;border-color:#93C5FD;color:#1D4ED8}
+.si-spinner{width:14px;height:14px;border:2px solid #BFDBFE;border-top-color:#1D4ED8;border-radius:50%;animation:spin .6s linear infinite;display:none}
+.si-section{margin-top:18px;padding-top:16px;border-top:1px solid #E2E8F0;display:none}
+.si-section.show{display:block}
+.si-section-title{font-size:.625rem;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.si-section-title::after{content:'AI Generated';font-size:.5rem;background:#EFF6FF;color:#3B82F6;padding:1px 6px;border-radius:99px;font-weight:700;letter-spacing:.05em}
+.si-profile-summary{font-size:.9375rem;color:#1E293B;line-height:1.65;margin-bottom:14px;padding:12px 14px;background:#F8FAFC;border-radius:9px;border-left:3px solid #3B82F6}
+.si-tags-row{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px}
+.si-tag{font-size:.6875rem;font-weight:600;padding:4px 10px;border-radius:99px}
+.si-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.si-field{background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:10px 12px}
+.si-field-lbl{font-size:.5625rem;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px}
+.si-field-val{font-size:.8125rem;color:#1E293B;font-weight:500}
+.si-trigger-events{margin-bottom:14px}
+.si-trigger-item{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;background:#FFF7ED;border:1px solid #FED7AA;border-radius:7px;margin-bottom:6px}
+.si-trigger-item svg{flex-shrink:0;margin-top:1px}
+.si-trigger-text{font-size:.8125rem;color:#92400E;line-height:1.4}
+.si-channels{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.si-channel{display:flex;align-items:center;gap:5px;font-size:.75rem;font-weight:600;padding:5px 10px;border-radius:7px;background:#F1F5F9;color:#475569}
+.si-disclaimer{font-size:.6875rem;color:#94A3B8;line-height:1.5;padding:8px 10px;background:#F8FAFC;border-radius:6px;margin-top:4px}
+.si-error{font-size:.8125rem;color:#DC2626;padding:10px 12px;background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;margin-top:10px;display:none}
+.si-error.show{display:block}
+
 @media(max-width:900px){.workspace{grid-template-columns:1fr}.sidebar{position:static}.kpi-strip{grid-template-columns:repeat(2,1fr)}.charts-grid{grid-template-columns:1fr}.match-customers{grid-template-columns:1fr;}.match-vs{padding:0}.profiles-grid{grid-template-columns:1fr!important}}
 </style>
 </head>
@@ -1145,6 +1173,221 @@ function closeProfileModal(e) {
   }
 }
 
+
+// ── SOCIAL INTELLIGENCE ──
+let _currentProfileForResearch = null;
+
+// Store current profile when modal opens so research can access it
+const _origOpenProfileModal = openProfileModal;
+function openProfileModal(p) {
+  _origOpenProfileModal(p);
+  _currentProfileForResearch = p;
+  // Reset social section
+  document.getElementById('si-section').classList.remove('show');
+  document.getElementById('si-error').classList.remove('show');
+  const btn = document.getElementById('si-research-btn');
+  if (btn) { btn.disabled = false; btn.classList.remove('si-btn-loading'); }
+  const icon = document.getElementById('si-btn-icon');
+  if (icon) icon.style.display = 'block';
+  const spinner = document.getElementById('si-spinner');
+  if (spinner) spinner.style.display = 'none';
+}
+
+async function runSocialResearch() {
+  const p = _currentProfileForResearch;
+  if (!p) return;
+
+  const apiKey = localStorage.getItem('clarix_api_key');
+  if (!apiKey) {
+    showSIError('Please add your Claude API key in Settings to use Social Intelligence.');
+    return;
+  }
+
+  // Build search query from available PII
+  const name = ((p.first_name||'')+' '+(p.last_name||'')).trim() || p.full_name || '';
+  const city = p.city || p.delivery_city || '';
+  const country = p.country || '';
+
+  if (!name || name.trim().length < 3) {
+    showSIError('Need at least a first and last name to research this customer.');
+    return;
+  }
+
+  // Set loading state
+  const btn = document.getElementById('si-research-btn');
+  const icon = document.getElementById('si-btn-icon');
+  const spinner = document.getElementById('si-spinner');
+  btn.disabled = true;
+  btn.classList.add('si-btn-loading');
+  icon.style.display = 'none';
+  spinner.style.display = 'block';
+  document.getElementById('si-error').classList.remove('show');
+
+  try {
+    const locationStr = [city, country].filter(Boolean).join(', ');
+    const loyaltyTier = p.loyalty_tier || '';
+    const gender = p.gender || '';
+    const dob = p.date_of_birth || '';
+    const ageStr = dob ? `born ${dob}` : (p.age ? `age ${p.age}` : '');
+
+    const prompt = `You are a customer intelligence analyst. Research the following person using publicly available information and build a lifestyle and interest profile to help with marketing segmentation.
+
+Customer details:
+- Name: ${name}
+- Location: ${locationStr || 'Unknown'}
+- Gender: ${gender || 'Unknown'}
+- ${ageStr || ''}
+- Loyalty tier: ${loyaltyTier || 'Unknown'}
+- Purchase history signals: Spent $${p.totalSpend||0} across ${p.orderCount||0} orders
+
+Your task:
+1. Based on the name, location, and demographics, infer likely lifestyle, interests, and social presence
+2. Search for any publicly available signals about this person (professional background, social activity, interests)
+3. Identify life stage and potential life events that are marketing trigger moments
+4. Recommend best channels to reach this person
+
+IMPORTANT: Be honest about confidence levels. If you cannot find specific information, say so and provide probabilistic estimates based on demographics. Never fabricate specific facts.
+
+Respond in JSON only:
+{
+  "found_public_info": true/false,
+  "confidence": "high/medium/low",
+  "summary": "2-3 sentence profile summary",
+  "lifestyle_tags": ["tag1","tag2","tag3","tag4","tag5"],
+  "life_stage": "student/young_professional/parent/mid_career/empty_nester/retired",
+  "income_bracket": "low/mid/upper_mid/high",
+  "digital_savviness": "low/medium/high",
+  "interests": ["interest1","interest2","interest3"],
+  "social_presence": {"linkedin":"active/inactive/unknown","instagram":"active/inactive/unknown","twitter":"active/inactive/unknown"},
+  "trigger_events": [{"event":"description","marketing_angle":"how to use this"}],
+  "best_channels": [{"channel":"email/push/sms/social/display","reason":"why this works for them"}],
+  "product_affinity": ["product type 1","product type 2"],
+  "campaign_angle": "one sentence on how to pitch to this customer",
+  "privacy_note": "brief note on what was/wasn't found publicly"
+}`;
+
+    const resp = await fetch('/api/claude', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 1200,
+        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
+        messages: [{ role: 'user', content: prompt + '\n\nRespond ONLY with valid JSON after completing your research.' }]
+      })
+    });
+
+    const data = await resp.json();
+    if (data.error) throw new Error(data.error.message || 'API error');
+
+    // Extract text content (Claude may use web search tool first)
+    const textBlocks = (data.content || []).filter(b => b.type === 'text');
+    if (!textBlocks.length) throw new Error('No response from Claude');
+
+    const raw = textBlocks[textBlocks.length-1].text.trim()
+      .replace(/^```json\n?/,'').replace(/\n?```$/,'');
+    const result = JSON.parse(raw);
+    renderSocialIntelligence(result, name);
+
+  } catch(e) {
+    showSIError('Research failed: ' + (e.message || 'Unknown error') + '. Check your API key and try again.');
+    console.error('Social intelligence error:', e);
+  } finally {
+    btn.disabled = false;
+    btn.classList.remove('si-btn-loading');
+    icon.style.display = 'block';
+    spinner.style.display = 'none';
+  }
+}
+
+function renderSocialIntelligence(r, name) {
+  // Summary
+  const summary = document.getElementById('si-summary');
+  summary.textContent = r.summary || 'No summary available.';
+
+  // Confidence badge
+  const confColors = { high:['#D1FAE5','#065F46'], medium:['#FEF3C7','#92400E'], low:['#F1F5F9','#475569'] };
+  const [confBg, confText] = confColors[r.confidence] || confColors.low;
+  summary.style.borderLeftColor = r.confidence === 'high' ? '#10B981' : r.confidence === 'medium' ? '#F59E0B' : '#94A3B8';
+
+  // Lifestyle tags
+  const tagsEl = document.getElementById('si-lifestyle-tags');
+  const allTags = [...(r.lifestyle_tags||[]), ...(r.interests||[])];
+  const tagColors = [
+    ['#EFF6FF','#1D4ED8'],['#F0FDF4','#166534'],['#FFF7ED','#92400E'],
+    ['#FDF4FF','#7E22CE'],['#FFF1F2','#9F1239'],['#F0F9FF','#0C4A6E'],
+  ];
+  tagsEl.innerHTML = allTags.slice(0,8).map((t,i) => {
+    const [bg,c] = tagColors[i % tagColors.length];
+    return `<span class="si-tag" style="background:${bg};color:${c}">${escH(t)}</span>`;
+  }).join('');
+
+  // Detail grid
+  const details = document.getElementById('si-details');
+  const detailItems = [
+    ['Life Stage', r.life_stage?.replace(/_/g,' ')],
+    ['Income Bracket', r.income_bracket?.replace(/_/g,' ')],
+    ['Digital Savviness', r.digital_savviness],
+    ['Campaign Angle', r.campaign_angle],
+  ].filter(([,v]) => v);
+
+  if (r.social_presence) {
+    const sp = r.social_presence;
+    const platforms = Object.entries(sp).filter(([,v]) => v && v !== 'unknown');
+    if (platforms.length) {
+      detailItems.push(['Social Presence', platforms.map(([k,v]) => `${k}: ${v}`).join(' · ')]);
+    }
+  }
+  details.innerHTML = detailItems.map(([l,v]) => `
+    <div class="si-field">
+      <div class="si-field-lbl">${l}</div>
+      <div class="si-field-val">${escH(String(v))}</div>
+    </div>`).join('');
+
+  // Trigger events
+  const triggers = r.trigger_events || [];
+  const triggersWrap = document.getElementById('si-triggers-wrap');
+  const triggersEl = document.getElementById('si-triggers');
+  if (triggers.length) {
+    triggersWrap.style.display = 'block';
+    triggersEl.innerHTML = triggers.map(t => `
+      <div class="si-trigger-item">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2.5" stroke-linecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        <div class="si-trigger-text"><strong style="color:#78350F">${escH(t.event)}</strong>${t.marketing_angle ? ' — '+escH(t.marketing_angle) : ''}</div>
+      </div>`).join('');
+  } else { triggersWrap.style.display = 'none'; }
+
+  // Best channels
+  const channels = r.best_channels || [];
+  const channelsWrap = document.getElementById('si-channels-wrap');
+  const channelsEl = document.getElementById('si-channels');
+  const channelIcons = { email:'📧', push:'📱', sms:'💬', social:'📲', display:'🖥️' };
+  if (channels.length) {
+    channelsWrap.style.display = 'block';
+    channelsEl.innerHTML = channels.map(c => `
+      <div class="si-channel" title="${escH(c.reason||'')}">
+        <span>${channelIcons[c.channel]||'📡'}</span>
+        ${escH(c.channel)}
+      </div>`).join('');
+  } else { channelsWrap.style.display = 'none'; }
+
+  // Show section
+  document.getElementById('si-section').classList.add('show');
+
+  // Update button
+  const btn = document.getElementById('si-research-btn');
+  btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> Research complete · Run again';
+  btn.style.background = '#F0FDF4';
+  btn.style.borderColor = '#86EFAC';
+  btn.style.color = '#166534';
+}
+
+function showSIError(msg) {
+  const el = document.getElementById('si-error');
+  el.textContent = msg;
+  el.classList.add('show');
+}
+
 function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
 </script>
@@ -1171,6 +1414,29 @@ function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;')
       <div class="pm-fields" id="pm-fields"></div>
       <div class="pm-section-title" id="pm-txn-label" style="display:none">Transaction Behaviour</div>
       <div class="pm-fields" id="pm-txn-fields"></div>
+
+      <!-- SOCIAL INTELLIGENCE BUTTON + RESULTS -->
+      <button class="si-btn" id="si-research-btn" onclick="runSocialResearch()">
+        <div class="si-spinner" id="si-spinner"></div>
+        <svg id="si-btn-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Research this customer online
+      </button>
+      <div class="si-error" id="si-error"></div>
+      <div class="si-section" id="si-section">
+        <div class="si-section-title">Social Intelligence</div>
+        <div class="si-profile-summary" id="si-summary"></div>
+        <div class="si-tags-row" id="si-lifestyle-tags"></div>
+        <div class="si-grid" id="si-details"></div>
+        <div id="si-triggers-wrap" style="display:none">
+          <div style="font-size:.625rem;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px">⚡ Life Events / Trigger Moments</div>
+          <div id="si-triggers"></div>
+        </div>
+        <div id="si-channels-wrap" style="display:none">
+          <div style="font-size:.625rem;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px">Best Channels to Reach</div>
+          <div class="si-channels" id="si-channels"></div>
+        </div>
+        <div class="si-disclaimer">⚠ Based on publicly available information only. Results are probabilistic and should be used as soft signals, not definitive facts. Always respect customer privacy and applicable data protection laws.</div>
+      </div>
     </div>
   </div>
 </div>
