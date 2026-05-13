@@ -188,7 +188,96 @@ a{text-decoration:none;color:var(--teal)}
 .skeleton{background:linear-gradient(90deg,var(--s1) 25%,var(--s2) 50%,var(--s1) 75%);background-size:400% 100%;animation:shimmer 1.5s ease infinite;border-radius:8px}
 @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 
-@media(max-width:900px){.workspace{grid-template-columns:1fr}.sidebar{position:static}.kpi-strip{grid-template-columns:repeat(2,1fr)}.charts-grid{grid-template-columns:1fr}}
+/* PERSONAS */
+.personas-tab-btn{padding:7px 14px;background:transparent;border:1px solid var(--border2);border-radius:8px;color:var(--t2);font-family:var(--fb);font-size:.8125rem;font-weight:500;cursor:pointer;transition:all .15s}
+.personas-tab-btn.active{background:var(--s2);color:var(--t1);border-color:rgba(244,114,182,.3)}
+.personas-tab-btn:hover:not(.active){color:var(--t1)}
+
+.rule-builder{background:var(--s1);border:1px solid var(--border2);border-radius:14px;padding:20px;margin-bottom:20px}
+.rule-builder-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;gap:16px}
+.rule-builder-title{font-family:var(--fd);font-weight:700;font-size:1rem;color:var(--t1);margin-bottom:3px;letter-spacing:-.02em}
+.rule-builder-sub{font-size:.8125rem;color:var(--t2)}
+
+.field-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px}
+.field-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px;transition:all .2s;cursor:pointer}
+.field-card.active{border-color:#F472B6;background:rgba(244,114,182,0.06)}
+.field-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.field-card-name{font-size:.8125rem;font-weight:600;color:var(--t1)}
+.field-card-cat{font-size:.5625rem;font-weight:700;padding:2px 6px;border-radius:3px;text-transform:uppercase;letter-spacing:.05em}
+.field-card-fill{font-size:.6875rem;color:var(--t3);margin-bottom:8px}
+.field-card-controls{display:flex;align-items:center;gap:8px;opacity:0;transition:opacity .2s}
+.field-card.active .field-card-controls{opacity:1}
+.weight-slider{flex:1;accent-color:#F472B6;cursor:pointer}
+.weight-label{font-size:.625rem;color:var(--t2);min-width:20px;text-align:right}
+.match-type-select{font-size:.6875rem;background:var(--s1);border:1px solid var(--border2);color:var(--t2);border-radius:4px;padding:2px 4px;font-family:var(--fb);outline:none;cursor:pointer}
+.field-toggle{width:16px;height:16px;border-radius:50%;border:2px solid var(--border2);background:transparent;cursor:pointer;flex-shrink:0;transition:all .15s;display:flex;align-items:center;justify-content:center}
+.field-card.active .field-toggle{background:#F472B6;border-color:#F472B6}
+
+.run-identity-btn{display:flex;align-items:center;gap:7px;padding:10px 20px;background:#F472B6;color:#060B12;border:none;border-radius:9px;font-family:var(--fb);font-size:.875rem;font-weight:700;cursor:pointer;transition:background .15s}
+.run-identity-btn:hover{background:#EC4899}
+
+/* Match clusters */
+.match-cluster{background:var(--s1);border:1px solid var(--border2);border-radius:12px;padding:16px;margin-bottom:10px;transition:border-color .2s}
+.match-cluster.high{border-left:3px solid var(--green)}
+.match-cluster.medium{border-left:3px solid var(--amber)}
+.match-cluster.low{border-left:3px solid var(--t3)}
+.match-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.match-score{font-family:var(--fd);font-weight:800;font-size:1.375rem;letter-spacing:-.03em}
+.match-score.high{color:var(--green)}.match-score.medium{color:var(--amber)}.match-score.low{color:var(--t3)}
+.match-customers{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:start;margin-bottom:10px}
+.match-cust{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 12px}
+.match-cust-name{font-size:.875rem;font-weight:600;color:var(--t1);margin-bottom:3px}
+.match-cust-detail{font-size:.75rem;color:var(--t2);margin-bottom:2px}
+.match-vs{display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:var(--t3);padding-top:20px}
+.match-signals{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.match-signal{font-size:.6875rem;padding:3px 9px;border-radius:5px;font-weight:500}
+.signal-exact{background:var(--green-faint);color:var(--green)}
+.signal-fuzzy{background:var(--amber-faint);color:var(--amber)}
+.signal-partial{background:var(--blue-faint);color:var(--blue)}
+.match-actions{display:flex;gap:8px}
+.match-btn{padding:6px 14px;border-radius:7px;font-family:var(--fb);font-size:.75rem;font-weight:600;cursor:pointer;border:none;transition:all .15s}
+.match-btn-merge{background:var(--green-faint);color:var(--green)}.match-btn-merge:hover{background:rgba(34,197,94,.2)}
+.match-btn-dismiss{background:var(--red-faint);color:var(--red)}.match-btn-dismiss:hover{background:rgba(239,68,68,.2)}
+.match-btn-review{background:var(--s2);color:var(--t2)}.match-btn-review:hover{background:var(--border2);color:var(--t1)}
+
+/* Household cards */
+.hh-card{background:var(--s1);border:1px solid var(--border2);border-radius:14px;overflow:hidden;margin-bottom:12px}
+.hh-card-header{padding:14px 18px;background:var(--s2);display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.hh-id{font-family:var(--fd);font-weight:700;font-size:.9375rem;color:var(--t1);letter-spacing:-.02em}
+.hh-address{font-size:.8125rem;color:var(--t2);margin-top:2px}
+.hh-confidence{font-size:.6875rem;font-weight:700;padding:3px 9px;border-radius:99px;background:var(--green-faint);color:var(--green)}
+.hh-stats{display:flex;gap:16px;padding:10px 18px;border-bottom:1px solid var(--border);background:var(--bg2)}
+.hh-stat{font-size:.8125rem;color:var(--t2)}
+.hh-stat strong{color:var(--t1);font-weight:600}
+.hh-members{padding:12px 18px}
+.hh-member{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
+.hh-member:last-child{border-bottom:none}
+.hh-member-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-weight:700;font-size:.875rem;flex-shrink:0}
+.hh-member-info{flex:1}
+.hh-member-name{font-size:.875rem;font-weight:600;color:var(--t1)}
+.hh-member-detail{font-size:.75rem;color:var(--t2)}
+.hh-member-badge{font-size:.5625rem;font-weight:700;padding:2px 7px;border-radius:99px;white-space:nowrap}
+.badge-best{background:rgba(244,114,182,.1);color:#F472B6;border:1px solid rgba(244,114,182,.2)}
+.badge-suppress{background:var(--s2);color:var(--t3)}
+.hh-footer{padding:10px 18px;background:var(--bg2);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.hh-saving{font-size:.75rem;color:var(--teal)}
+.hh-export-btn{font-size:.6875rem;font-weight:600;padding:5px 12px;border-radius:6px;background:var(--teal-faint);color:var(--teal);border:1px solid rgba(0,212,180,.2);cursor:pointer;font-family:var(--fb)}
+
+/* Profile cards */
+.profile-card{background:var(--s1);border:1px solid var(--border2);border-radius:12px;padding:16px;transition:border-color .2s}
+.profile-card:hover{border-color:rgba(244,114,182,.3)}
+.profile-card-top{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.profile-avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-weight:700;font-size:1rem;flex-shrink:0}
+.profile-name{font-size:.9375rem;font-weight:600;color:var(--t1);margin-bottom:2px}
+.profile-email{font-size:.75rem;color:var(--t3)}
+.profile-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px}
+.profile-stat{background:var(--bg2);border-radius:6px;padding:7px 8px;text-align:center}
+.profile-stat-val{font-family:var(--fd);font-weight:700;font-size:.9375rem;color:var(--t1)}
+.profile-stat-lbl{font-size:.5625rem;color:var(--t3);margin-top:1px}
+.profile-tags{display:flex;gap:4px;flex-wrap:wrap}
+.profile-tag{font-size:.5625rem;font-weight:600;padding:2px 7px;border-radius:99px}
+
+@media(max-width:900px){.workspace{grid-template-columns:1fr}.sidebar{position:static}.kpi-strip{grid-template-columns:repeat(2,1fr)}.charts-grid{grid-template-columns:1fr}.match-customers{grid-template-columns:1fr;}.match-vs{padding:0}.profiles-grid{grid-template-columns:1fr!important}}
 </style>
 </head>
 <body>
@@ -368,6 +457,9 @@ a{text-decoration:none;color:var(--teal)}
       <button class="mod-tab locked" data-panel="campaigns" onclick="switchTab(this)">
         <div class="mod-tab-dot" style="background:var(--blue)"></div>Campaigns
       </button>
+      <button class="mod-tab locked" id="personas-tab" data-panel="personas" onclick="switchTab(this)">
+        <div class="mod-tab-dot" style="background:#F472B6"></div>Personas
+      </button>
     </div>
 
     <!-- OVERVIEW -->
@@ -470,6 +562,93 @@ a{text-decoration:none;color:var(--teal)}
       <div class="result-header"><div class="result-title">Campaign Playbooks</div><div class="result-sub">Ready-to-use briefs for email, push, and paid social</div></div>
       <div id="campaigns-content"></div>
     </div>
+
+    <!-- PERSONAS -->
+    <div class="panel" id="panel-personas">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+        <div>
+          <div class="result-title">Customer Intelligence Hub</div>
+          <div class="result-sub">Identity resolution, household graph, and individual profiles</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="personas-tab-btn active" onclick="switchPersonaTab('identity',this)">Identity Resolution</button>
+          <button class="personas-tab-btn" onclick="switchPersonaTab('household',this)">Household Graph</button>
+          <button class="personas-tab-btn" onclick="switchPersonaTab('profiles',this)">Customer Profiles</button>
+        </div>
+      </div>
+
+      <!-- IDENTITY RESOLUTION -->
+      <div id="persona-identity">
+        <!-- Rule Builder -->
+        <div class="rule-builder" id="ir-rule-builder">
+          <div class="rule-builder-header">
+            <div>
+              <div class="rule-builder-title">Match Rule Builder</div>
+              <div class="rule-builder-sub">Select which fields to use as matching signals and set their weights</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px">
+              <div style="display:flex;align-items:center;gap:8px;font-size:.8125rem;color:var(--t2)">
+                Match threshold:
+                <span style="font-family:var(--fd);font-weight:700;color:var(--t1)" id="ir-threshold-val">70%</span>
+              </div>
+              <input type="range" id="ir-threshold" min="40" max="95" value="70" style="width:100px;accent-color:var(--teal)" oninput="document.getElementById('ir-threshold-val').textContent=this.value+'%'">
+            </div>
+          </div>
+          <div id="ir-field-grid" class="field-grid"></div>
+          <div style="margin-top:16px;display:flex;align-items:center;gap:10px">
+            <button class="run-identity-btn" onclick="runIdentityResolution()">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              Run Identity Resolution
+            </button>
+            <div style="font-size:.75rem;color:var(--t3)" id="ir-status"></div>
+          </div>
+        </div>
+        <div id="ir-results"></div>
+      </div>
+
+      <!-- HOUSEHOLD GRAPH -->
+      <div id="persona-household" style="display:none">
+        <div class="rule-builder" id="hh-rule-builder">
+          <div class="rule-builder-header">
+            <div>
+              <div class="rule-builder-title">Household Grouping Rules</div>
+              <div class="rule-builder-sub">Choose signals to cluster customers who likely live together</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;font-size:.8125rem;color:var(--t2)">
+              Min signals to form household:
+              <select id="hh-min-signals" style="background:var(--s2);border:1px solid var(--border2);color:var(--t1);border-radius:6px;padding:4px 8px;font-family:var(--fb);font-size:.8125rem;outline:none">
+                <option value="1">1</option>
+                <option value="2" selected>2</option>
+                <option value="3">3</option>
+              </select>
+            </div>
+          </div>
+          <div id="hh-field-grid" class="field-grid"></div>
+          <div style="margin-top:16px;display:flex;align-items:center;gap:10px">
+            <button class="run-identity-btn" onclick="runHouseholdGraph()">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              Build Household Graph
+            </button>
+            <div style="font-size:.75rem;color:var(--t3)" id="hh-status"></div>
+          </div>
+        </div>
+        <div id="hh-results"></div>
+      </div>
+
+      <!-- CUSTOMER PROFILES -->
+      <div id="persona-profiles" style="display:none">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+          <input type="text" id="profile-search" placeholder="Search by name, email, city..." style="flex:1;padding:10px 14px;background:var(--s1);border:1px solid var(--border2);border-radius:9px;color:var(--t1);font-family:var(--fb);font-size:.875rem;outline:none;transition:border-color .15s" oninput="searchProfiles(this.value)" onfocus="this.style.borderColor='var(--teal)'" onblur="this.style.borderColor='var(--border2)'">
+          <select id="profile-sort" style="padding:10px 12px;background:var(--s1);border:1px solid var(--border2);border-radius:9px;color:var(--t2);font-family:var(--fb);font-size:.8125rem;outline:none;cursor:pointer" onchange="renderProfiles()">
+            <option value="value">Sort by Value</option>
+            <option value="recent">Most Recent</option>
+            <option value="orders">Most Orders</option>
+            <option value="name">Name A–Z</option>
+          </select>
+        </div>
+        <div id="profiles-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px"></div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -478,6 +657,7 @@ a{text-decoration:none;color:var(--teal)}
 <script src="js/supabase-client.js"></script>
 <script src="js/csv-engine.js"></script>
 <script src="js/chart-assistant.js"></script>
+<script src="js/identity-engine.js"></script>
 <script src="js/analysis.js"></script>
 
 <script>
@@ -489,20 +669,253 @@ function askChart() {
 
 // Sample data download
 function downloadSampleData() {
-  const files = [
-    { name: 'customers.csv', url: 'sample-data/customers.csv' },
-    { name: 'transactions.csv', url: 'sample-data/transactions.csv' },
-    { name: 'products.csv', url: 'sample-data/products.csv' },
-    { name: 'line_items.csv', url: 'sample-data/line_items.csv' },
-  ];
-  files.forEach((f, i) => {
+  ['customers.csv','transactions.csv','products.csv','line_items.csv'].forEach((f,i) => {
     setTimeout(() => {
       const a = document.createElement('a');
-      a.href = f.url; a.download = f.name;
+      a.href = 'sample-data/'+f; a.download = f;
       document.body.appendChild(a); a.click(); document.body.removeChild(a);
     }, i * 400);
   });
 }
+
+// ── PERSONAS MODULE ──
+let _irClusters = [];
+let _hhClusters = [];
+let _allProfiles = [];
+let _irRules = [];
+let _hhRules = [];
+
+function switchPersonaTab(tab, btn) {
+  ['identity','household','profiles'].forEach(t => {
+    document.getElementById('persona-'+t).style.display = t === tab ? 'block' : 'none';
+  });
+  document.querySelectorAll('.personas-tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+window.initPersonasTab = function() {
+  const parsed = ClarixEngine.getParsed();
+  const raw = ClarixEngine.getRaw();
+  const customers = parsed.customers || raw.customers || [];
+  if (customers.length === 0) return;
+  const tab = document.getElementById('personas-tab');
+  if (tab) tab.classList.remove('locked');
+  const fields = ClarixIdentity.detectFields(customers);
+  buildIRFieldGrid(fields);
+  buildHHFieldGrid(fields);
+  const txns = (parsed.transactions || raw.transactions || []);
+  _allProfiles = customers.map(c => ClarixIdentity.buildCustomerProfile(c, txns));
+  renderProfiles();
+};
+
+function buildIRFieldGrid(fields) {
+  const grid = document.getElementById('ir-field-grid');
+  if (!grid) return;
+  const catColors = { identity:'rgba(244,114,182,.1)', name:'rgba(168,85,247,.1)', location:'rgba(59,130,246,.1)', behavioural:'rgba(245,158,11,.1)', demographic:'rgba(34,197,94,.1)', other:'rgba(255,255,255,.05)' };
+  const catText = { identity:'#F472B6', name:'#A855F7', location:'#3B82F6', behavioural:'#F59E0B', demographic:'#22C55E', other:'#7A90B0' };
+  _irRules = fields.map(f => ({ ...f, enabled: f.defaultWeight >= 20, weight: f.defaultWeight, matchType: f.suggestedType }));
+  grid.innerHTML = _irRules.map((f, i) => `
+    <div class="field-card ${f.enabled ? 'active' : ''}" id="irf-${i}" onclick="toggleIRField(${i})">
+      <div class="field-card-top">
+        <div class="field-card-name">${escH(f.label)}</div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <span class="field-card-cat" style="background:${catColors[f.category]||catColors.other};color:${catText[f.category]||catText.other}">${f.category}</span>
+          <div class="field-toggle" id="irt-${i}">${f.enabled ? '<svg width="8" height="8" viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><polyline points="2 6 5 9 10 3"/></svg>' : ''}</div>
+        </div>
+      </div>
+      <div class="field-card-fill">${f.fillRate}% of records have this field</div>
+      <div class="field-card-controls" id="irfc-${i}" style="display:flex;align-items:center;gap:8px;margin-top:8px;${f.enabled?'opacity:1':'opacity:0'}">
+        <select class="match-type-select" onchange="updateIRRule(${i},'matchType',this.value)" onclick="event.stopPropagation()">
+          ${f.matchTypes.map(t => '<option value="'+t+'"'+(t===f.suggestedType?' selected':'')+'>'+t.charAt(0).toUpperCase()+t.slice(1)+'</option>').join('')}
+        </select>
+        <input type="range" class="weight-slider" min="5" max="50" value="${f.defaultWeight}" style="flex:1;accent-color:#F472B6" oninput="updateIRRule(${i},'weight',+this.value);document.getElementById('irw-${i}').textContent=this.value" onclick="event.stopPropagation()">
+        <span class="weight-label" id="irw-${i}" style="font-size:.625rem;color:var(--t2);min-width:20px;text-align:right">${f.defaultWeight}</span>
+      </div>
+    </div>`).join('');
+}
+
+function toggleIRField(i) {
+  _irRules[i].enabled = !_irRules[i].enabled;
+  const card = document.getElementById('irf-'+i);
+  const toggle = document.getElementById('irt-'+i);
+  const controls = document.getElementById('irfc-'+i);
+  card.classList.toggle('active', _irRules[i].enabled);
+  toggle.innerHTML = _irRules[i].enabled ? '<svg width="8" height="8" viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><polyline points="2 6 5 9 10 3"/></svg>' : '';
+  if (controls) controls.style.opacity = _irRules[i].enabled ? '1' : '0';
+}
+
+function updateIRRule(i, key, val) { _irRules[i][key] = val; }
+
+function buildHHFieldGrid(fields) {
+  const grid = document.getElementById('hh-field-grid');
+  if (!grid) return;
+  const hhFields = [
+    ...fields.filter(f => f.householdSignal),
+    { field:'surname_pincode', label:'Surname + Pincode', category:'location', fillRate:'-', matchType:'exact', enabled:true, matchTypes:['exact'] },
+    { field:'delivery_address', label:'Shared Delivery Address', category:'location', fillRate:'-', matchType:'fuzzy', enabled:true, matchTypes:['fuzzy'] },
+    { field:'phone_prefix', label:'Phone Area Code', category:'identity', fillRate:'-', matchType:'prefix', enabled:false, matchTypes:['prefix'] },
+  ];
+  _hhRules = hhFields.map(f => ({ ...f, enabled: f.enabled !== false }));
+  const catColors = { identity:'rgba(244,114,182,.1)', name:'rgba(168,85,247,.1)', location:'rgba(59,130,246,.1)', other:'rgba(255,255,255,.05)' };
+  const catText = { identity:'#F472B6', name:'#A855F7', location:'#3B82F6', other:'#7A90B0' };
+  grid.innerHTML = _hhRules.map((f, i) => `
+    <div class="field-card ${f.enabled ? 'active' : ''}" id="hhf-${i}" onclick="toggleHHField(${i})">
+      <div class="field-card-top">
+        <div class="field-card-name">${escH(f.label)}</div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <span class="field-card-cat" style="background:${catColors[f.category]||catColors.other};color:${catText[f.category]||catText.other}">${f.category}</span>
+          <div class="field-toggle" id="hht-${i}">${f.enabled ? '<svg width="8" height="8" viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><polyline points="2 6 5 9 10 3"/></svg>' : ''}</div>
+        </div>
+      </div>
+      <div class="field-card-fill">${typeof f.fillRate === 'number' ? f.fillRate+'% of records' : 'Computed signal'}</div>
+    </div>`).join('');
+}
+
+function toggleHHField(i) {
+  _hhRules[i].enabled = !_hhRules[i].enabled;
+  document.getElementById('hhf-'+i).classList.toggle('active', _hhRules[i].enabled);
+  const t = document.getElementById('hht-'+i);
+  t.innerHTML = _hhRules[i].enabled ? '<svg width="8" height="8" viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><polyline points="2 6 5 9 10 3"/></svg>' : '';
+}
+
+function runIdentityResolution() {
+  const customers = ClarixEngine.getParsed().customers || ClarixEngine.getRaw().customers || [];
+  if (!customers.length) return;
+  const threshold = parseInt(document.getElementById('ir-threshold').value);
+  document.getElementById('ir-status').textContent = 'Comparing '+customers.length+' customers...';
+  setTimeout(() => {
+    _irClusters = ClarixIdentity.runIdentityResolution(customers, _irRules, threshold);
+    document.getElementById('ir-status').textContent = _irClusters.length+' potential duplicate'+(_irClusters.length!==1?'s':'')+' found';
+    renderIRResults();
+  }, 50);
+}
+
+function renderIRResults() {
+  const el = document.getElementById('ir-results');
+  if (!el) return;
+  if (_irClusters.length === 0) { el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--t3);font-size:.875rem">No duplicates found above the confidence threshold. Try lowering the threshold or enabling more fields.</div>'; return; }
+  const avatarColors = ['#00D4B4','#3B82F6','#A855F7','#F59E0B','#22C55E','#EF4444'];
+  el.innerHTML = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><div style="font-size:.8125rem;color:var(--t2)">'+_irClusters.length+' potential duplicate cluster'+(_irClusters.length!==1?'s':'')+' · review and merge or dismiss</div><button onclick="exportSuppression()" style="font-size:.6875rem;font-weight:600;padding:5px 12px;border-radius:6px;background:var(--teal-faint);color:var(--teal);border:1px solid rgba(0,212,180,.2);cursor:pointer;font-family:var(--fb)">Export suppression list</button></div>' +
+  _irClusters.map((c,i) => {
+    const level = c.confidence >= 85 ? 'high' : c.confidence >= 70 ? 'medium' : 'low';
+    const c1 = c.customers[0], c2 = c.customers[1];
+    return '<div class="match-cluster '+level+'" id="cluster-'+i+'"><div class="match-header"><div style="display:flex;align-items:center;gap:10px"><div class="match-score '+level+'">'+c.confidence+'%</div><div style="font-size:.75rem;color:var(--t2)">confidence · '+c.id+'</div></div><div style="font-size:.6875rem;color:var(--t3)">'+c.signals.length+' matching signal'+(c.signals.length!==1?'s':'')+'</div></div>'
+    +'<div class="match-customers"><div class="match-cust"><div class="match-cust-name">'+escH((c1.first_name||'')+' '+(c1.last_name||''))+'</div>'+(c1.email?'<div class="match-cust-detail">📧 '+escH(c1.email)+'</div>':'')+(c1.phone?'<div class="match-cust-detail">📱 '+escH(c1.phone)+'</div>':'')+(c1.city?'<div class="match-cust-detail">📍 '+escH(c1.city+(c1.pincode?', '+c1.pincode:''))+'</div>':'')+'<div style="margin-top:6px;font-size:.6875rem;font-weight:600;color:var(--t3)">'+escH(c1.customer_id)+'</div></div>'
+    +'<div class="match-vs">vs</div>'
+    +'<div class="match-cust"><div class="match-cust-name">'+escH((c2.first_name||'')+' '+(c2.last_name||''))+'</div>'+(c2.email?'<div class="match-cust-detail">📧 '+escH(c2.email)+'</div>':'')+(c2.phone?'<div class="match-cust-detail">📱 '+escH(c2.phone)+'</div>':'')+(c2.city?'<div class="match-cust-detail">📍 '+escH(c2.city+(c2.pincode?', '+c2.pincode:''))+'</div>':'')+'<div style="margin-top:6px;font-size:.6875rem;font-weight:600;color:var(--t3)">'+escH(c2.customer_id)+'</div></div></div>'
+    +'<div class="match-signals">'+c.signals.map(s=>'<span class="match-signal signal-'+(s.matchType==='exact'?'exact':s.matchType==='fuzzy'?'fuzzy':'partial')+'">'+escH(s.label)+': '+Math.round(s.score*100)+'% match</span>').join('')+'</div>'
+    +'<div class="match-actions"><button class="match-btn match-btn-merge" onclick="resolveCluster('+i+','merged',this)">✓ Merge → Keep '+escH(c1.customer_id)+'</button><button class="match-btn match-btn-dismiss" onclick="resolveCluster('+i+','dismissed',this)">✗ Not a match</button><button class="match-btn match-btn-review" onclick="resolveCluster('+i+','review',this)">? Flag for review</button></div></div>';
+  }).join('');
+}
+
+function resolveCluster(i, status, btn) {
+  _irClusters[i].status = status;
+  const card = document.getElementById('cluster-'+i);
+  if (!card) return;
+  const colors = { merged:'rgba(34,197,94,.1)', dismissed:'rgba(239,68,68,.05)', review:'rgba(245,158,11,.08)' };
+  const labels = { merged:'✓ Merged', dismissed:'✗ Dismissed', review:'? Flagged for review' };
+  card.style.background = colors[status]; card.style.opacity = '.6';
+  const actions = card.querySelector('.match-actions');
+  if (actions) actions.innerHTML = '<span style="font-size:.75rem;font-weight:600;color:var(--t2)">'+labels[status]+'</span>';
+}
+
+function runHouseholdGraph() {
+  const customers = ClarixEngine.getParsed().customers || ClarixEngine.getRaw().customers || [];
+  const txns = ClarixEngine.getParsed().transactions || ClarixEngine.getRaw().transactions || [];
+  if (!customers.length) return;
+  const minSignals = parseInt(document.getElementById('hh-min-signals').value);
+  document.getElementById('hh-status').textContent = 'Building household graph...';
+  setTimeout(() => {
+    _hhClusters = ClarixIdentity.runHouseholdGraph(customers, _hhRules, minSignals, txns);
+    document.getElementById('hh-status').textContent = _hhClusters.length+' household'+(_hhClusters.length!==1?'s':'')+' identified';
+    renderHHResults();
+  }, 50);
+}
+
+function renderHHResults() {
+  const el = document.getElementById('hh-results');
+  if (!el) return;
+  if (_hhClusters.length === 0) { el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--t3);font-size:.875rem">No households found. Try enabling more signals or reducing the minimum signal count.</div>'; return; }
+  const totalSuppressed = _hhClusters.reduce((s,h) => s+h.suppressList.length, 0);
+  const totalPct = _hhClusters.length > 0 ? Math.round((totalSuppressed/_hhClusters.reduce((s,h)=>s+h.members.length,0))*100) : 0;
+  const avatarColors = ['#00D4B4','#3B82F6','#A855F7','#F59E0B','#22C55E','#EF4444'];
+  el.innerHTML = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><div style="font-size:.8125rem;color:var(--t2)">'+_hhClusters.length+' households · '+totalSuppressed+' suppressed · ~'+totalPct+'% marketing cost reduction</div><button onclick="exportHouseholdCSV()" style="font-size:.6875rem;font-weight:600;padding:5px 12px;border-radius:6px;background:var(--teal-faint);color:var(--teal);border:1px solid rgba(0,212,180,.2);cursor:pointer;font-family:var(--fb)">Export household map</button></div>' +
+  _hhClusters.map((hh,i) => {
+    return '<div class="hh-card"><div class="hh-card-header"><div><div class="hh-id">🏠 '+hh.id+'</div><div class="hh-address">'+escH(hh.address)+'</div></div><div style="text-align:right"><div class="hh-confidence">'+hh.confidence+'% confidence</div><div style="font-size:.6875rem;color:var(--t3);margin-top:3px">'+hh.signals.map(escH).join(' · ')+'</div></div></div>'
+    +'<div class="hh-stats"><div class="hh-stat"><strong>'+hh.members.length+'</strong> members</div><div class="hh-stat"><strong>$'+hh.hhRevenue.toLocaleString()+'</strong> household value</div><div class="hh-stat"><strong>'+hh.suppressList.length+'</strong> to suppress</div></div>'
+    +'<div class="hh-members">'+hh.members.map((m,mi) => {
+      const isBest = m.customer_id === hh.bestContact?.customer_id;
+      const initials = ((m.first_name||'?')[0]+(m.last_name||'?')[0]).toUpperCase();
+      const bg = avatarColors[mi%avatarColors.length];
+      return '<div class="hh-member"><div class="hh-member-avatar" style="background:'+bg+'22;color:'+bg+'">'+initials+'</div><div class="hh-member-info"><div class="hh-member-name">'+escH((m.first_name||'')+' '+(m.last_name||''))+'</div><div class="hh-member-detail">'+escH(m.email||'')+(m.loyalty_tier?' · '+m.loyalty_tier:'')+(m.city?' · '+m.city:'')+'</div></div><span class="hh-member-badge '+(isBest?'badge-best':'badge-suppress')+'">'+(isBest?'★ Best contact':'Suppress')+'</span></div>';
+    }).join('')+'</div>'
+    +'<div class="hh-footer"><div class="hh-saving">→ Send to '+escH(hh.bestContact?.first_name||'best')+'  only · saves '+hh.suppressList.length+' send'+(hh.suppressList.length!==1?'s':'')+'</div><button class="hh-export-btn" onclick="exportSingleHousehold(''+hh.id+'')">Export</button></div></div>';
+  }).join('');
+}
+
+function renderProfiles() {
+  const sort = document.getElementById('profile-sort')?.value || 'value';
+  const search = (document.getElementById('profile-search')?.value||'').toLowerCase();
+  let profiles = [..._allProfiles];
+  if (search) profiles = profiles.filter(p => ((p.first_name||'')+' '+(p.last_name||'')).toLowerCase().includes(search)||(p.email||'').toLowerCase().includes(search)||(p.city||'').toLowerCase().includes(search));
+  if (sort==='value') profiles.sort((a,b)=>b.totalSpend-a.totalSpend);
+  else if (sort==='recent') profiles.sort((a,b)=>(a.daysSinceLast||999)-(b.daysSinceLast||999));
+  else if (sort==='orders') profiles.sort((a,b)=>b.orderCount-a.orderCount);
+  else profiles.sort((a,b)=>(a.first_name||'').localeCompare(b.first_name||''));
+  const grid = document.getElementById('profiles-grid');
+  if (!grid) return;
+  const avatarColors = ['#00D4B4','#3B82F6','#A855F7','#F59E0B','#22C55E','#EF4444'];
+  const tierColors = { Platinum:'rgba(168,85,247,.2)', Gold:'rgba(245,158,11,.2)', Silver:'rgba(122,144,176,.2)', Bronze:'rgba(146,64,14,.2)' };
+  const tierText = { Platinum:'#A855F7', Gold:'#F59E0B', Silver:'#7A90B0', Bronze:'#92400E' };
+  if (!profiles.length) { grid.innerHTML = '<div style="grid-column:span 2;text-align:center;padding:40px;color:var(--t3);font-size:.875rem">No customers match your search.</div>'; return; }
+  grid.innerHTML = profiles.slice(0,40).map((p,i) => {
+    const initials = ((p.first_name||'?')[0]+(p.last_name||'?')[0]).toUpperCase();
+    const bg = avatarColors[i%avatarColors.length];
+    const tags = [];
+    if (p.loyalty_tier) tags.push({label:p.loyalty_tier,bg:tierColors[p.loyalty_tier]||'rgba(255,255,255,.05)',color:tierText[p.loyalty_tier]||'#7A90B0'});
+    if (p.orderCount>5) tags.push({label:'Repeat buyer',bg:'rgba(0,212,180,.1)',color:'#00D4B4'});
+    if (p.daysSinceLast!==null&&p.daysSinceLast>90) tags.push({label:'At risk',bg:'rgba(239,68,68,.1)',color:'#EF4444'});
+    if (p.daysSinceLast!==null&&p.daysSinceLast<=14) tags.push({label:'Recent',bg:'rgba(34,197,94,.1)',color:'#22C55E'});
+    if (p.preferredChannels?.includes('app')) tags.push({label:'App user',bg:'rgba(59,130,246,.1)',color:'#3B82F6'});
+    return '<div class="profile-card"><div class="profile-card-top"><div class="profile-avatar" style="background:'+bg+'22;color:'+bg+'">'+initials+'</div><div><div class="profile-name">'+escH((p.first_name||'')+' '+(p.last_name||''))+'</div><div class="profile-email">'+escH(p.email||'')+(p.city?' · '+p.city:'')+'</div></div></div>'
+    +'<div class="profile-stats"><div class="profile-stat"><div class="profile-stat-val">$'+(p.totalSpend>1000?(p.totalSpend/1000).toFixed(1)+'k':p.totalSpend)+'</div><div class="profile-stat-lbl">Total spend</div></div><div class="profile-stat"><div class="profile-stat-val">'+p.orderCount+'</div><div class="profile-stat-lbl">Orders</div></div><div class="profile-stat"><div class="profile-stat-val">'+(p.daysSinceLast!==null?p.daysSinceLast+'d':'—')+'</div><div class="profile-stat-lbl">Days since order</div></div></div>'
+    +(tags.length?'<div class="profile-tags">'+tags.map(t=>'<span class="profile-tag" style="background:'+t.bg+';color:'+t.color+'">'+t.label+'</span>').join('')+'</div>':'')+'</div>';
+  }).join('');
+}
+
+function searchProfiles(val) { renderProfiles(); }
+
+function exportSuppression() {
+  const rows = [['customer_id_keep','customer_id_suppress','confidence','reason']];
+  _irClusters.filter(c=>c.status==='merged').forEach(c=>rows.push([c.customers[0].customer_id,c.customers[1].customer_id,c.confidence+'%',c.signals.map(s=>s.label).join('; ')]));
+  downloadCSV(rows,'identity_suppression_list.csv');
+}
+
+function exportHouseholdCSV() {
+  const rows = [['household_id','customer_id','name','email','is_best_contact','suppress']];
+  _hhClusters.forEach(hh=>hh.members.forEach(m=>{const isBest=m.customer_id===hh.bestContact?.customer_id;rows.push([hh.id,m.customer_id,((m.first_name||'')+' '+(m.last_name||'')).trim(),m.email||'',isBest?'YES':'NO',isBest?'NO':'YES']);}));
+  downloadCSV(rows,'household_graph.csv');
+}
+
+function exportSingleHousehold(hhId) {
+  const hh = _hhClusters.find(h=>h.id===hhId);
+  if (!hh) return;
+  const rows = [['customer_id','name','email','action']];
+  hh.members.forEach(m=>{const isBest=m.customer_id===hh.bestContact?.customer_id;rows.push([m.customer_id,((m.first_name||'')+' '+(m.last_name||'')).trim(),m.email||'',isBest?'CONTACT':'SUPPRESS']);});
+  downloadCSV(rows,hhId+'_suppression.csv');
+}
+
+function downloadCSV(rows, filename) {
+  const csv = rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const blob = new Blob([csv],{type:'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href=url; a.download=filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
 </script>
 </body>
 </html>

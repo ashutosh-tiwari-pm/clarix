@@ -60,6 +60,8 @@ async function loadFileToEngine(type, file) {
     zone?.classList.add('has-file');
     if (nameEl) nameEl.textContent = `${file.name} · ${info.rows.toLocaleString()} rows`;
     updateRunButton();
+    // Unlock Personas tab as soon as customers.csv is loaded
+    if (type === 'customers' && window.initPersonasTab) initPersonasTab();
   } catch (e) {
     alert(`Error parsing ${file.name}: ${e.message}`);
   }
