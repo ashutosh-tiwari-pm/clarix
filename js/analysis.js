@@ -131,51 +131,6 @@ function hideStorageIndicator() {
   if (el) el.style.display = 'none';
 }
 
-  try {
-    // Save datasets metadata + records for each file type
-    const filesToSave = [
-      { type: 'customers',    table: 'raw_customers',    idField: 'customer_id',    records: parsed.customers || raw.customers || [] },
-      { type: 'transactions', table: 'raw_transactions',  idField: 'transaction_id', records: parsed.transactions || raw.transactions || [] },
-      { type: 'products',     table: 'raw_products',      idField: 'product_id',     records: parsed.products || raw.products || [] },
-      { type: 'lineitems',    table: 'raw_lineitems',     idField: 'transaction_id', records: parsed.lineitems || raw.lineitems || [] },
-    ];
-
-    for (const f of filesToSave) {
-      if (!f.records.length) continue;
-
-      // Upsert metadata
-      await supabaseClient.from('uploaded_datasets').upsert({
-        analysis_id: analysisId,
-        user_id: session.user.id,
-        dataset_type: f.type,
-        row_count: f.records.length,
-        column_names: Object.keys(f.records[0] || {}),
-        storage_mode: 'saved',
-      }, { onConflict: 'analysis_id,dataset_type' });
-
-      // Upsert records in chunks of 100
-      const CHUNK = 100;
-      for (let i = 0; i < f.records.length; i += CHUNK) {
-        const chunk = f.records.slice(i, i + CHUNK).map(r => ({
-          analysis_id: analysisId,
-          user_id: session.user.id,
-          [f.idField]: r[f.idField] || null,
-          ...(f.type === 'transactions' ? { customer_id: r.customer_id || null } : {}),
-          ...(f.type === 'lineitems' ? { product_id: r.product_id || null } : {}),
-          record: r,
-        }));
-        await supabaseClient.from(f.table).upsert(chunk);
-      }
-    }
-
-    if (indicator) { indicator.textContent = '✓ Data saved to account'; indicator.style.color = 'var(--green)'; }
-    setTimeout(() => { if (indicator) indicator.style.display = 'none'; }, 3000);
-  } catch (e) {
-    console.warn('Data save failed:', e.message);
-    if (indicator) { indicator.textContent = '⚠ Save failed — data in session only'; indicator.style.color = 'var(--amber)'; }
-  }
-}
-
 // ── LOAD SAVED DATA FROM DB (for existing analysis) ──
 async function loadSavedDataFromDB(analysisId) {
   try {
