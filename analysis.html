@@ -457,7 +457,7 @@ a{text-decoration:none;color:var(--teal)}
       <button class="mod-tab locked" data-panel="campaigns" onclick="switchTab(this)">
         <div class="mod-tab-dot" style="background:var(--blue)"></div>Campaigns
       </button>
-      <button class="mod-tab locked" id="personas-tab" data-panel="personas" onclick="switchTab(this)">
+      <button class="mod-tab locked" id="personas-tab" data-panel="personas" onclick="switchTab(this)" title="Upload customers.csv to unlock">
         <div class="mod-tab-dot" style="background:#F472B6"></div>Personas
       </button>
     </div>
@@ -804,7 +804,7 @@ function renderIRResults() {
     +'<div class="match-vs">vs</div>'
     +'<div class="match-cust"><div class="match-cust-name">'+escH((c2.first_name||'')+' '+(c2.last_name||''))+'</div>'+(c2.email?'<div class="match-cust-detail">📧 '+escH(c2.email)+'</div>':'')+(c2.phone?'<div class="match-cust-detail">📱 '+escH(c2.phone)+'</div>':'')+(c2.city?'<div class="match-cust-detail">📍 '+escH(c2.city+(c2.pincode?', '+c2.pincode:''))+'</div>':'')+'<div style="margin-top:6px;font-size:.6875rem;font-weight:600;color:var(--t3)">'+escH(c2.customer_id)+'</div></div></div>'
     +'<div class="match-signals">'+c.signals.map(s=>'<span class="match-signal signal-'+(s.matchType==='exact'?'exact':s.matchType==='fuzzy'?'fuzzy':'partial')+'">'+escH(s.label)+': '+Math.round(s.score*100)+'% match</span>').join('')+'</div>'
-    +'<div class="match-actions"><button class="match-btn match-btn-merge" onclick="resolveCluster('+i+','merged',this)">✓ Merge → Keep '+escH(c1.customer_id)+'</button><button class="match-btn match-btn-dismiss" onclick="resolveCluster('+i+','dismissed',this)">✗ Not a match</button><button class="match-btn match-btn-review" onclick="resolveCluster('+i+','review',this)">? Flag for review</button></div></div>';
+    +'<div class="match-actions"><button class="match-btn match-btn-merge" onclick="resolveCluster('+i+',\'merged\',this)">✓ Merge → Keep '+escH(c1.customer_id)+'</button><button class="match-btn match-btn-dismiss" onclick="resolveCluster('+i+',\'dismissed\',this)">✗ Not a match</button><button class="match-btn match-btn-review" onclick="resolveCluster('+i+',\'review\',this)">? Flag for review</button></div></div>';
   }).join('');
 }
 
