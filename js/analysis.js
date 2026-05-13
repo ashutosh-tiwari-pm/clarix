@@ -10,10 +10,15 @@ let currentMode = 'data';
 let storageMode = 'session'; // 'session' | 'save'
 
 // ── STORAGE MODE ──
-function setStorageMode(mode) {
+async function setStorageMode(mode) {
   storageMode = mode;
   document.getElementById('storage-session')?.classList.toggle('active', mode === 'session');
   document.getElementById('storage-save')?.classList.toggle('active', mode === 'save');
+
+  if (mode === 'save') {
+    // Save immediately — don't wait for analysis
+    await saveRawDataImmediately();
+  }
 }
 
 function showStoragePanel() {
@@ -21,14 +26,110 @@ function showStoragePanel() {
   if (panel) panel.style.display = 'block';
 }
 
+// ── IMMEDIATE SAVE (triggered on mode selection) ──
+let _dataSaved = false; // track if already saved this session
+
+async function saveRawDataImmediately() {
+  if (_dataSaved) return; // already saved, skip
+
+  const raw = ClarixEngine.getRaw();
+  const parsed = ClarixEngine.getParsed();
+  const hasData = raw.customers?.length || raw.transactions?.length;
+  if (!hasData) {
+    // No data yet — set a flag so it saves automatically when analysis creates the ID
+    showStorageIndicator('pending', '💾 Will save when analysis runs...');
+    return;
+  }
+
+  // Need an analysis ID first — create a draft record
+  if (!analysisId) {
+    const name = document.getElementById('proj-title')?.value || 'New Analysis';
+    const { data } = await supabaseClient.from('analyses').insert({
+      user_id: session.user.id,
+      name,
+      mode: currentMode,
+      status: 'draft',
+      data_summary: null,
+    }).select().single();
+    if (data) {
+      analysisId = data.id;
+      history.pushState({}, '', `?id=${analysisId}`);
+    }
+  }
+
+  if (!analysisId) { showStorageIndicator('error', '⚠ Could not save — try again'); return; }
+
+  await saveRawDataToDB(analysisId);
+}
+
 // ── SAVE RAW DATA TO DB ──
 async function saveRawDataToDB(analysisId) {
   if (storageMode !== 'save') return;
+  if (_dataSaved) return; // already saved
+
   const parsed = ClarixEngine.getParsed();
   const raw = ClarixEngine.getRaw();
 
-  const indicator = document.getElementById('storage-save-indicator');
-  if (indicator) { indicator.style.display = 'flex'; indicator.textContent = '↑ Saving data to account...'; }
+  showStorageIndicator('saving', '↑ Saving data to account...');
+
+  try {
+    const filesToSave = [
+      { type:'customers',    table:'raw_customers',    idField:'customer_id',    records: parsed.customers    || raw.customers    || [] },
+      { type:'transactions', table:'raw_transactions', idField:'transaction_id', records: parsed.transactions || raw.transactions || [] },
+      { type:'products',     table:'raw_products',     idField:'product_id',     records: parsed.products     || raw.products     || [] },
+      { type:'lineitems',    table:'raw_lineitems',    idField:'transaction_id', records: parsed.lineitems    || raw.lineitems    || [] },
+    ];
+
+    for (const f of filesToSave) {
+      if (!f.records.length) continue;
+
+      // Metadata
+      await supabaseClient.from('uploaded_datasets').upsert({
+        analysis_id: analysisId,
+        user_id: session.user.id,
+        dataset_type: f.type,
+        row_count: f.records.length,
+        column_names: Object.keys(f.records[0] || {}),
+        storage_mode: 'saved',
+      }, { onConflict: 'analysis_id,dataset_type' });
+
+      // Records in chunks of 100
+      const CHUNK = 100;
+      for (let i = 0; i < f.records.length; i += CHUNK) {
+        const chunk = f.records.slice(i, i + CHUNK).map(r => ({
+          analysis_id: analysisId,
+          user_id: session.user.id,
+          [f.idField]: r[f.idField] || null,
+          ...(f.type === 'transactions' ? { customer_id: r.customer_id || null } : {}),
+          ...(f.type === 'lineitems'    ? { product_id:  r.product_id  || null } : {}),
+          record: r,
+        }));
+        await supabaseClient.from(f.table).upsert(chunk);
+      }
+    }
+
+    _dataSaved = true;
+    showStorageIndicator('saved', '✓ Data saved to account');
+    setTimeout(() => hideStorageIndicator(), 4000);
+  } catch (e) {
+    console.warn('Data save failed:', e.message);
+    showStorageIndicator('error', '⚠ Save failed — session only');
+  }
+}
+
+function showStorageIndicator(type, msg) {
+  const el = document.getElementById('storage-save-indicator');
+  if (!el) return;
+  const colors = { saving:'var(--teal)', saved:'var(--green)', error:'var(--amber)', pending:'var(--t2)' };
+  el.style.display = 'flex';
+  el.style.color = colors[type] || 'var(--teal)';
+  el.textContent = msg;
+}
+
+function hideStorageIndicator() {
+  const el = document.getElementById('storage-save-indicator');
+  if (el) el.style.display = 'none';
+}
 
   try {
     // Save datasets metadata + records for each file type
@@ -219,6 +320,7 @@ function removeFile(event, type) {
   zone?.classList.remove('has-file');
   const input = zone?.querySelector('input[type=file]');
   if (input) input.value = '';
+  _dataSaved = false; // reset so new data can be saved
   updateRunButton();
 }
 
@@ -315,8 +417,8 @@ async function runAnalysis() {
     // Save customer profiles to DB
     await saveCustomerProfilesToDB(analysisId, stats.full);
 
-    // Save raw uploaded data if user chose to
-    await saveRawDataToDB(analysisId);
+    // Save raw data if not already saved (safety net — primary trigger is on mode selection)
+    if (!_dataSaved) await saveRawDataToDB(analysisId);
 
     await supabaseClient.from('analyses').update({ status: 'complete' }).eq('id', analysisId);
     updateProcStep(3, 'done');
