@@ -1240,29 +1240,30 @@ Customer details:
 - Purchase history signals: Spent $${p.totalSpend||0} across ${p.orderCount||0} orders
 
 Your task:
-1. Based on the name, location, and demographics, infer likely lifestyle, interests, and social presence
-2. Search for any publicly available signals about this person (professional background, social activity, interests)
-3. Identify life stage and potential life events that are marketing trigger moments
-4. Recommend best channels to reach this person
+1. Based on the name, location, demographics, and purchase behaviour, infer likely lifestyle, interests, and social presence
+2. Identify probable life stage and life events that are marketing trigger moments
+3. Recommend best channels to reach this customer
+4. Be honest about confidence — use "low" confidence when inferring from demographics only
 
-IMPORTANT: Be honest about confidence levels. If you cannot find specific information, say so and provide probabilistic estimates based on demographics. Never fabricate specific facts.
+CRITICAL: Your ENTIRE response must be a single valid JSON object. Do not write any text before or after the JSON. Do not use markdown code blocks. Start directly with {
 
-Respond in JSON only:
+You MUST respond with ONLY a JSON object. No preamble, no explanation, no markdown. Start your response with { and end with }.
+
 {
-  "found_public_info": true/false,
-  "confidence": "high/medium/low",
-  "summary": "2-3 sentence profile summary",
+  "found_public_info": false,
+  "confidence": "medium",
+  "summary": "2-3 sentence inferred profile based on demographics",
   "lifestyle_tags": ["tag1","tag2","tag3","tag4","tag5"],
-  "life_stage": "student/young_professional/parent/mid_career/empty_nester/retired",
-  "income_bracket": "low/mid/upper_mid/high",
-  "digital_savviness": "low/medium/high",
+  "life_stage": "young_professional",
+  "income_bracket": "mid",
+  "digital_savviness": "high",
   "interests": ["interest1","interest2","interest3"],
-  "social_presence": {"linkedin":"active/inactive/unknown","instagram":"active/inactive/unknown","twitter":"active/inactive/unknown"},
-  "trigger_events": [{"event":"description","marketing_angle":"how to use this"}],
-  "best_channels": [{"channel":"email/push/sms/social/display","reason":"why this works for them"}],
+  "social_presence": {"linkedin":"unknown","instagram":"unknown","twitter":"unknown"},
+  "trigger_events": [{"event":"life event description","marketing_angle":"how to use this for marketing"}],
+  "best_channels": [{"channel":"email","reason":"why this channel works for them"}],
   "product_affinity": ["product type 1","product type 2"],
-  "campaign_angle": "one sentence on how to pitch to this customer",
-  "privacy_note": "brief note on what was/wasn't found publicly"
+  "campaign_angle": "one sentence pitch angle for this customer",
+  "privacy_note": "Inferred from demographics — no personal data searched"
 }`;
 
     const resp = await fetch('/api/claude', {
@@ -1271,21 +1272,23 @@ Respond in JSON only:
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
         max_tokens: 1200,
-        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
-        messages: [{ role: 'user', content: prompt + '\n\nRespond ONLY with valid JSON after completing your research.' }]
+        messages: [{ role: 'user', content: prompt }]
       })
     });
 
     const data = await resp.json();
     if (data.error) throw new Error(data.error.message || 'API error');
 
-    // Extract text content (Claude may use web search tool first)
+    // Extract text content - Claude may have tool_use blocks before the final text
     const textBlocks = (data.content || []).filter(b => b.type === 'text');
     if (!textBlocks.length) throw new Error('No response from Claude');
 
-    const raw = textBlocks[textBlocks.length-1].text.trim()
-      .replace(/^```json\n?/,'').replace(/\n?```$/,'');
-    const result = JSON.parse(raw);
+    // Find JSON by extracting from first { to last } — handles preamble text
+    const rawText = textBlocks[textBlocks.length-1].text;
+    const jsonStart = rawText.indexOf('{');
+    const jsonEnd = rawText.lastIndexOf('}');
+    if (jsonStart === -1 || jsonEnd === -1) throw new Error('No JSON found in response');
+    const result = JSON.parse(rawText.slice(jsonStart, jsonEnd + 1));
     renderSocialIntelligence(result, name);
 
   } catch(e) {
