@@ -1190,10 +1190,8 @@ function initSocialSection(p) {
     btn.style.background = '';
     btn.style.borderColor = '';
     btn.style.color = '';
-    btn.innerHTML = '<svg id="si-btn-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> Research this customer online';
+    btn.textContent = '🔍 Research this customer online';
   }
-  const spinner = document.getElementById('si-spinner');
-  if (spinner) spinner.style.display = 'none';
 }
 
 async function runSocialResearch() {
@@ -1218,12 +1216,10 @@ async function runSocialResearch() {
 
   // Set loading state
   const btn = document.getElementById('si-research-btn');
-  const icon = document.getElementById('si-btn-icon');
-  const spinner = document.getElementById('si-spinner');
+  if (!btn) return;
   btn.disabled = true;
+  btn.textContent = '⟳ Researching...';
   btn.classList.add('si-btn-loading');
-  icon.style.display = 'none';
-  spinner.style.display = 'block';
   document.getElementById('si-error').classList.remove('show');
 
   try {
@@ -1298,8 +1294,9 @@ Respond in JSON only:
   } finally {
     btn.disabled = false;
     btn.classList.remove('si-btn-loading');
-    icon.style.display = 'block';
-    spinner.style.display = 'none';
+    if (!btn.textContent.includes('complete')) {
+      btn.textContent = '🔍 Research this customer online';
+    }
   }
 }
 
@@ -1377,12 +1374,14 @@ function renderSocialIntelligence(r, name) {
   // Show section
   document.getElementById('si-section').classList.add('show');
 
-  // Update button
+  // Update button to show complete state
   const btn = document.getElementById('si-research-btn');
-  btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> Research complete · Run again';
-  btn.style.background = '#F0FDF4';
-  btn.style.borderColor = '#86EFAC';
-  btn.style.color = '#166534';
+  if (btn) {
+    btn.textContent = '✓ Research complete · Run again';
+    btn.style.background = '#F0FDF4';
+    btn.style.borderColor = '#86EFAC';
+    btn.style.color = '#166534';
+  }
 }
 
 function showSIError(msg) {
@@ -1420,9 +1419,7 @@ function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;')
 
       <!-- SOCIAL INTELLIGENCE BUTTON + RESULTS -->
       <button class="si-btn" id="si-research-btn" onclick="runSocialResearch()">
-        <div class="si-spinner" id="si-spinner"></div>
-        <svg id="si-btn-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        Research this customer online
+        🔍 Research this customer online
       </button>
       <div class="si-error" id="si-error"></div>
       <div class="si-section" id="si-section">
