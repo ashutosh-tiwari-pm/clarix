@@ -305,14 +305,85 @@ async function deleteAllDatasets(analysisId) {
 }
 let isRunning = false;
 const params = new URLSearchParams(location.search);
+const IS_DEMO = params.get('demo') === 'true';
 
 async function init() {
+  if (IS_DEMO) {
+    await initDemoMode();
+    return;
+  }
+
   session = await requireAuth();
   if (!session) return;
 
   if (params.get('id')) {
     analysisId = params.get('id');
     await loadExistingAnalysis();
+  }
+}
+
+// ── CLARIX DEMO MODE ──
+async function initDemoMode() {
+  // Fake session for UI
+  session = { user: { id: 'demo', email: 'demo@clarix.app' } };
+
+  // Demo banner
+  const banner = document.createElement('div');
+  banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;background:linear-gradient(90deg,#0F766E,#0891B2);color:#fff;padding:9px 24px;display:flex;align-items:center;justify-content:space-between;font-size:.875rem;font-family:system-ui,sans-serif';
+  banner.innerHTML = `
+    <div style="display:flex;align-items:center;gap:10px">
+      <span style="background:rgba(255,255,255,.2);padding:2px 10px;border-radius:99px;font-size:.75rem;font-weight:700;letter-spacing:.05em">DEMO</span>
+      <span style="opacity:.9">Live demo — 40 customers · 94 transactions · 30 products — pre-loaded sample data</span>
+    </div>
+    <a href="/login.html?mode=signup" style="background:#fff;color:#0F766E;padding:6px 16px;border-radius:7px;font-weight:700;text-decoration:none;font-size:.8125rem">Create free account →</a>`;
+  document.body.prepend(banner);
+  document.body.style.paddingTop = '44px';
+
+  showStoragePanel();
+
+  // Auto-load all 4 sample CSVs
+  const files = ['customers', 'transactions', 'products', 'lineitems'];
+  const fileNames = {
+    customers: 'sample-data/customers.csv',
+    transactions: 'sample-data/transactions.csv',
+    products: 'sample-data/products.csv',
+    lineitems: 'sample-data/line_items.csv'
+  };
+
+  for (const type of files) {
+    try {
+      const resp = await fetch(fileNames[type]);
+      const text = await resp.text();
+      const blob = new Blob([text], { type: 'text/csv' });
+      const file = new File([blob], type + '.csv', { type: 'text/csv' });
+      await loadFileToEngine(type, file);
+    } catch(e) {
+      console.warn('Demo file load failed:', type, e.message);
+    }
+  }
+
+  updateRunButton();
+  showStoragePanel();
+
+  // Show demo hint
+  const modulesReady = document.getElementById('modules-ready');
+  if (modulesReady) {
+    modulesReady.textContent = '✓ Sample data loaded — add your API key and click Run Analysis';
+    modulesReady.style.color = 'var(--teal)';
+  }
+
+  // If API key exists, auto-run after short delay
+  const existingKey = localStorage.getItem('clarix_api_key');
+  if (existingKey) {
+    setTimeout(() => runAnalysis(), 1000);
+  } else {
+    setTimeout(() => {
+      const key = prompt('To see AI analysis results, enter your Claude API key:\n(Free at console.anthropic.com)\n\nOr Cancel to browse the demo UI.');
+      if (key && key.startsWith('sk-')) {
+        localStorage.setItem('clarix_api_key', key);
+        setTimeout(() => runAnalysis(), 300);
+      }
+    }, 600);
   }
 }
 
@@ -473,7 +544,7 @@ async function runAnalysis() {
     // Save raw data if not already saved (safety net — primary trigger is on mode selection)
     if (!_dataSaved) await saveRawDataToDB(analysisId);
 
-    await supabaseClient.from('analyses').update({ status: 'complete' }).eq('id', analysisId);
+    if (!IS_DEMO) await supabaseClient.from('analyses').update({ status: 'complete' }).eq('id', analysisId);
     updateProcStep(3, 'done');
 
     // Render results
@@ -489,7 +560,7 @@ async function runAnalysis() {
   } catch (err) {
     console.error(err);
     alert(`Analysis failed: ${err.message}`);
-    await supabaseClient.from('analyses').update({ status: 'error' }).eq('id', analysisId);
+    if (!IS_DEMO) await supabaseClient.from('analyses').update({ status: 'error' }).eq('id', analysisId);
   } finally {
     isRunning = false;
     setRunLoading(false);
