@@ -1,0 +1,31 @@
+product_id,product_name,category_l1,category_l2,category_l3,brand,selling_price,cost_price,currency,stock_status,launch_date,tags
+PROD001,Classic White Sneakers,Footwear,Sneakers,Casual,StepStyle,79.99,32.00,USD,in_stock,2022-01-01,casual,unisex,everyday
+PROD002,Premium Running Shoes,Footwear,Sneakers,Athletic,StepStyle,149.99,58.00,USD,in_stock,2022-01-01,running,athletic,performance
+PROD003,Leather Chelsea Boots,Footwear,Boots,Formal,StepStyle,189.99,72.00,USD,in_stock,2022-03-15,formal,leather,premium
+PROD004,Slip-On Canvas Shoes,Footwear,Sneakers,Casual,StepStyle,49.99,18.00,USD,in_stock,2022-01-01,casual,lightweight,summer
+PROD005,High-Top Basketball Shoes,Footwear,Sneakers,Athletic,StepStyle,129.99,50.00,USD,in_stock,2022-06-01,basketball,athletic,sport
+PROD006,Cotton Crew T-Shirt,Apparel,Tops,T-Shirts,ThreadWell,24.99,8.00,USD,in_stock,2022-01-01,casual,cotton,basics
+PROD007,Premium Merino Sweater,Apparel,Tops,Knitwear,ThreadWell,89.99,34.00,USD,in_stock,2022-09-01,winter,premium,merino
+PROD008,Slim Fit Chinos,Apparel,Bottoms,Pants,ThreadWell,64.99,24.00,USD,in_stock,2022-01-01,casual,slim,versatile
+PROD009,Relaxed Fit Jeans,Apparel,Bottoms,Jeans,ThreadWell,79.99,29.00,USD,in_stock,2022-01-01,casual,denim,relaxed
+PROD010,Linen Button-Down Shirt,Apparel,Tops,Shirts,ThreadWell,54.99,20.00,USD,in_stock,2022-04-01,summer,linen,breathable
+PROD011,Leather Crossbody Bag,Accessories,Bags,Crossbody,CarryOn,119.99,44.00,USD,in_stock,2022-02-01,leather,everyday,premium
+PROD012,Canvas Tote Bag,Accessories,Bags,Tote,CarryOn,39.99,12.00,USD,in_stock,2022-01-01,casual,canvas,everyday
+PROD013,Leather Bifold Wallet,Accessories,Wallets,Bifold,CarryOn,49.99,16.00,USD,in_stock,2022-01-01,leather,slim,everyday
+PROD014,Stainless Steel Watch,Accessories,Watches,Casual,TimeCraft,199.99,75.00,USD,in_stock,2022-03-01,watch,steel,premium
+PROD015,Sports Cap,Accessories,Hats,Caps,ThreadWell,29.99,9.00,USD,in_stock,2022-01-01,casual,cap,sport
+PROD016,Polarized Sunglasses,Accessories,Eyewear,Sunglasses,ViewPoint,89.99,32.00,USD,in_stock,2022-04-01,summer,polarized,uv400
+PROD017,Wool Beanie,Accessories,Hats,Beanies,ThreadWell,24.99,8.00,USD,in_stock,2022-10-01,winter,wool,warm
+PROD018,Leather Belt,Accessories,Belts,Formal,CarryOn,44.99,15.00,USD,in_stock,2022-01-01,leather,formal,versatile
+PROD019,Running Socks 3-Pack,Footwear,Socks,Athletic,StepStyle,19.99,5.50,USD,in_stock,2022-01-01,athletic,moisture-wicking,comfort
+PROD020,Ankle Socks 5-Pack,Footwear,Socks,Casual,StepStyle,14.99,4.00,USD,in_stock,2022-01-01,casual,everyday,cotton
+PROD021,Yoga Leggings,Activewear,Bottoms,Leggings,ActivePro,59.99,22.00,USD,in_stock,2022-01-01,yoga,stretchy,performance
+PROD022,Sports Bra,Activewear,Tops,Sports Bras,ActivePro,44.99,16.00,USD,in_stock,2022-01-01,athletic,support,performance
+PROD023,Zip-Up Hoodie,Apparel,Tops,Hoodies,ThreadWell,69.99,26.00,USD,in_stock,2022-09-01,casual,cozy,layering
+PROD024,Windbreaker Jacket,Outerwear,Jackets,Windbreaker,ThreadWell,99.99,38.00,USD,in_stock,2022-03-01,outdoor,lightweight,water-resistant
+PROD025,Down Puffer Jacket,Outerwear,Jackets,Puffer,ThreadWell,159.99,60.00,USD,in_stock,2022-10-01,winter,warm,premium
+PROD026,Denim Jacket,Outerwear,Jackets,Denim,ThreadWell,89.99,33.00,USD,in_stock,2022-04-01,casual,denim,versatile
+PROD027,Silk Scarf,Accessories,Scarves,Silk,CarryOn,64.99,22.00,USD,in_stock,2022-09-01,silk,premium,gift
+PROD028,Gym Drawstring Bag,Accessories,Bags,Sport,CarryOn,24.99,7.00,USD,in_stock,2022-01-01,sport,gym,lightweight
+PROD029,Compression Running Tights,Activewear,Bottoms,Tights,ActivePro,74.99,28.00,USD,in_stock,2022-01-01,running,compression,performance
+PROD030,Water Bottle 1L,Accessories,Drinkware,Water Bottles,ActivePro,34.99,11.00,USD,in_stock,2022-01-01,hydration,gym,reusable

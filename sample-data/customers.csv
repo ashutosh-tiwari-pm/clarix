@@ -1,0 +1,41 @@
+customer_id,first_name,last_name,email,phone,gender,date_of_birth,city,state,country,pincode,signup_date,acquisition_channel,loyalty_tier,loyalty_points,preferred_channel,email_opt_in,is_active
+CUST001,Emma,Thompson,emma.thompson@email.com,+1-555-0101,Female,1988-03-15,New York,NY,United States,10001,2022-01-10,organic,Gold,4250,email,true,true
+CUST002,James,Mitchell,james.mitchell@email.com,+1-555-0102,Male,1992-07-22,Los Angeles,CA,United States,90001,2022-01-18,paid_search,Silver,1820,push,true,true
+CUST003,Sofia,Rodriguez,sofia.rodriguez@email.com,+1-555-0103,Female,1985-11-05,Chicago,IL,United States,60601,2022-02-03,social,Platinum,8900,email,true,true
+CUST004,Marcus,Johnson,marcus.johnson@email.com,+1-555-0104,Male,1995-04-30,Houston,TX,United States,77001,2022-02-14,referral,Bronze,340,sms,false,true
+CUST005,Priya,Patel,priya.patel@email.com,+1-555-0105,Female,1990-09-18,Phoenix,AZ,United States,85001,2022-03-01,organic,Gold,3670,email,true,true
+CUST006,Daniel,Kim,daniel.kim@email.com,+1-555-0106,Male,1987-12-25,Philadelphia,PA,United States,19101,2022-03-15,paid_search,Silver,2100,email,true,true
+CUST007,Rachel,Williams,rachel.williams@email.com,+1-555-0107,Female,1993-06-08,San Antonio,TX,United States,78201,2022-04-02,social,Bronze,450,push,true,true
+CUST008,Kevin,Brown,kevin.brown@email.com,+1-555-0108,Male,1982-01-17,San Diego,CA,United States,92101,2022-04-20,organic,Platinum,12400,email,true,true
+CUST009,Aisha,Davis,aisha.davis@email.com,+1-555-0109,Female,1997-08-14,Dallas,TX,United States,75201,2022-05-05,referral,Gold,3100,email,true,true
+CUST010,Tyler,Anderson,tyler.anderson@email.com,+1-555-0110,Male,1991-03-28,San Jose,CA,United States,95101,2022-05-22,paid_search,Silver,980,push,false,true
+CUST011,Mei,Chen,mei.chen@email.com,+1-555-0111,Female,1989-10-12,Austin,TX,United States,78701,2022-06-08,organic,Gold,5200,email,true,true
+CUST012,Brandon,Taylor,brandon.taylor@email.com,+1-555-0112,Male,1994-02-19,Jacksonville,FL,United States,32099,2022-06-25,social,Bronze,210,sms,true,true
+CUST013,Natasha,White,natasha.white@email.com,+1-555-0113,Female,1986-05-31,Fort Worth,TX,United States,76101,2022-07-10,referral,Silver,1560,email,true,true
+CUST014,Carlos,Martinez,carlos.martinez@email.com,+1-555-0114,Male,1998-11-22,Columbus,OH,United States,43085,2022-07-28,organic,Bronze,680,push,true,true
+CUST015,Hannah,Wilson,hannah.wilson@email.com,+1-555-0115,Female,1984-07-09,Charlotte,NC,United States,28201,2022-08-14,paid_search,Platinum,9800,email,true,true
+CUST016,Ethan,Moore,ethan.moore@email.com,+1-555-0116,Male,1996-04-03,Indianapolis,IN,United States,46201,2022-08-30,social,Gold,2890,email,true,true
+CUST017,Zoe,Jackson,zoe.jackson@email.com,+1-555-0117,Female,1990-01-26,San Francisco,CA,United States,94101,2022-09-15,organic,Silver,1340,push,true,true
+CUST018,Ryan,Harris,ryan.harris@email.com,+1-555-0118,Male,1983-08-07,Seattle,WA,United States,98101,2022-09-28,referral,Gold,4100,email,false,true
+CUST019,Fatima,Ali,fatima.ali@email.com,+1-555-0119,Female,1992-12-18,Denver,CO,United States,80201,2022-10-12,paid_search,Bronze,290,email,true,true
+CUST020,Noah,Clark,noah.clark@email.com,+1-555-0120,Male,1988-06-24,Nashville,TN,United States,37201,2022-10-30,organic,Silver,1780,push,true,true
+CUST021,Isabella,Lewis,isabella.lewis@email.com,+1-555-0121,Female,1995-03-11,Oklahoma City,OK,United States,73101,2022-11-14,social,Gold,3450,email,true,true
+CUST022,Austin,Robinson,austin.robinson@email.com,+1-555-0122,Male,1991-09-05,Louisville,KY,United States,40201,2022-11-28,referral,Bronze,560,sms,true,true
+CUST023,Samantha,Walker,samantha.walker@email.com,+1-555-0123,Female,1987-07-20,Portland,OR,United States,97201,2022-12-10,organic,Platinum,11200,email,true,true
+CUST024,Jordan,Hall,jordan.hall@email.com,+1-555-0124,Male,1993-02-14,Las Vegas,NV,United States,89101,2022-12-28,paid_search,Silver,2340,push,true,true
+CUST025,Lily,Young,lily.young@email.com,+1-555-0125,Female,1986-11-03,Memphis,TN,United States,38101,2023-01-10,social,Gold,3780,email,true,true
+CUST026,Alex,Allen,alex.allen@email.com,+1-555-0126,Male,1994-05-27,Baltimore,MD,United States,21201,2023-01-25,organic,Bronze,120,push,false,true
+CUST027,Grace,Scott,grace.scott@email.com,+1-555-0127,Female,1989-08-16,Milwaukee,WI,United States,53201,2023-02-08,referral,Silver,1900,email,true,true
+CUST028,Liam,Green,liam.green@email.com,+1-555-0128,Male,1997-01-30,Albuquerque,NM,United States,87101,2023-02-22,paid_search,Bronze,430,sms,true,true
+CUST029,Chloe,Adams,chloe.adams@email.com,+1-555-0129,Female,1984-04-19,Tucson,AZ,United States,85701,2023-03-08,organic,Gold,4560,email,true,true
+CUST030,Mason,Nelson,mason.nelson@email.com,+1-555-0130,Male,1992-10-08,Fresno,CA,United States,93701,2023-03-25,social,Silver,2210,push,true,true
+CUST031,Ava,Carter,ava.carter@email.com,+1-555-0131,Female,1990-06-22,Sacramento,CA,United States,95814,2023-04-10,organic,Platinum,15600,email,true,true
+CUST032,Jack,Mitchell,jack.mitchell@email.com,+1-555-0132,Male,1985-02-11,Mesa,AZ,United States,85201,2023-04-28,referral,Gold,3200,email,true,true
+CUST033,Maya,Perez,maya.perez@email.com,+1-555-0133,Female,1996-09-14,Kansas City,MO,United States,64101,2023-05-12,paid_search,Bronze,670,push,true,true
+CUST034,Owen,Roberts,owen.roberts@email.com,+1-555-0134,Male,1988-12-01,Atlanta,GA,United States,30301,2023-05-29,social,Silver,1650,email,false,true
+CUST035,Ella,Turner,ella.turner@email.com,+1-555-0135,Female,1993-07-18,Omaha,NE,United States,68101,2023-06-14,organic,Gold,2980,email,true,true
+CUST036,Logan,Phillips,logan.phillips@email.com,+1-555-0136,Male,1991-04-06,Colorado Springs,CO,United States,80901,2023-06-30,referral,Bronze,380,sms,true,true
+CUST037,Stella,Campbell,stella.campbell@email.com,+1-555-0137,Female,1987-11-24,Raleigh,NC,United States,27601,2023-07-15,organic,Silver,2560,email,true,true
+CUST038,Hunter,Parker,hunter.parker@email.com,+1-555-0138,Male,1999-03-09,Long Beach,CA,United States,90801,2023-07-30,paid_search,Bronze,190,push,true,true
+CUST039,Violet,Evans,violet.evans@email.com,+1-555-0139,Female,1985-08-28,Virginia Beach,VA,United States,23451,2023-08-14,social,Gold,4890,email,true,true
+CUST040,Sebastian,Edwards,sebastian.edwards@email.com,+1-555-0140,Male,1994-01-15,Minneapolis,MN,United States,55401,2023-08-29,organic,Silver,1120,email,true,true

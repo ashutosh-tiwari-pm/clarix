@@ -307,58 +307,83 @@ function showTransformReport(transforms) {
 
 // ── RENDER RESULTS ──
 function renderAllResults(results, stats) {
-  // Overview summary
   renderOverview(stats, results);
-
   if (results.segments) renderSegments(results.segments);
   if (results.upsell) renderUpsell(results.upsell);
   if (results.crosssell) renderCrossSell(results.crosssell);
   if (results.churn) renderChurn(results.churn);
   if (results.loyalty) renderLoyalty(results.loyalty);
   if (results.campaigns) renderCampaigns(results.campaigns);
+
+  // Init chart assistant with stats
+  setTimeout(() => {
+    if (window.ClarixCharts) {
+      ClarixCharts.init(stats);
+      // Show suggestions
+      const sw = document.getElementById('suggestions-wrap');
+      if (sw) sw.style.display = 'block';
+    }
+  }, 400);
 }
 
 function renderOverview(stats, results) {
-  const el = document.getElementById('overview-results');
-  if (!el) return;
+  document.getElementById('welcome-state').style.display = 'none';
+  document.getElementById('overview-results').style.display = 'block';
 
-  const seg = results.segments?.segments || [];
-  const totalRevenue = stats.total_revenue ? `$${(stats.total_revenue/1000).toFixed(0)}k` : 'N/A';
-  const insight = results.segments?.key_insight || results.campaigns?.key_insight || 'Analysis complete.';
+  // KPI strip
+  const kpi = document.getElementById('kpi-strip');
+  if (kpi) {
+    const repeatRate = stats.repeat_customer_rate || 0;
+    kpi.innerHTML = `
+      <div class="kpi-card">
+        <div class="kpi-label">Total Revenue</div>
+        <div class="kpi-val">$${stats.total_revenue ? (stats.total_revenue/1000).toFixed(1)+'k' : '0'}</div>
+        <div class="kpi-sub">${(stats.transaction_count||0).toLocaleString()} orders</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Customers</div>
+        <div class="kpi-val">${(stats.customer_count||0).toLocaleString()}</div>
+        <div class="kpi-sub">${repeatRate}% repeat buyers</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Avg Order Value</div>
+        <div class="kpi-val">$${(stats.avg_order_value||0).toLocaleString()}</div>
+        <div class="kpi-sub">Max $${(stats.max_order_value||0).toLocaleString()}</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Churn Risk</div>
+        <div class="kpi-val danger">${stats.churn_risk_count||0}</div>
+        <div class="kpi-sub">$${((stats.churn_revenue_at_risk||0)/1000).toFixed(1)}k revenue at stake</div>
+      </div>`;
+  }
 
-  el.innerHTML = `
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px">
-      <div class="insight-card" style="padding:16px">
-        <div style="font-size:.75rem;color:var(--t3);margin-bottom:4px">Total Revenue</div>
-        <div style="font-family:var(--fd);font-weight:800;font-size:1.5rem;color:var(--t1)">${totalRevenue}</div>
-      </div>
-      <div class="insight-card" style="padding:16px">
-        <div style="font-size:.75rem;color:var(--t3);margin-bottom:4px">Customers</div>
-        <div style="font-family:var(--fd);font-weight:800;font-size:1.5rem;color:var(--t1)">${(stats.customer_count||0).toLocaleString()}</div>
-      </div>
-      <div class="insight-card" style="padding:16px">
-        <div style="font-size:.75rem;color:var(--t3);margin-bottom:4px">Avg Order Value</div>
-        <div style="font-family:var(--fd);font-weight:800;font-size:1.5rem;color:var(--t1)">$${(stats.avg_order_value||0).toLocaleString()}</div>
-      </div>
-      <div class="insight-card" style="padding:16px">
-        <div style="font-size:.75rem;color:var(--t3);margin-bottom:4px">Churn Risk</div>
-        <div style="font-family:var(--fd);font-weight:800;font-size:1.5rem;color:var(--red)">${stats.churn_risk_count||0} customers</div>
-      </div>
-    </div>
-    <div class="insight-card">
-      <div style="font-size:.6875rem;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Top Insight</div>
-      <div style="font-size:1rem;color:var(--t1);line-height:1.6">${escHtml(insight)}</div>
-    </div>
-    <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
-      ${seg.slice(0,4).map(s=>`
-        <div class="insight-card" style="padding:14px 16px">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-            <div style="font-size:.875rem;font-weight:600;color:var(--t1)">${escHtml(s.name)}</div>
-            <div style="font-size:.75rem;font-weight:700;color:var(--teal)">${s.count} customers</div>
-          </div>
-          <div style="font-size:.8125rem;color:var(--t2)">${escHtml(s.recommended_action||'')}</div>
-        </div>`).join('')}
-    </div>`;
+  // Top insight
+  const insight = results.segments?.key_insight || results.campaigns?.key_insight || results.churn?.churn_summary?.primary_trigger || '';
+  if (insight) {
+    const ti = document.getElementById('top-insight');
+    const tt = document.getElementById('top-insight-text');
+    if (ti && tt) { ti.style.display = 'block'; tt.textContent = insight; }
+  }
+
+  // Segment cards
+  const segs = results.segments?.segments || [];
+  const segCards = document.getElementById('seg-cards');
+  const segLabel = document.getElementById('seg-cards-label');
+  if (segCards && segs.length > 0) {
+    if (segLabel) segLabel.style.display = 'flex';
+    const segColors = { Champions:'var(--teal)', Loyalists:'var(--blue)', 'Potential Loyalists':'var(--purple)', 'At Risk':'var(--amber)', Lost:'var(--red)', New:'var(--green)' };
+    segCards.innerHTML = segs.slice(0,4).map(s => {
+      const c = segColors[s.name] || 'var(--teal)';
+      return `<div class="insight-card" style="padding:14px 16px;border-left:3px solid ${c}">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px">
+          <div style="font-size:.875rem;font-weight:600;color:var(--t1)">${escHtml(s.name)}</div>
+          <div style="font-size:.75rem;font-weight:700;color:${c}">${s.count} customers</div>
+        </div>
+        <div style="font-size:.8125rem;color:var(--t2);line-height:1.5">${escHtml(s.recommended_action||'')}</div>
+        ${s.avg_order_value ? `<div style="font-size:.6875rem;color:var(--t3);margin-top:5px">Avg order: $${s.avg_order_value.toLocaleString()}</div>` : ''}
+      </div>`;
+    }).join('');
+  }
 }
 
 function renderSegments(data) {

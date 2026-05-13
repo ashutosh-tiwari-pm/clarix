@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://api.fontshare.com">
 <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@800,700&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{font-size:16px;-webkit-font-smoothing:antialiased}
@@ -27,7 +28,7 @@ a{text-decoration:none;color:var(--teal)}
 
 /* NAV */
 .nav{background:var(--bg2);border-bottom:1px solid var(--border);padding:13px 0;position:sticky;top:0;z-index:100}
-.nav-inner{max-width:1200px;margin:0 auto;padding:0 28px;display:flex;align-items:center;gap:12px}
+.nav-inner{max-width:1280px;margin:0 auto;padding:0 28px;display:flex;align-items:center;gap:12px}
 .logo{display:flex;align-items:center;gap:8px;font-family:var(--fd);font-weight:800;font-size:1.1rem;color:var(--t1);letter-spacing:-.03em}
 .logo-mark{width:28px;height:28px;background:var(--teal);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .breadcrumb{color:var(--t3);font-size:.875rem}
@@ -40,125 +41,154 @@ a{text-decoration:none;color:var(--teal)}
 .btn-teal:disabled{opacity:.4;cursor:not-allowed}
 
 /* LAYOUT */
-.workspace{max-width:1200px;margin:0 auto;padding:32px 28px;display:grid;grid-template-columns:280px 1fr;gap:24px;align-items:start}
+.workspace{max-width:1280px;margin:0 auto;padding:28px;display:grid;grid-template-columns:268px 1fr;gap:24px;align-items:start}
 
 /* SIDEBAR */
-.sidebar{position:sticky;top:72px}
-.sidebar-section{margin-bottom:24px}
+.sidebar{position:sticky;top:70px}
+.sidebar-section{margin-bottom:20px}
 .sidebar-label{font-size:.6875rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin-bottom:10px}
-
-/* Upload zones */
-.upload-zone{border:1px dashed var(--border2);border-radius:12px;padding:16px;cursor:pointer;transition:all .2s;margin-bottom:8px;position:relative}
+.mode-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:16px}
+.mode-tab{padding:9px 6px;border:1px solid var(--border2);border-radius:9px;cursor:pointer;text-align:center;transition:all .2s;background:transparent}
+.mode-tab.active{border-color:var(--teal);background:var(--teal-faint)}
+.mode-tab-icon{font-size:1rem;margin-bottom:3px}
+.mode-tab-label{font-size:.6875rem;font-weight:600;color:var(--t2)}
+.mode-tab.active .mode-tab-label{color:var(--teal)}
+.upload-zone{border:1px dashed var(--border2);border-radius:11px;padding:13px;cursor:pointer;transition:all .2s;margin-bottom:7px;position:relative}
 .upload-zone:hover{border-color:var(--teal);background:var(--teal-faint)}
 .upload-zone.has-file{border-style:solid;border-color:var(--teal);background:var(--teal-faint)}
 .upload-zone.drag-over{border-color:var(--teal);background:rgba(0,212,180,.12);transform:scale(1.01)}
 .upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
-.uz-top{display:flex;align-items:center;gap:10px}
-.uz-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.uz-name{font-size:.8125rem;font-weight:600;color:var(--t1)}
-.uz-hint{font-size:.6875rem;color:var(--t3);margin-top:2px}
-.uz-badge{margin-left:auto;font-size:.5625rem;font-weight:700;padding:2px 6px;border-radius:3px;flex-shrink:0}
+.uz-top{display:flex;align-items:center;gap:9px}
+.uz-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.uz-name{font-size:.75rem;font-weight:600;color:var(--t1)}
+.uz-hint{font-size:.625rem;color:var(--t3);margin-top:1px}
+.uz-badge{margin-left:auto;font-size:.5rem;font-weight:700;padding:2px 5px;border-radius:3px;flex-shrink:0}
 .uz-req{background:rgba(0,212,180,.12);color:var(--teal)}
 .uz-opt{background:var(--s2);color:var(--t3)}
-.uz-file-info{display:none;margin-top:8px;padding:6px 8px;background:var(--s2);border-radius:6px;font-size:.6875rem;color:var(--teal);display:flex;align-items:center;gap:6px}
+.uz-file-info{display:none;margin-top:7px;padding:5px 8px;background:var(--s2);border-radius:5px;font-size:.625rem;color:var(--teal);align-items:center;gap:5px}
 .upload-zone.has-file .uz-file-info{display:flex}
-.uz-remove{margin-left:auto;cursor:pointer;color:var(--t3);font-size:14px;line-height:1;padding:0 2px;background:none;border:none}
+.uz-remove{margin-left:auto;cursor:pointer;color:var(--t3);font-size:13px;line-height:1;padding:0 2px;background:none;border:none}
 .uz-remove:hover{color:var(--red)}
-
-/* Analysis mode tabs */
-.mode-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:16px}
-.mode-tab{padding:10px 8px;border:1px solid var(--border2);border-radius:9px;cursor:pointer;text-align:center;transition:all .2s;background:transparent}
-.mode-tab.active{border-color:var(--teal);background:var(--teal-faint)}
-.mode-tab-icon{font-size:1.125rem;margin-bottom:4px}
-.mode-tab-label{font-size:.75rem;font-weight:600;color:var(--t2)}
-.mode-tab.active .mode-tab-label{color:var(--teal)}
-
-/* Run button */
-.run-btn{width:100%;padding:13px;background:var(--teal);color:#060B12;border:none;border-radius:10px;font-family:var(--fb);font-size:.9375rem;font-weight:700;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:8px}
-.run-btn:hover{background:var(--teal-dim)}
-.run-btn:disabled{opacity:.4;cursor:not-allowed}
-.run-btn .spinner{width:16px;height:16px;border:2px solid rgba(6,11,18,.3);border-top-color:#060B12;border-radius:50%;animation:spin .6s linear infinite;display:none}
+.run-btn{width:100%;padding:12px;background:var(--teal);color:#060B12;border:none;border-radius:9px;font-family:var(--fb);font-size:.875rem;font-weight:700;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:7px;margin-top:4px}
+.run-btn:hover{background:var(--teal-dim)}.run-btn:disabled{opacity:.4;cursor:not-allowed}
+.run-btn .spinner{width:14px;height:14px;border:2px solid rgba(6,11,18,.3);border-top-color:#060B12;border-radius:50%;animation:spin .6s linear infinite;display:none}
 @keyframes spin{to{transform:rotate(360deg)}}
-
-/* Transform report */
-.transform-report{margin-top:12px;background:var(--s2);border:1px solid var(--border2);border-radius:10px;padding:12px;display:none}
+.transform-report{margin-top:10px;background:var(--s2);border:1px solid var(--border2);border-radius:9px;padding:10px;display:none}
 .transform-report.show{display:block}
-.tr-title{font-size:.6875rem;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
-.tr-item{display:flex;align-items:flex-start;gap:6px;font-size:.6875rem;color:var(--t2);margin-bottom:4px;line-height:1.4}
-.tr-dot{width:5px;height:5px;border-radius:50%;margin-top:3px;flex-shrink:0}
+.tr-title{font-size:.625rem;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:7px}
+.tr-item{display:flex;align-items:flex-start;gap:5px;font-size:.625rem;color:var(--t2);margin-bottom:3px;line-height:1.4}
+.tr-dot{width:4px;height:4px;border-radius:50%;margin-top:3px;flex-shrink:0;background:var(--teal)}
 
-/* MAIN CONTENT */
+/* CONTENT */
 .content{min-width:0}
-
-/* Module tabs */
-.module-tabs{display:flex;gap:2px;background:var(--s1);border:1px solid var(--border2);border-radius:12px;padding:4px;margin-bottom:24px;overflow-x:auto}
-.mod-tab{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;cursor:pointer;transition:all .15s;white-space:nowrap;border:none;background:none;font-family:var(--fb);font-size:.8125rem;font-weight:500;color:var(--t3)}
+.module-tabs{display:flex;gap:2px;background:var(--s1);border:1px solid var(--border2);border-radius:11px;padding:4px;margin-bottom:20px;overflow-x:auto}
+.mod-tab{display:flex;align-items:center;gap:5px;padding:7px 12px;border-radius:7px;cursor:pointer;transition:all .15s;white-space:nowrap;border:none;background:none;font-family:var(--fb);font-size:.8125rem;font-weight:500;color:var(--t3)}
 .mod-tab.active{background:var(--s2);color:var(--t1)}
-.mod-tab-dot{width:7px;height:7px;border-radius:50%}
-.mod-tab.locked{opacity:.4;cursor:default}
-
-/* Panel states */
+.mod-tab-dot{width:6px;height:6px;border-radius:50%}
+.mod-tab.locked{opacity:.35;cursor:default}
 .panel{display:none}.panel.active{display:block}
 
-/* Welcome panel */
-.welcome-panel{text-align:center;padding:80px 40px;border:1px dashed var(--border2);border-radius:16px}
-.welcome-icon{width:72px;height:72px;background:var(--s1);border-radius:18px;display:flex;align-items:center;justify-content:center;margin:0 auto 24px}
-.welcome-panel h2{font-family:var(--fd);font-weight:800;font-size:1.75rem;letter-spacing:-.03em;color:var(--t1);margin-bottom:10px}
-.welcome-panel p{font-size:.9375rem;color:var(--t2);max-width:440px;margin:0 auto;line-height:1.7}
+/* WELCOME */
+.welcome-panel{text-align:center;padding:72px 40px;border:1px dashed var(--border2);border-radius:16px}
+.welcome-icon{width:64px;height:64px;background:var(--s1);border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px}
+.welcome-panel h2{font-family:var(--fd);font-weight:800;font-size:1.625rem;letter-spacing:-.03em;color:var(--t1);margin-bottom:8px}
+.welcome-panel p{font-size:.9375rem;color:var(--t2);max-width:400px;margin:0 auto 20px;line-height:1.7}
+.sample-btn{display:inline-flex;align-items:center;gap:7px;background:var(--s1);border:1px solid var(--border2);color:var(--t2);padding:9px 18px;border-radius:8px;font-family:var(--fb);font-size:.8125rem;font-weight:600;cursor:pointer;transition:all .15s}
+.sample-btn:hover{border-color:var(--teal);color:var(--teal)}
 
-/* Processing state */
+/* PROCESSING */
 .processing-panel{padding:48px;border:1px solid var(--border2);border-radius:16px;text-align:center}
-.processing-steps{display:flex;flex-direction:column;gap:10px;max-width:420px;margin:32px auto 0;text-align:left}
-.proc-step{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--s1);border-radius:10px;border:1px solid var(--border)}
-.proc-step-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.875rem}
-.proc-step-text{font-size:.875rem;color:var(--t2)}
+.processing-steps{display:flex;flex-direction:column;gap:8px;max-width:400px;margin:28px auto 0;text-align:left}
+.proc-step{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--s1);border-radius:9px;border:1px solid var(--border)}
+.proc-step-icon{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.8125rem}
+.proc-step-text{font-size:.8125rem;color:var(--t2)}
 .proc-step-text strong{color:var(--t1);display:block;font-weight:600;margin-bottom:1px}
 .proc-step.done .proc-step-icon{background:var(--green-faint)}
 .proc-step.active .proc-step-icon{background:var(--teal-faint);animation:procPulse 1.5s ease infinite}
 .proc-step.pending .proc-step-icon{background:var(--s2)}
 @keyframes procPulse{0%,100%{opacity:1}50%{opacity:.5}}
-.proc-ring{width:56px;height:56px;border:3px solid var(--border2);border-top-color:var(--teal);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 16px}
-.proc-label{font-family:var(--fd);font-weight:700;font-size:1.25rem;color:var(--t1);margin-bottom:6px;letter-spacing:-.02em}
-.proc-sub{font-size:.875rem;color:var(--t2)}
+.proc-ring{width:52px;height:52px;border:3px solid var(--border2);border-top-color:var(--teal);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 14px}
+.proc-label{font-family:var(--fd);font-weight:700;font-size:1.125rem;color:var(--t1);margin-bottom:4px;letter-spacing:-.02em}
+.proc-sub{font-size:.8125rem;color:var(--t2)}
 
-/* Results panel shared styles */
-.result-header{margin-bottom:24px}
-.result-title{font-family:var(--fd);font-weight:800;font-size:1.5rem;letter-spacing:-.03em;color:var(--t1);margin-bottom:6px}
-.result-sub{font-size:.9375rem;color:var(--t2)}
+/* KPI STRIP */
+.kpi-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
+.kpi-card{background:var(--s1);border:1px solid var(--border2);border-radius:12px;padding:16px 18px}
+.kpi-label{font-size:.6875rem;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px}
+.kpi-val{font-family:var(--fd);font-weight:800;font-size:1.625rem;letter-spacing:-.04em;color:var(--t1);line-height:1}
+.kpi-val.danger{color:var(--red)}
+.kpi-sub{font-size:.6875rem;color:var(--t3);margin-top:3px}
 
-.insight-card{background:var(--s1);border:1px solid var(--border2);border-radius:14px;padding:22px;margin-bottom:14px}
-.insight-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-.insight-card-title{font-family:var(--fd);font-weight:700;font-size:1.0625rem;color:var(--t1);letter-spacing:-.02em}
-.insight-badge{font-size:.6875rem;font-weight:700;padding:3px 9px;border-radius:99px}
+/* TOP INSIGHT */
+.top-insight{background:var(--s1);border:1px solid var(--border2);border-radius:12px;padding:16px 20px;margin-bottom:18px}
+.top-insight-label{font-size:.625rem;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}
+.top-insight-text{font-size:.9375rem;color:var(--t1);line-height:1.6}
 
+/* CHARTS */
+.charts-section-title{font-size:.6875rem;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.charts-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px}
+.chart-card{background:var(--s1);border:1px solid var(--border2);border-radius:12px;overflow:hidden}
+.chart-card-custom{border-color:rgba(0,212,180,.2)}
+.chart-card-header{padding:14px 16px 0;display:flex;align-items:flex-start;justify-content:space-between}
+.chart-card-title{font-size:.875rem;font-weight:600;color:var(--t1);margin-bottom:2px}
+.chart-card-sub{font-size:.6875rem;color:var(--t3)}
+.chart-card-body{padding:12px 16px 16px}
+.chart-ai-badge{font-size:.5625rem;font-weight:700;padding:2px 8px;border-radius:99px;background:var(--teal-faint);color:var(--teal);border:1px solid rgba(0,212,180,.2);white-space:nowrap}
+.chart-remove-btn{background:none;border:none;color:var(--t3);cursor:pointer;font-size:.875rem;padding:2px 4px;line-height:1}
+.chart-remove-btn:hover{color:var(--red)}
+
+/* AI CHART ASSISTANT */
+.chart-assistant{background:var(--s1);border:1px solid var(--border2);border-radius:12px;padding:16px;margin-bottom:20px}
+.chart-assistant-header{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.chart-assistant-icon{width:28px;height:28px;border-radius:7px;background:var(--teal-faint);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.chart-assistant-title{font-size:.875rem;font-weight:600;color:var(--t1)}
+.chart-assistant-sub{font-size:.75rem;color:var(--t3);margin-top:1px}
+.chart-input-row{display:flex;gap:8px}
+.chart-query-input{flex:1;padding:10px 14px;background:var(--bg2);border:1px solid var(--border2);border-radius:9px;font-family:var(--fb);font-size:.875rem;color:var(--t1);outline:none;transition:border-color .15s}
+.chart-query-input:focus{border-color:var(--teal)}
+.chart-query-input::placeholder{color:var(--t3)}
+.chart-ask-btn{padding:10px 18px;background:var(--teal);color:#060B12;border:none;border-radius:9px;font-family:var(--fb);font-size:.8125rem;font-weight:700;cursor:pointer;white-space:nowrap;transition:background .15s}
+.chart-ask-btn:hover{background:var(--teal-dim)}
+.chart-chat-message{display:none;align-items:flex-start;gap:10px;margin-top:10px;padding:10px 12px;background:var(--s2);border-radius:8px;border:1px solid var(--border2)}
+
+/* SUGGESTIONS */
+.suggestions-label{font-size:.625rem;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin:10px 0 7px}
+.suggestions-list{display:flex;flex-direction:column;gap:5px}
+.suggestion-pill{display:flex;align-items:center;gap:7px;padding:8px 11px;background:var(--bg2);border:1px solid var(--border);border-radius:7px;cursor:pointer;font-size:.8125rem;color:var(--t2);transition:all .15s;line-height:1.4}
+.suggestion-pill:hover{border-color:var(--teal);color:var(--teal);background:var(--teal-faint)}
+.suggestion-pill svg{flex-shrink:0;opacity:.5}
+
+/* RESULT PANELS */
+.result-header{margin-bottom:20px}
+.result-title{font-family:var(--fd);font-weight:800;font-size:1.375rem;letter-spacing:-.03em;color:var(--t1);margin-bottom:5px}
+.result-sub{font-size:.875rem;color:var(--t2)}
+.insight-card{background:var(--s1);border:1px solid var(--border2);border-radius:12px;padding:18px;margin-bottom:12px}
 .seg-table{width:100%;border-collapse:collapse}
-.seg-table th{font-size:.6875rem;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;padding:0 12px 10px;text-align:left}
-.seg-table td{padding:10px 12px;border-top:1px solid var(--border);font-size:.875rem;color:var(--t2);vertical-align:top}
+.seg-table th{font-size:.625rem;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;padding:0 10px 9px;text-align:left}
+.seg-table td{padding:9px 10px;border-top:1px solid var(--border);font-size:.8125rem;color:var(--t2);vertical-align:top}
 .seg-table td:first-child{color:var(--t1);font-weight:500}
-.seg-count{font-family:var(--fd);font-weight:700;font-size:1.125rem;color:var(--t1)}
-.seg-bar-wrap{display:flex;align-items:center;gap:8px}
-.seg-bar-bg{flex:1;height:6px;background:var(--border);border-radius:99px;overflow:hidden}
+.seg-count{font-family:var(--fd);font-weight:700;font-size:1rem;color:var(--t1)}
+.seg-bar-wrap{display:flex;align-items:center;gap:7px}
+.seg-bar-bg{flex:1;height:5px;background:var(--border);border-radius:99px;overflow:hidden}
 .seg-bar-f{height:100%;border-radius:99px}
-.action-tag{font-size:.6875rem;padding:3px 8px;border-radius:5px;background:var(--teal-faint);color:var(--teal);font-weight:500}
-
-.opp-list{display:flex;flex-direction:column;gap:10px}
-.opp-item{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center;padding:14px 16px;background:var(--s1);border:1px solid var(--border2);border-radius:10px}
-.opp-item-title{font-size:.9375rem;font-weight:600;color:var(--t1);margin-bottom:3px}
-.opp-item-desc{font-size:.8125rem;color:var(--t2)}
+.action-tag{font-size:.6250rem;padding:2px 7px;border-radius:4px;background:var(--teal-faint);color:var(--teal);font-weight:500}
+.opp-list{display:flex;flex-direction:column;gap:9px}
+.opp-item{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center;padding:13px 15px;background:var(--s1);border:1px solid var(--border2);border-radius:9px}
+.opp-item-title{font-size:.875rem;font-weight:600;color:var(--t1);margin-bottom:2px}
+.opp-item-desc{font-size:.75rem;color:var(--t2)}
 .opp-value{text-align:right;flex-shrink:0}
-.opp-amount{font-family:var(--fd);font-weight:800;font-size:1.25rem;color:var(--teal);letter-spacing:-.03em}
-.opp-customers{font-size:.75rem;color:var(--t3);margin-top:1px}
-
-.campaign-card{background:var(--s1);border:1px solid var(--border2);border-radius:14px;padding:20px;margin-bottom:12px}
-.campaign-segment{font-size:.75rem;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
-.campaign-channel{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-.channel-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.channel-label{font-size:.75rem;font-weight:600;color:var(--t2)}
-.campaign-content{font-size:.875rem;color:var(--t1);line-height:1.6;padding:10px 12px;background:var(--bg2);border-radius:8px;border:1px solid var(--border)}
-
-/* Loading skeleton */
+.opp-amount{font-family:var(--fd);font-weight:800;font-size:1.125rem;color:var(--teal);letter-spacing:-.03em}
+.opp-customers{font-size:.6875rem;color:var(--t3);margin-top:1px}
+.campaign-card{background:var(--s1);border:1px solid var(--border2);border-radius:12px;padding:18px;margin-bottom:10px}
+.campaign-segment{font-size:.6875rem;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+.campaign-channel{display:flex;align-items:center;gap:7px;margin-bottom:7px}
+.channel-icon{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.channel-label{font-size:.6875rem;font-weight:600;color:var(--t2)}
+.campaign-content{font-size:.8125rem;color:var(--t1);line-height:1.6;padding:9px 11px;background:var(--bg2);border-radius:7px;border:1px solid var(--border)}
 .skeleton{background:linear-gradient(90deg,var(--s1) 25%,var(--s2) 50%,var(--s1) 75%);background-size:400% 100%;animation:shimmer 1.5s ease infinite;border-radius:8px}
 @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+@media(max-width:900px){.workspace{grid-template-columns:1fr}.sidebar{position:static}.kpi-strip{grid-template-columns:repeat(2,1fr)}.charts-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -183,7 +213,7 @@ a{text-decoration:none;color:var(--teal)}
     <div class="nav-right">
       <button class="btn btn-ghost" onclick="location.href='dashboard.html'">← Dashboard</button>
       <button class="btn btn-teal" id="run-btn" onclick="runAnalysis()" disabled>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
         Run Analysis
       </button>
     </div>
@@ -207,110 +237,95 @@ a{text-decoration:none;color:var(--teal)}
       </div>
     </div>
 
-    <!-- Data upload mode -->
     <div id="data-mode-panel">
       <div class="sidebar-section">
         <div class="sidebar-label">Upload CSV Files</div>
 
         <div class="upload-zone" id="uz-customers" ondragover="dragOver(event,'uz-customers')" ondragleave="dragLeave('uz-customers')" ondrop="handleDrop(event,'customers')">
-          <input type="file" accept=".csv" onchange="handleFile(event,'customers')" onclick="e=>e.stopPropagation()">
+          <input type="file" accept=".csv" onchange="handleFile(event,'customers')">
           <div class="uz-top">
             <div class="uz-icon" style="background:rgba(0,212,180,.1)">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00D4B4" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#00D4B4" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
             </div>
-            <div>
-              <div class="uz-name">customers.csv</div>
-              <div class="uz-hint">customer_id, email, signup_date</div>
-            </div>
+            <div><div class="uz-name">customers.csv</div><div class="uz-hint">customer_id, email, signup_date</div></div>
             <span class="uz-badge uz-req">Required</span>
           </div>
           <div class="uz-file-info" id="fi-customers">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#00D4B4" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#00D4B4" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
             <span id="fn-customers">file.csv</span>
             <button class="uz-remove" onclick="removeFile(event,'customers')">✕</button>
           </div>
         </div>
 
         <div class="upload-zone" id="uz-products" ondragover="dragOver(event,'uz-products')" ondragleave="dragLeave('uz-products')" ondrop="handleDrop(event,'products')">
-          <input type="file" accept=".csv" onchange="handleFile(event,'products')" onclick="e=>e.stopPropagation()">
+          <input type="file" accept=".csv" onchange="handleFile(event,'products')">
           <div class="uz-top">
             <div class="uz-icon" style="background:rgba(168,85,247,.1)">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A855F7" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#A855F7" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
             </div>
-            <div>
-              <div class="uz-name">products.csv</div>
-              <div class="uz-hint">product_id, name, category, price</div>
-            </div>
+            <div><div class="uz-name">products.csv</div><div class="uz-hint">product_id, name, category, price</div></div>
             <span class="uz-badge uz-opt">Optional</span>
           </div>
           <div class="uz-file-info" id="fi-products">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#00D4B4" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#00D4B4" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
             <span id="fn-products">file.csv</span>
             <button class="uz-remove" onclick="removeFile(event,'products')">✕</button>
           </div>
         </div>
 
         <div class="upload-zone" id="uz-transactions" ondragover="dragOver(event,'uz-transactions')" ondragleave="dragLeave('uz-transactions')" ondrop="handleDrop(event,'transactions')">
-          <input type="file" accept=".csv" onchange="handleFile(event,'transactions')" onclick="e=>e.stopPropagation()">
+          <input type="file" accept=".csv" onchange="handleFile(event,'transactions')">
           <div class="uz-top">
             <div class="uz-icon" style="background:rgba(245,158,11,.1)">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
             </div>
-            <div>
-              <div class="uz-name">transactions.csv</div>
-              <div class="uz-hint">transaction_id, customer_id, date, amount</div>
-            </div>
+            <div><div class="uz-name">transactions.csv</div><div class="uz-hint">transaction_id, customer_id, date, amount</div></div>
             <span class="uz-badge uz-req">Required</span>
           </div>
           <div class="uz-file-info" id="fi-transactions">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#00D4B4" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#00D4B4" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
             <span id="fn-transactions">file.csv</span>
             <button class="uz-remove" onclick="removeFile(event,'transactions')">✕</button>
           </div>
         </div>
 
         <div class="upload-zone" id="uz-lineitems" ondragover="dragOver(event,'uz-lineitems')" ondragleave="dragLeave('uz-lineitems')" ondrop="handleDrop(event,'lineitems')">
-          <input type="file" accept=".csv" onchange="handleFile(event,'lineitems')" onclick="e=>e.stopPropagation()">
+          <input type="file" accept=".csv" onchange="handleFile(event,'lineitems')">
           <div class="uz-top">
             <div class="uz-icon" style="background:rgba(59,130,246,.1)">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
             </div>
-            <div>
-              <div class="uz-name">line_items.csv</div>
-              <div class="uz-hint">transaction_id, product_id, quantity, price</div>
-            </div>
+            <div><div class="uz-name">line_items.csv</div><div class="uz-hint">transaction_id, product_id, qty, price</div></div>
             <span class="uz-badge uz-opt">Optional</span>
           </div>
           <div class="uz-file-info" id="fi-lineitems">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#00D4B4" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#00D4B4" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
             <span id="fn-lineitems">file.csv</span>
             <button class="uz-remove" onclick="removeFile(event,'lineitems')">✕</button>
           </div>
         </div>
       </div>
 
-      <!-- AI Transform report -->
       <div class="transform-report" id="transform-report">
         <div class="tr-title">AI Transformations Applied</div>
         <div id="transform-items"></div>
       </div>
 
-      <!-- Run button -->
       <button class="run-btn" id="run-main" onclick="runAnalysis()" disabled>
         <div class="spinner" id="run-spinner"></div>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" id="run-icon"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" id="run-icon"><polygon points="5 3 19 12 5 21 5 3"/></svg>
         <span id="run-label">Run Analysis</span>
       </button>
-      <div style="margin-top:8px;font-size:.6875rem;color:var(--t3);text-align:center" id="modules-ready"></div>
+      <div style="margin-top:7px;font-size:.625rem;color:var(--t3);text-align:center" id="modules-ready"></div>
     </div>
 
     <!-- Research mode -->
     <div id="research-mode-panel" style="display:none">
       <div class="sidebar-section">
         <div class="sidebar-label">Brand Details</div>
-        <input type="text" id="brand-name" placeholder="e.g. Myntra, Meesho, Nykaa" style="width:100%;padding:10px 12px;background:var(--s1);border:1px solid var(--border2);border-radius:9px;color:var(--t1);font-family:var(--fb);font-size:.875rem;outline:none;margin-bottom:8px;transition:border-color .15s" onfocus="this.style.borderColor='var(--teal)'" onblur="this.style.borderColor='var(--border2)'">
-        <input type="text" id="brand-url" placeholder="https://brand.com (optional)" style="width:100%;padding:10px 12px;background:var(--s1);border:1px solid var(--border2);border-radius:9px;color:var(--t1);font-family:var(--fb);font-size:.875rem;outline:none;margin-bottom:8px;transition:border-color .15s" onfocus="this.style.borderColor='var(--teal)'" onblur="this.style.borderColor='var(--border2)'">
-        <select id="brand-industry" style="width:100%;padding:10px 12px;background:var(--s1);border:1px solid var(--border2);border-radius:9px;color:var(--t2);font-family:var(--fb);font-size:.875rem;outline:none;margin-bottom:16px;cursor:pointer">
+        <input type="text" id="brand-name" placeholder="Brand name (e.g. ASOS, Zara)" style="width:100%;padding:9px 12px;background:var(--s1);border:1px solid var(--border2);border-radius:8px;color:var(--t1);font-family:var(--fb);font-size:.8125rem;outline:none;margin-bottom:7px;transition:border-color .15s" onfocus="this.style.borderColor='var(--teal)'" onblur="this.style.borderColor='var(--border2)'">
+        <input type="text" id="brand-url" placeholder="https://brand.com (optional)" style="width:100%;padding:9px 12px;background:var(--s1);border:1px solid var(--border2);border-radius:8px;color:var(--t1);font-family:var(--fb);font-size:.8125rem;outline:none;margin-bottom:7px;transition:border-color .15s" onfocus="this.style.borderColor='var(--teal)'" onblur="this.style.borderColor='var(--border2)'">
+        <select id="brand-industry" style="width:100%;padding:9px 12px;background:var(--s1);border:1px solid var(--border2);border-radius:8px;color:var(--t2);font-family:var(--fb);font-size:.8125rem;outline:none;margin-bottom:14px;cursor:pointer">
           <option value="">Select industry...</option>
           <option>Fashion & Apparel</option>
           <option>Beauty & Personal Care</option>
@@ -322,7 +337,7 @@ a{text-decoration:none;color:var(--teal)}
           <option>Other</option>
         </select>
         <button class="run-btn" onclick="runResearch()">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           Research Brand
         </button>
       </div>
@@ -331,103 +346,128 @@ a{text-decoration:none;color:var(--teal)}
 
   <!-- MAIN CONTENT -->
   <div class="content">
-    <!-- Module tabs -->
     <div class="module-tabs">
       <button class="mod-tab active" data-panel="overview" onclick="switchTab(this)">
-        <div class="mod-tab-dot" style="background:var(--teal)"></div>
-        Overview
+        <div class="mod-tab-dot" style="background:var(--teal)"></div>Overview
       </button>
       <button class="mod-tab locked" data-panel="segments" onclick="switchTab(this)">
-        <div class="mod-tab-dot" style="background:var(--teal)"></div>
-        Segments
+        <div class="mod-tab-dot" style="background:var(--teal)"></div>Segments
       </button>
       <button class="mod-tab locked" data-panel="upsell" onclick="switchTab(this)">
-        <div class="mod-tab-dot" style="background:var(--amber)"></div>
-        Upsell
+        <div class="mod-tab-dot" style="background:var(--amber)"></div>Upsell
       </button>
       <button class="mod-tab locked" data-panel="crosssell" onclick="switchTab(this)">
-        <div class="mod-tab-dot" style="background:var(--purple)"></div>
-        Cross-sell
+        <div class="mod-tab-dot" style="background:var(--purple)"></div>Cross-sell
       </button>
       <button class="mod-tab locked" data-panel="churn" onclick="switchTab(this)">
-        <div class="mod-tab-dot" style="background:var(--red)"></div>
-        Churn
+        <div class="mod-tab-dot" style="background:var(--red)"></div>Churn
       </button>
       <button class="mod-tab locked" data-panel="loyalty" onclick="switchTab(this)">
-        <div class="mod-tab-dot" style="background:var(--green)"></div>
-        Loyalty
+        <div class="mod-tab-dot" style="background:var(--green)"></div>Loyalty
       </button>
       <button class="mod-tab locked" data-panel="campaigns" onclick="switchTab(this)">
-        <div class="mod-tab-dot" style="background:var(--blue)"></div>
-        Campaigns
+        <div class="mod-tab-dot" style="background:var(--blue)"></div>Campaigns
       </button>
     </div>
 
-    <!-- OVERVIEW panel -->
+    <!-- OVERVIEW -->
     <div class="panel active" id="panel-overview">
       <div class="welcome-panel" id="welcome-state">
         <div class="welcome-icon">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#00D4B4" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00D4B4" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
         </div>
         <h2>Upload your data to begin</h2>
-        <p>Add at minimum <strong>customers.csv</strong> and <strong>transactions.csv</strong>. The AI engine will normalise your data, compute RFM scores, and run 6 parallel growth analyses.</p>
+        <p>Add at minimum <strong>customers.csv</strong> and <strong>transactions.csv</strong>. The AI engine normalises your data, computes RFM scores, and runs 6 parallel growth analyses.</p>
+        <button class="sample-btn" onclick="downloadSampleData()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download sample data to try it now
+        </button>
       </div>
+
       <div id="overview-results" style="display:none">
-        <!-- Populated after analysis -->
+        <!-- KPI strip -->
+        <div class="kpi-strip" id="kpi-strip"></div>
+
+        <!-- Top insight -->
+        <div class="top-insight" id="top-insight" style="display:none">
+          <div class="top-insight-label">✦ Top Insight</div>
+          <div class="top-insight-text" id="top-insight-text"></div>
+        </div>
+
+        <!-- AI CHART ASSISTANT -->
+        <div class="chart-assistant">
+          <div class="chart-assistant-header">
+            <div class="chart-assistant-icon">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00D4B4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </div>
+            <div>
+              <div class="chart-assistant-title">AI Chart Assistant</div>
+              <div class="chart-assistant-sub">Ask for any chart — the AI assesses your data and builds it</div>
+            </div>
+          </div>
+          <div class="chart-input-row">
+            <input type="text" id="chart-query-input" class="chart-query-input" placeholder="e.g. Show revenue by acquisition channel, Top 5 customers by lifetime value..." onkeydown="if(event.key==='Enter')askChart()">
+            <button class="chart-ask-btn" onclick="askChart()">Generate →</button>
+          </div>
+          <div class="chart-chat-message" id="chart-chat-message"></div>
+          <div id="suggestions-wrap" style="display:none">
+            <div class="suggestions-label">Suggested based on your data</div>
+            <div class="suggestions-list" id="chart-suggestions"></div>
+          </div>
+        </div>
+
+        <!-- Custom AI charts -->
+        <div id="custom-charts"></div>
+
+        <!-- Default charts -->
+        <div class="charts-section-title">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          Overview Charts
+        </div>
+        <div class="charts-grid" id="default-charts"></div>
+
+        <!-- Segment summary cards -->
+        <div class="charts-section-title" id="seg-cards-label" style="display:none">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          Segment Actions
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px" id="seg-cards"></div>
       </div>
     </div>
 
-    <!-- SEGMENTS panel -->
+    <!-- SEGMENTS -->
     <div class="panel" id="panel-segments">
-      <div class="result-header">
-        <div class="result-title">Customer Segments</div>
-        <div class="result-sub">RFM-based behavioural segments with recommended actions</div>
-      </div>
+      <div class="result-header"><div class="result-title">Customer Segments</div><div class="result-sub">RFM-based behavioural segments with recommended actions</div></div>
       <div id="segments-content"></div>
     </div>
 
-    <!-- UPSELL panel -->
+    <!-- UPSELL -->
     <div class="panel" id="panel-upsell">
-      <div class="result-header">
-        <div class="result-title">Upsell Opportunities</div>
-        <div class="result-sub">Ranked by revenue potential — customers ready for a premium upgrade</div>
-      </div>
+      <div class="result-header"><div class="result-title">Upsell Opportunities</div><div class="result-sub">Ranked by revenue potential — customers ready for premium upgrade</div></div>
       <div id="upsell-content"></div>
     </div>
 
-    <!-- CROSS-SELL panel -->
+    <!-- CROSS-SELL -->
     <div class="panel" id="panel-crosssell">
-      <div class="result-header">
-        <div class="result-title">Cross-sell Intelligence</div>
-        <div class="result-sub">Product affinity pairs and category gaps per segment</div>
-      </div>
+      <div class="result-header"><div class="result-title">Cross-sell Intelligence</div><div class="result-sub">Product affinity pairs and category gaps per segment</div></div>
       <div id="crosssell-content"></div>
     </div>
 
-    <!-- CHURN panel -->
+    <!-- CHURN -->
     <div class="panel" id="panel-churn">
-      <div class="result-header">
-        <div class="result-title">Churn Risk & Retention</div>
-        <div class="result-sub">At-risk customers and win-back strategies</div>
-      </div>
+      <div class="result-header"><div class="result-title">Churn Risk & Retention</div><div class="result-sub">At-risk customers and win-back strategies</div></div>
       <div id="churn-content"></div>
     </div>
 
-    <!-- LOYALTY panel -->
+    <!-- LOYALTY -->
     <div class="panel" id="panel-loyalty">
-      <div class="result-header">
-        <div class="result-title">Loyalty Intelligence</div>
-        <div class="result-sub">Tier ROI, upgrade candidates, and discount impact</div>
-      </div>
+      <div class="result-header"><div class="result-title">Loyalty Intelligence</div><div class="result-sub">Tier ROI, upgrade candidates, and discount impact</div></div>
       <div id="loyalty-content"></div>
     </div>
 
-    <!-- CAMPAIGNS panel -->
+    <!-- CAMPAIGNS -->
     <div class="panel" id="panel-campaigns">
-      <div class="result-header">
-        <div class="result-title">Campaign Playbooks</div>
-        <div class="result-sub">Ready-to-use briefs for email, push, and paid social</div>
-      </div>
+      <div class="result-header"><div class="result-title">Campaign Playbooks</div><div class="result-sub">Ready-to-use briefs for email, push, and paid social</div></div>
       <div id="campaigns-content"></div>
     </div>
   </div>
@@ -437,6 +477,32 @@ a{text-decoration:none;color:var(--teal)}
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script src="js/supabase-client.js"></script>
 <script src="js/csv-engine.js"></script>
+<script src="js/chart-assistant.js"></script>
 <script src="js/analysis.js"></script>
+
+<script>
+// Chart ask from input
+function askChart() {
+  const q = document.getElementById('chart-query-input')?.value?.trim();
+  if (q) ClarixCharts.askChart(q);
+}
+
+// Sample data download
+function downloadSampleData() {
+  const files = [
+    { name: 'customers.csv', url: 'sample-data/customers.csv' },
+    { name: 'transactions.csv', url: 'sample-data/transactions.csv' },
+    { name: 'products.csv', url: 'sample-data/products.csv' },
+    { name: 'line_items.csv', url: 'sample-data/line_items.csv' },
+  ];
+  files.forEach((f, i) => {
+    setTimeout(() => {
+      const a = document.createElement('a');
+      a.href = f.url; a.download = f.name;
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    }, i * 400);
+  });
+}
+</script>
 </body>
 </html>
