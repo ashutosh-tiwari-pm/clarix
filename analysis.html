@@ -316,6 +316,17 @@ a{text-decoration:none;color:var(--teal)}
 .pm-tags{display:flex;gap:5px;flex-wrap:wrap}
 .pm-tag{font-size:.6875rem;font-weight:600;padding:4px 10px;border-radius:99px}
 
+
+/* DATA MANAGER MODAL */
+.dm-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:700;align-items:center;justify-content:center;backdrop-filter:blur(8px);padding:20px}
+.dm-overlay.open{display:flex}
+.dm-modal{background:var(--s1);border:1px solid var(--border2);border-radius:18px;width:100%;max-width:500px;max-height:85vh;overflow-y:auto;box-shadow:0 24px 60px rgba(0,0,0,.5);animation:mIn .22s ease}
+.dm-header{padding:22px 24px 0;display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.dm-title{font-family:var(--fd);font-weight:800;font-size:1.125rem;letter-spacing:-.03em;color:var(--t1)}
+.dm-close{background:var(--s2);border:none;width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--t2);cursor:pointer;transition:all .15s}
+.dm-close:hover{background:var(--border2);color:var(--t1)}
+.dm-body{padding:0 24px 24px}
+
 @media(max-width:900px){.workspace{grid-template-columns:1fr}.sidebar{position:static}.kpi-strip{grid-template-columns:repeat(2,1fr)}.charts-grid{grid-template-columns:1fr}.match-customers{grid-template-columns:1fr;}.match-vs{padding:0}.profiles-grid{grid-template-columns:1fr!important}}
 </style>
 </head>
@@ -1165,6 +1176,19 @@ function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;')
 </div>
 
 
+
+<!-- DATA MANAGER MODAL -->
+<div class="dm-overlay" id="data-manager-modal" onclick="if(event.target===this)closeDataManager()">
+  <div class="dm-modal">
+    <div class="dm-header">
+      <div class="dm-title">📂 Manage Saved Data</div>
+      <button class="dm-close" onclick="closeDataManager()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="dm-body" id="data-manager-body"></div>
+  </div>
+</div>
 
 </body>
 </html>

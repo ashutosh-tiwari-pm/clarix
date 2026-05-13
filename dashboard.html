@@ -358,8 +358,11 @@ function renderProjects(analyses) {
         ${modulePills ? `<div class="proj-modules">${modulePills}</div>` : ''}
         <div class="proj-footer">
           <span class="proj-updated">Updated ${updated}</span>
-          <div class="proj-arrow">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7A90B0" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          <div style="display:flex;align-items:center;gap:6px">
+            <button onclick="event.stopPropagation();openDeleteMenu('${a.id}',event)" style="background:none;border:none;cursor:pointer;color:var(--t3);font-size:.75rem;padding:4px 8px;border-radius:6px;font-family:var(--fb);transition:all .15s" onmouseenter="this.style.color='var(--red)';this.style.background='var(--red-faint)'" onmouseleave="this.style.color='var(--t3)';this.style.background='none'">⋯</button>
+            <div class="proj-arrow">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7A90B0" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
           </div>
         </div>
       </div>`;
@@ -396,6 +399,76 @@ function saveApiKey() {
 
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSettings(); });
 init();
+
+// ── DATA DELETION FROM DASHBOARD ──
+let _deleteMenu = null;
+
+function openDeleteMenu(analysisId, event) {
+  // Close existing menu
+  if (_deleteMenu) { _deleteMenu.remove(); _deleteMenu = null; }
+
+  const menu = document.createElement('div');
+  menu.style.cssText = 'position:fixed;background:var(--s1);border:1px solid var(--border2);border-radius:10px;padding:6px;z-index:999;min-width:200px;box-shadow:0 8px 32px rgba(0,0,0,.4)';
+  menu.innerHTML = `
+    <div onclick="deleteAnalysisData('${analysisId}','datasets')" style="padding:9px 12px;border-radius:7px;cursor:pointer;font-size:.8125rem;color:var(--t1);display:flex;align-items:center;gap:8px" onmouseenter="this.style.background='var(--s2)'" onmouseleave="this.style.background='none'">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2" stroke-linecap="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v14a2 2 0 0 1-2 2z"/></svg>
+      Delete saved data only
+    </div>
+    <div onclick="deleteAnalysisData('${analysisId}','analysis')" style="padding:9px 12px;border-radius:7px;cursor:pointer;font-size:.8125rem;color:var(--red);display:flex;align-items:center;gap:8px" onmouseenter="this.style.background='var(--red-faint)'" onmouseleave="this.style.background='none'">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
+      Delete entire analysis
+    </div>`;
+
+  // Position near the button
+  const rect = event.target.getBoundingClientRect();
+  menu.style.top = (rect.bottom + 6) + 'px';
+  menu.style.right = (window.innerWidth - rect.right) + 'px';
+  document.body.appendChild(menu);
+  _deleteMenu = menu;
+
+  // Close on outside click
+  setTimeout(() => {
+    document.addEventListener('click', function handler() {
+      menu.remove(); _deleteMenu = null;
+      document.removeEventListener('click', handler);
+    });
+  }, 10);
+}
+
+async function deleteAnalysisData(analysisId, scope) {
+  if (_deleteMenu) { _deleteMenu.remove(); _deleteMenu = null; }
+
+  const msgs = {
+    datasets: 'Delete all saved raw data for this analysis? Insights and results are kept.',
+    analysis: 'Delete the entire analysis including results and all data? This cannot be undone.',
+  };
+  if (!confirm(msgs[scope])) return;
+
+  if (scope === 'datasets') {
+    const tables = ['raw_customers','raw_transactions','raw_products','raw_lineitems','uploaded_datasets','customer_profiles','households'];
+    for (const t of tables) {
+      await supabaseClient.from(t).delete().eq('analysis_id', analysisId);
+    }
+    showDashboardToast('✓ Saved data deleted — analysis results kept');
+  } else {
+    // Delete everything
+    await supabaseClient.from('analyses').delete().eq('id', analysisId);
+    showDashboardToast('✓ Analysis deleted');
+  }
+  await loadProjects(); // refresh
+}
+
+function showDashboardToast(msg) {
+  const existing = document.querySelector('.dash-toast');
+  if (existing) existing.remove();
+  const t = document.createElement('div');
+  t.className = 'dash-toast';
+  t.style.cssText = 'position:fixed;bottom:24px;right:24px;background:#022c22;border:1px solid rgba(34,197,94,.3);color:#86EFAC;padding:12px 18px;border-radius:10px;font-size:.875rem;font-weight:500;z-index:999;display:flex;align-items:center;gap:8px';
+  t.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>${msg}`;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 4000);
+}
+
 </script>
 </body>
 </html>

@@ -181,29 +181,127 @@ async function loadSavedDataFromDB(analysisId) {
 }
 
 function showSavedDataBanner(datasets) {
-  // Insert banner above upload zones if not present
   const sidebar = document.getElementById('data-mode-panel');
   if (!sidebar || document.getElementById('saved-data-banner')) return;
-
-  const types = datasets.map(d => d.dataset_type);
   const total = datasets.reduce((s,d) => s+d.row_count, 0);
   const banner = document.createElement('div');
   banner.id = 'saved-data-banner';
-  banner.style.cssText = 'background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);border-radius:10px;padding:10px 12px;margin-bottom:10px';
+  banner.style.cssText = 'background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);border-radius:10px;padding:11px 13px;margin-bottom:10px';
   banner.innerHTML = `
-    <div style="font-size:.75rem;font-weight:600;color:var(--green);margin-bottom:3px">✓ Saved data loaded</div>
-    <div style="font-size:.6875rem;color:var(--t2)">${types.join(', ')} · ${total.toLocaleString()} total rows</div>
-    <button onclick="clearSavedData('${datasets[0]?.analysis_id}')" style="font-size:.6rem;color:var(--red);background:none;border:none;cursor:pointer;margin-top:4px;font-family:var(--fb)">Clear saved data →</button>`;
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px">
+      <div style="font-size:.75rem;font-weight:700;color:var(--green)">✓ Data saved to account</div>
+      <button onclick="openDataManager('${datasets[0]?.analysis_id}')" style="font-size:.625rem;font-weight:600;color:var(--teal);background:none;border:none;cursor:pointer;font-family:var(--fb)">Manage →</button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:3px">
+      ${datasets.map(d => `<div style="display:flex;justify-content:space-between;font-size:.6875rem;color:var(--t2)">
+        <span>${d.dataset_type}</span>
+        <span style="color:var(--t1);font-weight:500">${d.row_count.toLocaleString()} rows</span>
+      </div>`).join('')}
+    </div>
+    <div style="font-size:.625rem;color:var(--t3);margin-top:5px">Total: ${total.toLocaleString()} rows · <a href="#" onclick="openDataManager('${datasets[0]?.analysis_id}');return false;" style="color:var(--red);text-decoration:none">Delete data</a></div>`;
   sidebar.insertBefore(banner, sidebar.firstChild);
 }
 
-async function clearSavedData(analysisId) {
-  if (!confirm('Remove saved data from account? Files will need to be re-uploaded.')) return;
+// ── DATA MANAGER MODAL ──
+async function openDataManager(aid) {
+  const analysisIdToUse = aid || analysisId;
+  if (!analysisIdToUse) return;
+
+  // Fetch current datasets
+  const { data: datasets } = await supabaseClient
+    .from('uploaded_datasets')
+    .select('*')
+    .eq('analysis_id', analysisIdToUse)
+    .order('uploaded_at');
+
+  // Build modal HTML
+  const modal = document.getElementById('data-manager-modal');
+  const body = document.getElementById('data-manager-body');
+  if (!modal || !body) return;
+
+  const total = (datasets||[]).reduce((s,d) => s+d.row_count, 0);
+  const tableMap = {
+    customers: { label:'Customers', icon:'👤', color:'#00D4B4', dbTable:'raw_customers' },
+    transactions: { label:'Transactions', icon:'💳', color:'#F59E0B', dbTable:'raw_transactions' },
+    products: { label:'Products', icon:'📦', color:'#A855F7', dbTable:'raw_products' },
+    lineitems: { label:'Line Items', icon:'📋', color:'#3B82F6', dbTable:'raw_lineitems' },
+  };
+
+  if (!datasets || datasets.length === 0) {
+    body.innerHTML = `<div style="text-align:center;padding:32px;color:var(--t2);font-size:.875rem">No data saved to account for this analysis.<br><span style="color:var(--t3);font-size:.8125rem">Select "Save to my account" before running analysis.</span></div>`;
+  } else {
+    body.innerHTML = `
+      <div style="margin-bottom:16px">
+        <div style="font-size:.6875rem;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">Saved Datasets · ${total.toLocaleString()} total rows</div>
+        ${datasets.map(d => {
+          const meta = tableMap[d.dataset_type] || { label:d.dataset_type, icon:'📄', color:'#7A90B0', dbTable:'raw_'+d.dataset_type };
+          return `
+          <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--bg2);border:1px solid var(--border2);border-radius:10px;margin-bottom:8px">
+            <div style="width:36px;height:36px;border-radius:9px;background:${meta.color}22;display:flex;align-items:center;justify-content:center;font-size:1.125rem;flex-shrink:0">${meta.icon}</div>
+            <div style="flex:1">
+              <div style="font-size:.875rem;font-weight:600;color:var(--t1)">${meta.label}</div>
+              <div style="font-size:.75rem;color:var(--t2)">${d.row_count.toLocaleString()} rows · saved ${new Date(d.uploaded_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</div>
+              <div style="font-size:.625rem;color:var(--t3);margin-top:2px">${(d.column_names||[]).slice(0,5).join(', ')}${(d.column_names||[]).length>5?'...':''}</div>
+            </div>
+            <button onclick="deleteDataset('${analysisIdToUse}','${d.dataset_type}','${meta.dbTable}',this)" style="padding:6px 12px;background:var(--red-faint);color:var(--red);border:1px solid rgba(239,68,68,.2);border-radius:7px;font-size:.6875rem;font-weight:600;cursor:pointer;font-family:var(--fb);white-space:nowrap">Delete</button>
+          </div>`;
+        }).join('')}
+      </div>
+      <div style="padding-top:14px;border-top:1px solid var(--border)">
+        <div style="font-size:.75rem;font-weight:600;color:var(--red);margin-bottom:6px">Delete all data for this analysis</div>
+        <div style="font-size:.8125rem;color:var(--t2);margin-bottom:12px;line-height:1.5">Removes all saved datasets from your account. The analysis results and insights are kept — only the raw uploaded data is deleted.</div>
+        <button onclick="deleteAllDatasets('${analysisIdToUse}')" style="display:flex;align-items:center;gap:6px;padding:9px 18px;background:var(--red-faint);color:var(--red);border:1px solid rgba(239,68,68,.25);border-radius:9px;font-size:.875rem;font-weight:600;cursor:pointer;font-family:var(--fb)">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+          Delete all datasets
+        </button>
+      </div>`;
+  }
+
+  modal.classList.add('open');
+}
+
+function closeDataManager() {
+  document.getElementById('data-manager-modal')?.classList.remove('open');
+}
+
+async function deleteDataset(analysisId, type, dbTable, btn) {
+  if (!confirm(`Delete ${type} data? This cannot be undone.`)) return;
+  btn.disabled = true;
+  btn.textContent = 'Deleting...';
+  try {
+    await supabaseClient.from(dbTable).delete().eq('analysis_id', analysisId);
+    await supabaseClient.from('uploaded_datasets').delete()
+      .eq('analysis_id', analysisId).eq('dataset_type', type);
+    // Remove the card
+    btn.closest('div[style*="display:flex;align-items:center"]').remove();
+    // Update banner
+    const banner = document.getElementById('saved-data-banner');
+    if (banner) {
+      // Refresh by reloading
+      const { data } = await supabaseClient.from('uploaded_datasets').select('*').eq('analysis_id', analysisId);
+      if (!data || data.length === 0) { banner.remove(); }
+    }
+    _dataSaved = false;
+    showStorageIndicator('saved', `✓ ${type} data deleted`);
+    setTimeout(() => hideStorageIndicator(), 3000);
+  } catch(e) {
+    btn.disabled = false;
+    btn.textContent = 'Delete';
+    showStorageIndicator('error', '⚠ Delete failed');
+  }
+}
+
+async function deleteAllDatasets(analysisId) {
+  if (!confirm('Delete ALL saved datasets for this analysis? Analysis results are kept.')) return;
   const tables = ['raw_customers','raw_transactions','raw_products','raw_lineitems','uploaded_datasets'];
   for (const t of tables) {
     await supabaseClient.from(t).delete().eq('analysis_id', analysisId);
   }
   document.getElementById('saved-data-banner')?.remove();
+  _dataSaved = false;
+  closeDataManager();
+  showStorageIndicator('saved', '✓ All datasets deleted from account');
+  setTimeout(() => hideStorageIndicator(), 3000);
 }
 let isRunning = false;
 const params = new URLSearchParams(location.search);
