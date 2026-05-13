@@ -287,6 +287,23 @@ async function loadProjects() {
   renderProjects(data || []);
 }
 
+async function checkDataSaved(analysisId) {
+  try {
+    const { data } = await supabaseClient
+      .from('uploaded_datasets')
+      .select('dataset_type,row_count')
+      .eq('analysis_id', analysisId)
+      .eq('storage_mode', 'saved');
+    if (data && data.length > 0) {
+      const badge = document.getElementById('saved-badge-'+analysisId);
+      if (badge) {
+        badge.style.display = 'inline-flex';
+        badge.title = data.map(d => d.dataset_type+': '+d.row_count+' rows').join(', ');
+      }
+    }
+  } catch(e) {}
+}
+
 function renderProjects(analyses) {
   const grid = document.getElementById('projects-grid');
 
@@ -314,6 +331,9 @@ function renderProjects(analyses) {
     const summary = a.data_summary;
     const counts = summary ? `${(summary.customer_count||0).toLocaleString()} customers · ${(summary.transaction_count||0).toLocaleString()} orders` : 'No data yet';
 
+      // Check if data is saved (async - we'll add badge after render)
+      checkDataSaved(a.id);
+
     return `
       <div class="proj-card" onclick="openAnalysis('${a.id}')">
         <div class="proj-card-top">
@@ -327,6 +347,12 @@ function renderProjects(analyses) {
           <div class="proj-meta-item">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
             ${counts}
+          </div>
+          <div class="proj-meta-item">
+            <span id="saved-badge-${a.id}" style="display:none;align-items:center;gap:4px;font-size:.6rem;font-weight:700;padding:2px 7px;border-radius:99px;background:rgba(34,197,94,.1);color:var(--green);border:1px solid rgba(34,197,94,.2)">
+              <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v14a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+              Data saved
+            </span>
           </div>
         </div>
         ${modulePills ? `<div class="proj-modules">${modulePills}</div>` : ''}

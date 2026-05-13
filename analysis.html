@@ -188,6 +188,19 @@ a{text-decoration:none;color:var(--teal)}
 .skeleton{background:linear-gradient(90deg,var(--s1) 25%,var(--s2) 50%,var(--s1) 75%);background-size:400% 100%;animation:shimmer 1.5s ease infinite;border-radius:8px}
 @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 
+
+/* STORAGE MODE TOGGLE */
+.storage-opt{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1px solid var(--border2);border-radius:9px;cursor:pointer;transition:all .2s;margin-bottom:6px;background:var(--bg2)}
+.storage-opt:hover{border-color:var(--teal);background:var(--teal-faint)}
+.storage-opt.active{border-color:var(--teal);background:var(--teal-faint)}
+.storage-opt-radio{width:15px;height:15px;border-radius:50%;border:2px solid var(--border2);flex-shrink:0;margin-top:2px;transition:all .2s;position:relative}
+.storage-opt.active .storage-opt-radio{border-color:var(--teal);background:var(--teal)}
+.storage-opt.active .storage-opt-radio::after{content:'';width:5px;height:5px;border-radius:50%;background:#060B12;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)}
+.storage-opt-label{font-size:.8125rem;font-weight:600;color:var(--t1);margin-bottom:1px}
+.storage-opt-sub{font-size:.6875rem;color:var(--t2)}
+.storage-saving-indicator{font-size:.6875rem;color:var(--teal);display:none;align-items:center;gap:5px;margin-top:6px}
+.storage-saving-indicator.show{display:flex}
+
 /* PERSONAS */
 .personas-tab-btn{padding:7px 14px;background:transparent;border:1px solid var(--border2);border-radius:8px;color:var(--t2);font-family:var(--fb);font-size:.8125rem;font-weight:500;cursor:pointer;transition:all .15s}
 .personas-tab-btn.active{background:var(--s2);color:var(--t1);border-color:rgba(244,114,182,.3)}
@@ -426,12 +439,32 @@ a{text-decoration:none;color:var(--teal)}
         <div id="transform-items"></div>
       </div>
 
+      <!-- STORAGE MODE TOGGLE — shown after first file upload -->
+      <div id="storage-mode-panel" style="display:none;margin-top:12px">
+        <div style="font-size:.625rem;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px">💾 Data Storage</div>
+        <div id="storage-session" class="storage-opt active" onclick="setStorageMode('session')">
+          <div class="storage-opt-radio" id="radio-session"></div>
+          <div>
+            <div class="storage-opt-label">Session only</div>
+            <div class="storage-opt-sub">Browser memory · not saved to account</div>
+          </div>
+        </div>
+        <div id="storage-save" class="storage-opt" onclick="setStorageMode('save')">
+          <div class="storage-opt-radio" id="radio-save"></div>
+          <div>
+            <div class="storage-opt-label">Save to my account</div>
+            <div class="storage-opt-sub">Stored securely · reload without re-uploading</div>
+          </div>
+        </div>
+      </div>
+
       <button class="run-btn" id="run-main" onclick="runAnalysis()" disabled>
         <div class="spinner" id="run-spinner"></div>
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" id="run-icon"><polygon points="5 3 19 12 5 21 5 3"/></svg>
         <span id="run-label">Run Analysis</span>
       </button>
       <div style="margin-top:7px;font-size:.6875rem;color:var(--t2);text-align:center;font-weight:500" id="modules-ready"></div>
+      <div id="storage-save-indicator" style="display:none;align-items:center;justify-content:center;gap:5px;font-size:.6875rem;color:var(--teal);margin-top:6px;font-weight:500"></div>
     </div>
 
     <!-- Research mode -->

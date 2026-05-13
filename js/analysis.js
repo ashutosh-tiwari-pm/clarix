@@ -7,6 +7,148 @@
 let session = null;
 let analysisId = null;
 let currentMode = 'data';
+let storageMode = 'session'; // 'session' | 'save'
+
+// ── STORAGE MODE ──
+function setStorageMode(mode) {
+  storageMode = mode;
+  document.getElementById('storage-session')?.classList.toggle('active', mode === 'session');
+  document.getElementById('storage-save')?.classList.toggle('active', mode === 'save');
+}
+
+function showStoragePanel() {
+  const panel = document.getElementById('storage-mode-panel');
+  if (panel) panel.style.display = 'block';
+}
+
+// ── SAVE RAW DATA TO DB ──
+async function saveRawDataToDB(analysisId) {
+  if (storageMode !== 'save') return;
+  const parsed = ClarixEngine.getParsed();
+  const raw = ClarixEngine.getRaw();
+
+  const indicator = document.getElementById('storage-save-indicator');
+  if (indicator) { indicator.style.display = 'flex'; indicator.textContent = '↑ Saving data to account...'; }
+
+  try {
+    // Save datasets metadata + records for each file type
+    const filesToSave = [
+      { type: 'customers',    table: 'raw_customers',    idField: 'customer_id',    records: parsed.customers || raw.customers || [] },
+      { type: 'transactions', table: 'raw_transactions',  idField: 'transaction_id', records: parsed.transactions || raw.transactions || [] },
+      { type: 'products',     table: 'raw_products',      idField: 'product_id',     records: parsed.products || raw.products || [] },
+      { type: 'lineitems',    table: 'raw_lineitems',     idField: 'transaction_id', records: parsed.lineitems || raw.lineitems || [] },
+    ];
+
+    for (const f of filesToSave) {
+      if (!f.records.length) continue;
+
+      // Upsert metadata
+      await supabaseClient.from('uploaded_datasets').upsert({
+        analysis_id: analysisId,
+        user_id: session.user.id,
+        dataset_type: f.type,
+        row_count: f.records.length,
+        column_names: Object.keys(f.records[0] || {}),
+        storage_mode: 'saved',
+      }, { onConflict: 'analysis_id,dataset_type' });
+
+      // Upsert records in chunks of 100
+      const CHUNK = 100;
+      for (let i = 0; i < f.records.length; i += CHUNK) {
+        const chunk = f.records.slice(i, i + CHUNK).map(r => ({
+          analysis_id: analysisId,
+          user_id: session.user.id,
+          [f.idField]: r[f.idField] || null,
+          ...(f.type === 'transactions' ? { customer_id: r.customer_id || null } : {}),
+          ...(f.type === 'lineitems' ? { product_id: r.product_id || null } : {}),
+          record: r,
+        }));
+        await supabaseClient.from(f.table).upsert(chunk);
+      }
+    }
+
+    if (indicator) { indicator.textContent = '✓ Data saved to account'; indicator.style.color = 'var(--green)'; }
+    setTimeout(() => { if (indicator) indicator.style.display = 'none'; }, 3000);
+  } catch (e) {
+    console.warn('Data save failed:', e.message);
+    if (indicator) { indicator.textContent = '⚠ Save failed — data in session only'; indicator.style.color = 'var(--amber)'; }
+  }
+}
+
+// ── LOAD SAVED DATA FROM DB (for existing analysis) ──
+async function loadSavedDataFromDB(analysisId) {
+  try {
+    const { data: datasets } = await supabaseClient
+      .from('uploaded_datasets')
+      .select('*')
+      .eq('analysis_id', analysisId)
+      .eq('storage_mode', 'saved');
+
+    if (!datasets || datasets.length === 0) return false;
+
+    // Show saved data banner in sidebar
+    showSavedDataBanner(datasets);
+
+    // Load each dataset back into memory
+    const tableMap = { customers:'raw_customers', transactions:'raw_transactions', products:'raw_products', lineitems:'raw_lineitems' };
+
+    for (const ds of datasets) {
+      const table = tableMap[ds.dataset_type];
+      if (!table) continue;
+
+      const { data: records } = await supabaseClient
+        .from(table)
+        .select('record')
+        .eq('analysis_id', analysisId)
+        .order('created_at');
+
+      if (records && records.length > 0) {
+        const rows = records.map(r => r.record);
+        // Load back into engine
+        ClarixEngine.getRaw()[ds.dataset_type] = rows;
+
+        // Update UI
+        const zone = document.getElementById(`uz-${ds.dataset_type}`);
+        const nameEl = document.getElementById(`fn-${ds.dataset_type}`);
+        zone?.classList.add('has-file');
+        if (nameEl) nameEl.textContent = `Saved · ${rows.length.toLocaleString()} rows`;
+      }
+    }
+
+    updateRunButton();
+    if (window.initPersonasTab) initPersonasTab();
+    return true;
+  } catch (e) {
+    console.warn('Load saved data failed:', e.message);
+    return false;
+  }
+}
+
+function showSavedDataBanner(datasets) {
+  // Insert banner above upload zones if not present
+  const sidebar = document.getElementById('data-mode-panel');
+  if (!sidebar || document.getElementById('saved-data-banner')) return;
+
+  const types = datasets.map(d => d.dataset_type);
+  const total = datasets.reduce((s,d) => s+d.row_count, 0);
+  const banner = document.createElement('div');
+  banner.id = 'saved-data-banner';
+  banner.style.cssText = 'background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);border-radius:10px;padding:10px 12px;margin-bottom:10px';
+  banner.innerHTML = `
+    <div style="font-size:.75rem;font-weight:600;color:var(--green);margin-bottom:3px">✓ Saved data loaded</div>
+    <div style="font-size:.6875rem;color:var(--t2)">${types.join(', ')} · ${total.toLocaleString()} total rows</div>
+    <button onclick="clearSavedData('${datasets[0]?.analysis_id}')" style="font-size:.6rem;color:var(--red);background:none;border:none;cursor:pointer;margin-top:4px;font-family:var(--fb)">Clear saved data →</button>`;
+  sidebar.insertBefore(banner, sidebar.firstChild);
+}
+
+async function clearSavedData(analysisId) {
+  if (!confirm('Remove saved data from account? Files will need to be re-uploaded.')) return;
+  const tables = ['raw_customers','raw_transactions','raw_products','raw_lineitems','uploaded_datasets'];
+  for (const t of tables) {
+    await supabaseClient.from(t).delete().eq('analysis_id', analysisId);
+  }
+  document.getElementById('saved-data-banner')?.remove();
+}
 let isRunning = false;
 const params = new URLSearchParams(location.search);
 
@@ -60,6 +202,8 @@ async function loadFileToEngine(type, file) {
     zone?.classList.add('has-file');
     if (nameEl) nameEl.textContent = `${file.name} · ${info.rows.toLocaleString()} rows`;
     updateRunButton();
+    // Show storage mode panel on first file
+    showStoragePanel();
     // Unlock Personas tab as soon as customers.csv is loaded
     if (type === 'customers' && window.initPersonasTab) initPersonasTab();
   } catch (e) {
@@ -170,6 +314,9 @@ async function runAnalysis() {
 
     // Save customer profiles to DB
     await saveCustomerProfilesToDB(analysisId, stats.full);
+
+    // Save raw uploaded data if user chose to
+    await saveRawDataToDB(analysisId);
 
     await supabaseClient.from('analyses').update({ status: 'complete' }).eq('id', analysisId);
     updateProcStep(3, 'done');
@@ -623,6 +770,10 @@ async function loadExistingAnalysis() {
   const { data: analysis } = await supabaseClient.from('analyses').select('*').eq('id', analysisId).single();
   if (!analysis) return;
   document.getElementById('proj-title').value = analysis.name;
+
+  // Try to load saved raw data from DB first
+  await loadSavedDataFromDB(analysisId);
+
   if (analysis.status === 'complete') {
     const { data: insights } = await supabaseClient.from('insights').select('*').eq('analysis_id', analysisId);
     if (insights) {
