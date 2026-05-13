@@ -264,7 +264,7 @@ a{text-decoration:none;color:var(--teal)}
 .hh-export-btn{font-size:.6875rem;font-weight:600;padding:5px 12px;border-radius:6px;background:var(--teal-faint);color:var(--teal);border:1px solid rgba(0,212,180,.2);cursor:pointer;font-family:var(--fb)}
 
 /* Profile cards */
-.profile-card{background:var(--s1);border:1px solid var(--border2);border-radius:12px;padding:16px;transition:border-color .2s}
+.profile-card{background:var(--s1);border:1px solid var(--border2);border-radius:12px;padding:16px;transition:border-color .2s;cursor:pointer}
 .profile-card:hover{border-color:rgba(244,114,182,.3)}
 .profile-card-top{display:flex;align-items:center;gap:10px;margin-bottom:12px}
 .profile-avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-weight:700;font-size:1rem;flex-shrink:0}
@@ -276,6 +276,31 @@ a{text-decoration:none;color:var(--teal)}
 .profile-stat-lbl{font-size:.5625rem;color:var(--t3);margin-top:1px}
 .profile-tags{display:flex;gap:4px;flex-wrap:wrap}
 .profile-tag{font-size:.5625rem;font-weight:600;padding:2px 7px;border-radius:99px}
+
+
+/* PROFILE POPUP MODAL */
+.profile-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:600;align-items:center;justify-content:center;backdrop-filter:blur(8px);padding:20px}
+.profile-modal-overlay.open{display:flex}
+.profile-modal{background:var(--s1);border:1px solid var(--border2);border-radius:20px;width:100%;max-width:560px;max-height:85vh;overflow-y:auto;animation:mIn .25s ease}
+@keyframes mIn{from{opacity:0;transform:scale(.96) translateY(12px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.pm-header{padding:24px 24px 0;display:flex;align-items:flex-start;gap:16px}
+.pm-avatar{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-weight:800;font-size:1.25rem;flex-shrink:0}
+.pm-name{font-family:var(--fd);font-weight:800;font-size:1.25rem;letter-spacing:-.03em;color:var(--t1);margin-bottom:3px}
+.pm-email{font-size:.8125rem;color:var(--t3)}
+.pm-close{margin-left:auto;background:var(--s2);border:none;width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--t2);cursor:pointer;flex-shrink:0}
+.pm-close:hover{background:var(--border2);color:var(--t1)}
+.pm-body{padding:20px 24px 24px}
+.pm-section-title{font-size:.625rem;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;margin-top:16px}
+.pm-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:4px}
+.pm-kpi{background:var(--bg2);border-radius:8px;padding:10px 12px;text-align:center}
+.pm-kpi-val{font-family:var(--fd);font-weight:800;font-size:1.125rem;letter-spacing:-.03em;color:var(--t1)}
+.pm-kpi-lbl{font-size:.5625rem;color:var(--t3);margin-top:2px}
+.pm-fields{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.pm-field{background:var(--bg2);border-radius:7px;padding:9px 11px}
+.pm-field-lbl{font-size:.5625rem;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px}
+.pm-field-val{font-size:.8125rem;color:var(--t1)}
+.pm-tags{display:flex;gap:5px;flex-wrap:wrap}
+.pm-tag{font-size:.625rem;font-weight:600;padding:3px 9px;border-radius:99px}
 
 @media(max-width:900px){.workspace{grid-template-columns:1fr}.sidebar{position:static}.kpi-strip{grid-template-columns:repeat(2,1fr)}.charts-grid{grid-template-columns:1fr}.match-customers{grid-template-columns:1fr;}.match-vs{padding:0}.profiles-grid{grid-template-columns:1fr!important}}
 </style>
@@ -898,7 +923,7 @@ function renderProfiles() {
     if (p.daysSinceLast!==null&&p.daysSinceLast>90) tags.push({label:'At risk',bg:'rgba(239,68,68,.1)',color:'#EF4444'});
     if (p.daysSinceLast!==null&&p.daysSinceLast<=14) tags.push({label:'Recent',bg:'rgba(34,197,94,.1)',color:'#22C55E'});
     if (p.preferredChannels?.includes('app')) tags.push({label:'App user',bg:'rgba(59,130,246,.1)',color:'#3B82F6'});
-    return '<div class="profile-card"><div class="profile-card-top"><div class="profile-avatar" style="background:'+bg+'22;color:'+bg+'">'+initials+'</div><div><div class="profile-name">'+escH((p.first_name||'')+' '+(p.last_name||''))+'</div><div class="profile-email">'+escH(p.email||'')+(p.city?' · '+p.city:'')+'</div></div></div>'
+    const pEncoded = encodeURIComponent(JSON.stringify(p)); return '<div class="profile-card" onclick="openProfileModal(JSON.parse(decodeURIComponent(\''+pEncoded+'\')))"><div class="profile-card-top"><div class="profile-avatar" style="background:'+bg+'22;color:'+bg+'">'+initials+'</div><div><div class="profile-name">'+escH((p.first_name||'')+' '+(p.last_name||''))+'</div><div class="profile-email">'+escH(p.email||'')+(p.city?' · '+p.city:'')+'</div></div></div>'
     +'<div class="profile-stats"><div class="profile-stat"><div class="profile-stat-val">$'+(p.totalSpend>1000?(p.totalSpend/1000).toFixed(1)+'k':p.totalSpend)+'</div><div class="profile-stat-lbl">Total spend</div></div><div class="profile-stat"><div class="profile-stat-val">'+p.orderCount+'</div><div class="profile-stat-lbl">Orders</div></div><div class="profile-stat"><div class="profile-stat-val">'+(p.daysSinceLast!==null?p.daysSinceLast+'d':'—')+'</div><div class="profile-stat-lbl">Days since order</div></div></div>'
     +(tags.length?'<div class="profile-tags">'+tags.map(t=>'<span class="profile-tag" style="background:'+t.bg+';color:'+t.color+'">'+t.label+'</span>').join('')+'</div>':'')+'</div>';
   }).join('');
@@ -935,8 +960,99 @@ function downloadCSV(rows, filename) {
   URL.revokeObjectURL(url);
 }
 
+
+// ── CUSTOMER PROFILE MODAL ──
+function openProfileModal(p) {
+  if (typeof p === 'string') { try { p = JSON.parse(p); } catch(e) { return; } }
+  const overlay = document.getElementById('profile-modal-overlay');
+  const avatarColors = ['#00D4B4','#3B82F6','#A855F7','#F59E0B','#22C55E','#EF4444'];
+  const nameStr = ((p.first_name||p.full_name||'?')[0]).toUpperCase() + ((p.last_name||' ')[0]).toUpperCase();
+  const bg = avatarColors[p.customer_id ? p.customer_id.charCodeAt(p.customer_id.length-1) % avatarColors.length : 0];
+
+  // Header
+  const avatar = document.getElementById('pm-avatar');
+  avatar.textContent = nameStr;
+  avatar.style.background = bg+'22';
+  avatar.style.color = bg;
+  document.getElementById('pm-name').textContent = ((p.first_name||'')+' '+(p.last_name||'')).trim() || p.full_name || 'Unknown';
+  document.getElementById('pm-email').textContent = p.email || p.customer_id || '—';
+
+  // KPIs
+  const kpis = document.getElementById('pm-kpis');
+  const spend = p.totalSpend || 0;
+  const orders = p.orderCount || 0;
+  const days = p.daysSinceLast !== undefined ? p.daysSinceLast : null;
+  kpis.innerHTML = `
+    <div class="pm-kpi"><div class="pm-kpi-val">$${spend > 1000 ? (spend/1000).toFixed(1)+'k' : spend}</div><div class="pm-kpi-lbl">Total spend</div></div>
+    <div class="pm-kpi"><div class="pm-kpi-val">${orders}</div><div class="pm-kpi-lbl">Orders</div></div>
+    <div class="pm-kpi"><div class="pm-kpi-val">${days !== null ? days+'d' : '—'}</div><div class="pm-kpi-lbl">Days since order</div></div>`;
+
+  // Tags
+  const tags = p.tags || [];
+  const tagEl = document.getElementById('pm-tags');
+  const tagLabel = document.getElementById('pm-tags-label');
+  if (tags.length) {
+    tagLabel.style.display = 'block';
+    const tagColors = { repeat_buyer:['rgba(0,212,180,.1)','#00D4B4'], recent:['rgba(34,197,94,.1)','#22C55E'], at_risk:['rgba(239,68,68,.1)','#EF4444'], high_value:['rgba(245,158,11,.1)','#F59E0B'], loyalty_member:['rgba(168,85,247,.1)','#A855F7'] };
+    tagEl.innerHTML = tags.map(t => { const [bg,c] = tagColors[t] || ['rgba(255,255,255,.05)','#7A90B0']; return `<span class="pm-tag" style="background:${bg};color:${c}">${t.replace(/_/g,' ')}</span>`; }).join('');
+  } else { tagLabel.style.display = 'none'; tagEl.innerHTML = ''; }
+
+  // Customer fields
+  const skipFields = new Set(['totalSpend','orderCount','avgOrder','daysSinceLast','preferredChannels','preferredPayments','deliveryCities','tags','first_name','last_name','email','customer_id','full_name']);
+  const fieldLabels = { phone:'Phone', gender:'Gender', date_of_birth:'Date of Birth', age:'Age', city:'City', state:'State', country:'Country', pincode:'Pincode', signup_date:'Signup Date', acquisition_channel:'Acquired via', loyalty_tier:'Loyalty Tier', loyalty_points:'Loyalty Points', preferred_channel:'Preferred Channel', email_opt_in:'Email Opt-in', is_active:'Active' };
+  const fields = Object.entries(p).filter(([k,v]) => !skipFields.has(k) && v !== null && v !== undefined && String(v).trim());
+  document.getElementById('pm-fields').innerHTML = fields.map(([k,v]) => `<div class="pm-field"><div class="pm-field-lbl">${fieldLabels[k]||k.replace(/_/g,' ')}</div><div class="pm-field-val">${escH(String(v))}</div></div>`).join('') || '<div style="color:var(--t3);font-size:.8125rem">No additional data available</div>';
+
+  // Transaction behaviour
+  const txnFields = [];
+  if (p.avgOrder) txnFields.push(['Avg Order Value', '$'+p.avgOrder]);
+  if (p.preferredChannels?.length) txnFields.push(['Preferred Channel', p.preferredChannels.join(', ')]);
+  if (p.preferredPayments?.length) txnFields.push(['Payment Method', p.preferredPayments.join(', ')]);
+  if (p.deliveryCities?.length) txnFields.push(['Delivery Cities', p.deliveryCities.slice(0,3).join(', ')]);
+  const txnEl = document.getElementById('pm-txn-fields');
+  const txnLabel = document.getElementById('pm-txn-label');
+  if (txnFields.length) {
+    txnLabel.style.display = 'block';
+    txnEl.innerHTML = txnFields.map(([l,v]) => `<div class="pm-field"><div class="pm-field-lbl">${l}</div><div class="pm-field-val">${escH(String(v))}</div></div>`).join('');
+  } else { txnLabel.style.display = 'none'; txnEl.innerHTML = ''; }
+
+  overlay.classList.add('open');
+}
+
+function closeProfileModal(e) {
+  if (e.target === document.getElementById('profile-modal-overlay')) {
+    document.getElementById('profile-modal-overlay').classList.remove('open');
+  }
+}
+
 function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
 </script>
+
+<!-- CUSTOMER PROFILE MODAL -->
+<div class="profile-modal-overlay" id="profile-modal-overlay" onclick="closeProfileModal(event)">
+  <div class="profile-modal" id="profile-modal">
+    <div class="pm-header">
+      <div class="pm-avatar" id="pm-avatar">AT</div>
+      <div>
+        <div class="pm-name" id="pm-name">Customer Name</div>
+        <div class="pm-email" id="pm-email">email@example.com</div>
+      </div>
+      <button class="pm-close" onclick="document.getElementById('profile-modal-overlay').classList.remove('open')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="pm-body">
+      <div class="pm-kpis" id="pm-kpis"></div>
+      <div class="pm-section-title" id="pm-tags-label" style="display:none">Tags</div>
+      <div class="pm-tags" id="pm-tags"></div>
+      <div class="pm-section-title">Customer Details</div>
+      <div class="pm-fields" id="pm-fields"></div>
+      <div class="pm-section-title" id="pm-txn-label" style="display:none">Transaction Behaviour</div>
+      <div class="pm-fields" id="pm-txn-fields"></div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

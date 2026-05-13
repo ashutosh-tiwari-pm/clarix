@@ -167,6 +167,10 @@ async function runAnalysis() {
         analysis_id: analysisId, module, output
       }, { onConflict: 'analysis_id,module' });
     }
+
+    // Save customer profiles to DB
+    await saveCustomerProfilesToDB(analysisId, stats.full);
+
     await supabaseClient.from('analyses').update({ status: 'complete' }).eq('id', analysisId);
     updateProcStep(3, 'done');
 
@@ -189,6 +193,42 @@ async function runAnalysis() {
     setRunLoading(false);
     document.getElementById('panel-overview').querySelector('.processing-panel')?.remove();
   }
+}
+
+// ── SAVE CUSTOMER PROFILES TO DB ──
+async function saveCustomerProfilesToDB(analysisId, fullStats) {
+  try {
+    const parsed = ClarixEngine.getParsed();
+    const raw = ClarixEngine.getRaw();
+    const customers = parsed.customers || raw.customers || [];
+    const txns = parsed.transactions || raw.transactions || [];
+    if (!customers.length) return;
+
+    const profiles = customers.map(c => {
+      const computed = (window.ClarixIdentity)
+        ? ClarixIdentity.buildCustomerProfile(c, txns)
+        : { totalSpend:0, orderCount:0, avgOrder:0, daysSinceLast:null, preferredChannels:[], preferredPayments:[], deliveryCities:[] };
+      const tags = [];
+      if (computed.orderCount > 5) tags.push('repeat_buyer');
+      if (computed.daysSinceLast !== null && computed.daysSinceLast <= 30) tags.push('recent');
+      if (computed.daysSinceLast !== null && computed.daysSinceLast > 90 && computed.orderCount >= 2) tags.push('at_risk');
+      if (computed.totalSpend > 500) tags.push('high_value');
+      if (c.loyalty_tier === 'Platinum' || c.loyalty_tier === 'Gold') tags.push('loyalty_member');
+      return {
+        analysis_id: analysisId,
+        user_id: session.user.id,
+        customer_id: c.customer_id || c.email || ('C'+Math.random()),
+        raw_data: c,
+        computed: { totalSpend:computed.totalSpend, orderCount:computed.orderCount, avgOrder:computed.avgOrder, daysSinceLast:computed.daysSinceLast, preferredChannels:computed.preferredChannels, preferredPayments:computed.preferredPayments, deliveryCities:computed.deliveryCities },
+        tags,
+      };
+    });
+
+    const CHUNK = 50;
+    for (let i = 0; i < profiles.length; i += CHUNK) {
+      await supabaseClient.from('customer_profiles').upsert(profiles.slice(i,i+CHUNK), { onConflict: 'analysis_id,customer_id' });
+    }
+  } catch(e) { console.warn('Profile save skipped:', e.message); }
 }
 
 async function runModules(modules, stats, apiKey) {
