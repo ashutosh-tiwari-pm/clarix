@@ -457,7 +457,7 @@ a{text-decoration:none;color:var(--teal)}
       <button class="mod-tab locked" data-panel="campaigns" onclick="switchTab(this)">
         <div class="mod-tab-dot" style="background:var(--blue)"></div>Campaigns
       </button>
-      <button class="mod-tab locked" id="personas-tab" data-panel="personas" onclick="switchTab(this)" title="Upload customers.csv to unlock">
+      <button class="mod-tab" id="personas-tab" data-panel="personas" onclick="switchPersonasTabSafe(this)">
         <div class="mod-tab-dot" style="background:#F472B6"></div>Personas
       </button>
     </div>
@@ -678,6 +678,27 @@ function downloadSampleData() {
   });
 }
 
+function switchPersonasTabSafe(btn) {
+  const parsed = window.ClarixEngine ? ClarixEngine.getParsed() : {};
+  const raw = window.ClarixEngine ? ClarixEngine.getRaw() : {};
+  const customers = (parsed.customers || raw.customers || []);
+  if (customers.length === 0) {
+    // Show upload prompt in personas panel
+    document.querySelectorAll('.mod-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-personas').classList.add('active');
+    // Show prompt if rule builder not built yet
+    const grid = document.getElementById('ir-field-grid');
+    if (grid && !grid.innerHTML.trim()) {
+      grid.innerHTML = '<div style="grid-column:span 3;padding:24px;text-align:center;color:var(--t3);font-size:.875rem">Upload <strong style="color:var(--t1)">customers.csv</strong> first — the rule builder will appear automatically with your available fields.</div>';
+    }
+    return;
+  }
+  switchTab(btn);
+  if (!_allProfiles.length) initPersonasTab();
+}
+
 // ── PERSONAS MODULE ──
 let _irClusters = [];
 let _hhClusters = [];
@@ -849,7 +870,7 @@ function renderHHResults() {
       const bg = avatarColors[mi%avatarColors.length];
       return '<div class="hh-member"><div class="hh-member-avatar" style="background:'+bg+'22;color:'+bg+'">'+initials+'</div><div class="hh-member-info"><div class="hh-member-name">'+escH((m.first_name||'')+' '+(m.last_name||''))+'</div><div class="hh-member-detail">'+escH(m.email||'')+(m.loyalty_tier?' · '+m.loyalty_tier:'')+(m.city?' · '+m.city:'')+'</div></div><span class="hh-member-badge '+(isBest?'badge-best':'badge-suppress')+'">'+(isBest?'★ Best contact':'Suppress')+'</span></div>';
     }).join('')+'</div>'
-    +'<div class="hh-footer"><div class="hh-saving">→ Send to '+escH(hh.bestContact?.first_name||'best')+'  only · saves '+hh.suppressList.length+' send'+(hh.suppressList.length!==1?'s':'')+'</div><button class="hh-export-btn" onclick="exportSingleHousehold(''+hh.id+'')">Export</button></div></div>';
+    +'<div class="hh-footer"><div class="hh-saving">→ Send to '+escH(hh.bestContact?.first_name||'best')+' only · saves '+hh.suppressList.length+' send'+(hh.suppressList.length!==1?'s':'')+'</div><button class="hh-export-btn" onclick="exportSingleHousehold(\''+hh.id+'\')">Export</button></div></div>';
   }).join('');
 }
 
