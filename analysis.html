@@ -1165,6 +1165,7 @@ function openProfileModal(p) {
   } else { txnLabel.style.display = 'none'; txnEl.innerHTML = ''; }
 
   overlay.classList.add('open');
+  initSocialSection(p);
 }
 
 function closeProfileModal(e) {
@@ -1177,18 +1178,20 @@ function closeProfileModal(e) {
 // ── SOCIAL INTELLIGENCE ──
 let _currentProfileForResearch = null;
 
-// Store current profile when modal opens so research can access it
-const _origOpenProfileModal = openProfileModal;
-function openProfileModal(p) {
-  _origOpenProfileModal(p);
+// Store current profile when modal opens (called directly from openProfileModal)
+function initSocialSection(p) {
   _currentProfileForResearch = p;
-  // Reset social section
   document.getElementById('si-section').classList.remove('show');
   document.getElementById('si-error').classList.remove('show');
   const btn = document.getElementById('si-research-btn');
-  if (btn) { btn.disabled = false; btn.classList.remove('si-btn-loading'); }
-  const icon = document.getElementById('si-btn-icon');
-  if (icon) icon.style.display = 'block';
+  if (btn) {
+    btn.disabled = false;
+    btn.classList.remove('si-btn-loading');
+    btn.style.background = '';
+    btn.style.borderColor = '';
+    btn.style.color = '';
+    btn.innerHTML = '<svg id="si-btn-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> Research this customer online';
+  }
   const spinner = document.getElementById('si-spinner');
   if (spinner) spinner.style.display = 'none';
 }
