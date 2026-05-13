@@ -278,29 +278,30 @@ a{text-decoration:none;color:var(--teal)}
 .profile-tag{font-size:.5625rem;font-weight:600;padding:2px 7px;border-radius:99px}
 
 
-/* PROFILE POPUP MODAL */
-.profile-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:600;align-items:center;justify-content:center;backdrop-filter:blur(8px);padding:20px}
+/* PROFILE POPUP MODAL — Light theme for visibility */
+.profile-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:600;align-items:center;justify-content:center;backdrop-filter:blur(10px);padding:20px}
 .profile-modal-overlay.open{display:flex}
-.profile-modal{background:var(--s1);border:1px solid var(--border2);border-radius:20px;width:100%;max-width:560px;max-height:85vh;overflow-y:auto;animation:mIn .25s ease}
-@keyframes mIn{from{opacity:0;transform:scale(.96) translateY(12px)}to{opacity:1;transform:scale(1) translateY(0)}}
-.pm-header{padding:24px 24px 0;display:flex;align-items:flex-start;gap:16px}
-.pm-avatar{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-weight:800;font-size:1.25rem;flex-shrink:0}
-.pm-name{font-family:var(--fd);font-weight:800;font-size:1.25rem;letter-spacing:-.03em;color:var(--t1);margin-bottom:3px}
-.pm-email{font-size:.8125rem;color:var(--t3)}
-.pm-close{margin-left:auto;background:var(--s2);border:none;width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--t2);cursor:pointer;flex-shrink:0}
-.pm-close:hover{background:var(--border2);color:var(--t1)}
-.pm-body{padding:20px 24px 24px}
-.pm-section-title{font-size:.625rem;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;margin-top:16px}
-.pm-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:4px}
-.pm-kpi{background:var(--bg2);border-radius:8px;padding:10px 12px;text-align:center}
-.pm-kpi-val{font-family:var(--fd);font-weight:800;font-size:1.125rem;letter-spacing:-.03em;color:var(--t1)}
-.pm-kpi-lbl{font-size:.5625rem;color:var(--t3);margin-top:2px}
-.pm-fields{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.pm-field{background:var(--bg2);border-radius:7px;padding:9px 11px}
-.pm-field-lbl{font-size:.5625rem;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px}
-.pm-field-val{font-size:.8125rem;color:var(--t1)}
+.profile-modal{background:#FFFFFF;border:none;border-radius:20px;width:100%;max-width:580px;max-height:88vh;overflow-y:auto;box-shadow:0 24px 60px rgba(0,0,0,0.45);animation:mIn .25s ease}
+@keyframes mIn{from{opacity:0;transform:scale(.95) translateY(16px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.pm-header{padding:28px 28px 0;display:flex;align-items:flex-start;gap:16px}
+.pm-avatar{width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-weight:800;font-size:1.375rem;flex-shrink:0}
+.pm-name{font-family:var(--fd);font-weight:800;font-size:1.375rem;letter-spacing:-.03em;color:#0F172A;margin-bottom:3px}
+.pm-email{font-size:.8125rem;color:#64748B}
+.pm-close{margin-left:auto;background:#F1F5F9;border:none;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#64748B;cursor:pointer;flex-shrink:0;transition:all .15s}
+.pm-close:hover{background:#E2E8F0;color:#0F172A}
+.pm-divider{height:1px;background:#E2E8F0;margin:20px 28px 0}
+.pm-body{padding:20px 28px 28px}
+.pm-section-title{font-size:.625rem;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;margin-top:18px}
+.pm-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:4px}
+.pm-kpi{background:#F8FAFC;border:1px solid #E2E8F0;border-radius:10px;padding:12px 14px;text-align:center}
+.pm-kpi-val{font-family:var(--fd);font-weight:800;font-size:1.25rem;letter-spacing:-.03em;color:#0F172A}
+.pm-kpi-lbl{font-size:.5625rem;color:#94A3B8;margin-top:3px;font-weight:500}
+.pm-fields{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pm-field{background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:10px 12px}
+.pm-field-lbl{font-size:.5625rem;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px}
+.pm-field-val{font-size:.8125rem;color:#1E293B;font-weight:500}
 .pm-tags{display:flex;gap:5px;flex-wrap:wrap}
-.pm-tag{font-size:.625rem;font-weight:600;padding:3px 9px;border-radius:99px}
+.pm-tag{font-size:.6875rem;font-weight:600;padding:4px 10px;border-radius:99px}
 
 @media(max-width:900px){.workspace{grid-template-columns:1fr}.sidebar{position:static}.kpi-strip{grid-template-columns:repeat(2,1fr)}.charts-grid{grid-template-columns:1fr}.match-customers{grid-template-columns:1fr;}.match-vs{padding:0}.profiles-grid{grid-template-columns:1fr!important}}
 </style>
@@ -881,21 +882,95 @@ function runHouseholdGraph() {
 function renderHHResults() {
   const el = document.getElementById('hh-results');
   if (!el) return;
-  if (_hhClusters.length === 0) { el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--t3);font-size:.875rem">No households found. Try enabling more signals or reducing the minimum signal count.</div>'; return; }
+  if (_hhClusters.length === 0) {
+    el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--t3);font-size:.875rem">No households found. Try enabling more signals or reducing the minimum signal count.</div>';
+    return;
+  }
   const totalSuppressed = _hhClusters.reduce((s,h) => s+h.suppressList.length, 0);
-  const totalPct = _hhClusters.length > 0 ? Math.round((totalSuppressed/_hhClusters.reduce((s,h)=>s+h.members.length,0))*100) : 0;
+  const totalMembers = _hhClusters.reduce((s,h) => s+h.members.length, 0);
+  const totalPct = totalMembers > 0 ? Math.round((totalSuppressed/totalMembers)*100) : 0;
   const avatarColors = ['#00D4B4','#3B82F6','#A855F7','#F59E0B','#22C55E','#EF4444'];
-  el.innerHTML = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><div style="font-size:.8125rem;color:var(--t2)">'+_hhClusters.length+' households · '+totalSuppressed+' suppressed · ~'+totalPct+'% marketing cost reduction</div><button onclick="exportHouseholdCSV()" style="font-size:.6875rem;font-weight:600;padding:5px 12px;border-radius:6px;background:var(--teal-faint);color:var(--teal);border:1px solid rgba(0,212,180,.2);cursor:pointer;font-family:var(--fb)">Export household map</button></div>' +
-  _hhClusters.map((hh,i) => {
-    return '<div class="hh-card"><div class="hh-card-header"><div><div class="hh-id">🏠 '+hh.id+'</div><div class="hh-address">'+escH(hh.address)+'</div></div><div style="text-align:right"><div class="hh-confidence">'+hh.confidence+'% confidence</div><div style="font-size:.6875rem;color:var(--t3);margin-top:3px">'+hh.signals.map(escH).join(' · ')+'</div></div></div>'
-    +'<div class="hh-stats"><div class="hh-stat"><strong>'+hh.members.length+'</strong> members</div><div class="hh-stat"><strong>$'+hh.hhRevenue.toLocaleString()+'</strong> household value</div><div class="hh-stat"><strong>'+hh.suppressList.length+'</strong> to suppress</div></div>'
-    +'<div class="hh-members">'+hh.members.map((m,mi) => {
-      const isBest = m.customer_id === hh.bestContact?.customer_id;
-      const initials = ((m.first_name||'?')[0]+(m.last_name||'?')[0]).toUpperCase();
-      const bg = avatarColors[mi%avatarColors.length];
-      return '<div class="hh-member"><div class="hh-member-avatar" style="background:'+bg+'22;color:'+bg+'">'+initials+'</div><div class="hh-member-info"><div class="hh-member-name">'+escH((m.first_name||'')+' '+(m.last_name||''))+'</div><div class="hh-member-detail">'+escH(m.email||'')+(m.loyalty_tier?' · '+m.loyalty_tier:'')+(m.city?' · '+m.city:'')+'</div></div><span class="hh-member-badge '+(isBest?'badge-best':'badge-suppress')+'">'+(isBest?'★ Best contact':'Suppress')+'</span></div>';
-    }).join('')+'</div>'
-    +'<div class="hh-footer"><div class="hh-saving">→ Send to '+escH(hh.bestContact?.first_name||'best')+' only · saves '+hh.suppressList.length+' send'+(hh.suppressList.length!==1?'s':'')+'</div><button class="hh-export-btn" onclick="exportSingleHousehold(\''+hh.id+'\')">Export</button></div></div>';
+
+  el.innerHTML = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">'
+    +'<div style="font-size:.8125rem;color:var(--t2)">'+_hhClusters.length+' households identified · '+totalSuppressed+' contacts suppressed · ~'+totalPct+'% marketing cost reduction</div>'
+    +'<button onclick="exportHouseholdCSV()" style="font-size:.6875rem;font-weight:600;padding:5px 12px;border-radius:6px;background:var(--teal-faint);color:var(--teal);border:1px solid rgba(0,212,180,.2);cursor:pointer;font-family:var(--fb)">Export household map</button>'
+    +'</div>'
+  + _hhClusters.map((hh, i) => {
+    const bestMember = hh.bestContact;
+    const suppressedMembers = hh.members.filter(m => m.customer_id !== bestMember?.customer_id);
+    const bestInitials = ((bestMember?.first_name||'?')[0]+(bestMember?.last_name||'?')[0]).toUpperCase();
+    const bestBg = avatarColors[0];
+
+    // Build grouped member avatars for header
+    const memberAvatars = hh.members.map((m,mi) => {
+      const init = ((m.first_name||'?')[0]+(m.last_name||'?')[0]).toUpperCase();
+      const bg = avatarColors[mi % avatarColors.length];
+      return '<div style="width:28px;height:28px;border-radius:50%;background:'+bg+'22;color:'+bg+';font-size:.6875rem;font-weight:700;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--bg);margin-left:'+(mi>0?'-8px':'0')+'">'+init+'</div>';
+    }).join('');
+
+    // Match parameters section
+    const matchParams = hh.signals.map(s =>
+      '<span style="display:inline-flex;align-items:center;gap:4px;font-size:.6875rem;font-weight:500;padding:3px 9px;border-radius:99px;background:rgba(0,212,180,0.08);color:var(--teal);border:1px solid rgba(0,212,180,0.15);margin:2px">'
+      +'<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>'
+      +escH(s)+'</span>'
+    ).join('');
+
+    // Build member rows
+    const memberRows = hh.members.map((m, mi) => {
+      const isBest = m.customer_id === bestMember?.customer_id;
+      const init = ((m.first_name||'?')[0]+(m.last_name||'?')[0]).toUpperCase();
+      const bg = avatarColors[mi % avatarColors.length];
+      const tier = m.loyalty_tier || '';
+      const tierColor = {Platinum:'#A855F7',Gold:'#F59E0B',Silver:'#7A90B0',Bronze:'#92400E'}[tier] || 'var(--t3)';
+
+      return '<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)">'
+        +'<div style="width:34px;height:34px;border-radius:50%;background:'+bg+'22;color:'+bg+';font-family:var(--fd);font-weight:800;font-size:.875rem;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+init+'</div>'
+        +'<div style="flex:1;min-width:0">'
+          +'<div style="font-size:.875rem;font-weight:600;color:var(--t1)">'+(isBest?'★ ':'')+escH((m.first_name||'')+' '+(m.last_name||''))+'</div>'
+          +'<div style="font-size:.75rem;color:var(--t3);margin-top:1px">'+escH(m.email||'')+(m.city?' · '+m.city:'')+'</div>'
+        +'</div>'
+        +(tier ? '<span style="font-size:.5625rem;font-weight:700;padding:2px 7px;border-radius:99px;background:'+tierColor+'22;color:'+tierColor+'">'+tier+'</span>' : '')
+        +'<span style="font-size:.6875rem;font-weight:600;padding:3px 9px;border-radius:99px;white-space:nowrap;'
+          +(isBest ? 'background:rgba(244,114,182,.1);color:#F472B6;border:1px solid rgba(244,114,182,.2)' : 'background:var(--s2);color:var(--t3)')+'">'+
+          (isBest ? '★ Best contact' : 'Suppress')+'</span>'
+      +'</div>';
+    }).join('');
+
+    return '<div class="hh-card">'
+      // Header: ID + address + confidence + avatars
+      +'<div class="hh-card-header">'
+        +'<div style="display:flex;align-items:center;gap:10px">'
+          +memberAvatars
+          +'<div>'
+            +'<div class="hh-id">'+hh.id+' · '+hh.members.length+' members</div>'
+            +'<div class="hh-address">'+escH(hh.address)+'</div>'
+          +'</div>'
+        +'</div>'
+        +'<div class="hh-confidence">'+hh.confidence+'% confidence</div>'
+      +'</div>'
+
+      // Match parameters — WHY were they grouped
+      +'<div style="padding:12px 18px;border-bottom:1px solid var(--border);background:var(--bg2)">'
+        +'<div style="font-size:.5625rem;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:7px">Grouped because they share</div>'
+        +'<div style="display:flex;flex-wrap:wrap;gap:4px">'+matchParams+'</div>'
+      +'</div>'
+
+      // Stats row
+      +'<div class="hh-stats">'
+        +'<div class="hh-stat"><strong>$'+hh.hhRevenue.toLocaleString()+'</strong> household value</div>'
+        +'<div class="hh-stat"><strong>'+hh.suppressList.length+'</strong> suppressed</div>'
+        +'<div class="hh-stat"><strong>'+Math.round((hh.suppressList.length/hh.members.length)*100)+'%</strong> cost saving</div>'
+      +'</div>'
+
+      // Member list
+      +'<div class="hh-members" style="padding-top:4px">'+memberRows+'<div style="height:1px"></div></div>'
+
+      // Footer
+      +'<div class="hh-footer">'
+        +'<div class="hh-saving">→ Contact '+escH(bestMember?.first_name||'best contact')+' only — suppress '+suppressedMembers.length+' send'+(suppressedMembers.length!==1?'s':'')+' per campaign</div>'
+        +'<button class="hh-export-btn" onclick="exportSingleHousehold(\''+hh.id+'\')">Export CSV</button>'
+      +'</div>'
+    +'</div>';
   }).join('');
 }
 
@@ -1038,10 +1113,11 @@ function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;')
         <div class="pm-name" id="pm-name">Customer Name</div>
         <div class="pm-email" id="pm-email">email@example.com</div>
       </div>
-      <button class="pm-close" onclick="document.getElementById('profile-modal-overlay').classList.remove('open')">
+      <button class="pm-close" onclick="document.getElementById('profile-modal-overlay').classList.remove('open')" style="color:#475569">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
+    <div class="pm-divider"></div>
     <div class="pm-body">
       <div class="pm-kpis" id="pm-kpis"></div>
       <div class="pm-section-title" id="pm-tags-label" style="display:none">Tags</div>
