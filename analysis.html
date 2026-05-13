@@ -292,29 +292,88 @@ a{text-decoration:none;color:var(--teal)}
 
 
 /* PROFILE POPUP MODAL — Light theme for visibility */
-.profile-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:600;align-items:center;justify-content:center;backdrop-filter:blur(10px);padding:20px 40px}
+.profile-modal-overlay{display:none;position:fixed;inset:0;background:rgba(6,11,18,0.75);z-index:600;align-items:center;justify-content:center;backdrop-filter:blur(12px);padding:20px}
 .profile-modal-overlay.open{display:flex}
-.profile-modal{background:#FFFFFF;border:none;border-radius:20px;width:100%;max-width:900px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 60px rgba(0,0,0,0.45);animation:mIn .25s ease}
-@keyframes mIn{from{opacity:0;transform:scale(.95) translateY(16px)}to{opacity:1;transform:scale(1) translateY(0)}}
-.pm-header{padding:28px 28px 0;display:flex;align-items:flex-start;gap:16px;grid-column:1/-1}
-.pm-avatar{width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-weight:800;font-size:1.375rem;flex-shrink:0}
-.pm-name{font-family:var(--fd);font-weight:800;font-size:1.375rem;letter-spacing:-.03em;color:#0F172A;margin-bottom:3px}
-.pm-email{font-size:.8125rem;color:#64748B}
-.pm-close{margin-left:auto;background:#F1F5F9;border:none;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#64748B;cursor:pointer;flex-shrink:0;transition:all .15s}
-.pm-close:hover{background:#E2E8F0;color:#0F172A}
-.pm-divider{height:1px;background:#E2E8F0;margin:20px 28px 0;grid-column:1/-1}
-.pm-body{padding:20px 28px 28px;display:grid;grid-template-columns:1fr 1fr;gap:0 28px}
-.pm-section-title{font-size:.625rem;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;margin-top:18px;grid-column:1/-1}
-.pm-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:4px;grid-column:1/-1}
-.pm-kpi{background:#F8FAFC;border:1px solid #E2E8F0;border-radius:10px;padding:12px 14px;text-align:center}
-.pm-kpi-val{font-family:var(--fd);font-weight:800;font-size:1.25rem;letter-spacing:-.03em;color:#0F172A}
-.pm-kpi-lbl{font-size:.5625rem;color:#94A3B8;margin-top:3px;font-weight:500}
-.pm-fields{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.pm-field{background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:10px 12px}
-.pm-field-lbl{font-size:.5625rem;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px}
-.pm-field-val{font-size:.8125rem;color:#1E293B;font-weight:500}
-.pm-tags{display:flex;gap:5px;flex-wrap:wrap;grid-column:1/-1}
-.pm-tag{font-size:.6875rem;font-weight:600;padding:4px 10px;border-radius:99px}
+.profile-modal{background:#FFFFFF;border:none;border-radius:24px;width:100%;max-width:860px;max-height:92vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 32px 80px rgba(0,0,0,0.5);animation:mIn .25s ease}
+@keyframes mIn{from{opacity:0;transform:scale(.96) translateY(14px)}to{opacity:1;transform:scale(1) translateY(0)}}
+
+/* Modal hero header */
+.pm-hero{background:linear-gradient(135deg,#0F172A 0%,#1E293B 100%);padding:28px 28px 24px;position:relative;flex-shrink:0}
+.pm-hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse at top right,rgba(0,212,180,0.15) 0%,transparent 60%);pointer-events:none}
+.pm-hero-top{display:flex;align-items:flex-start;gap:16px;margin-bottom:20px;position:relative}
+.pm-avatar{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-weight:800;font-size:1.5rem;flex-shrink:0;border:2px solid rgba(255,255,255,0.15)}
+.pm-hero-info{flex:1}
+.pm-name{font-family:var(--fd);font-weight:800;font-size:1.5rem;letter-spacing:-.04em;color:#FFFFFF;margin-bottom:4px}
+.pm-email{font-size:.8125rem;color:rgba(255,255,255,0.55);margin-bottom:8px}
+.pm-hero-badges{display:flex;gap:6px;flex-wrap:wrap}
+.pm-badge{font-size:.625rem;font-weight:700;padding:3px 9px;border-radius:99px;letter-spacing:.04em}
+.pm-close{position:absolute;top:0;right:0;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.7);cursor:pointer;transition:all .15s}
+.pm-close:hover{background:rgba(255,255,255,0.2);color:#fff}
+
+/* KPI strip in hero */
+.pm-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(255,255,255,0.08);border-radius:12px;overflow:hidden;position:relative}
+.pm-kpi{background:rgba(255,255,255,0.05);padding:12px 14px;text-align:center}
+.pm-kpi-val{font-family:var(--fd);font-weight:800;font-size:1.25rem;letter-spacing:-.04em;color:#FFFFFF;line-height:1}
+.pm-kpi-val.highlight{color:#00D4B4}
+.pm-kpi-val.danger{color:#F87171}
+.pm-kpi-lbl{font-size:.5rem;color:rgba(255,255,255,0.45);margin-top:4px;font-weight:600;text-transform:uppercase;letter-spacing:.08em}
+
+/* Modal body - scrollable */
+.pm-body{padding:0;overflow-y:auto;flex:1;display:grid;grid-template-columns:1fr 1fr;align-items:start}
+
+/* Left column */
+.pm-left{padding:22px 20px 22px 24px;border-right:1px solid #F1F5F9}
+/* Right column */
+.pm-right{padding:22px 24px 22px 20px}
+
+.pm-col-title{font-size:.5625rem;font-weight:800;color:#94A3B8;text-transform:uppercase;letter-spacing:.12em;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.pm-col-title::before{content:'';width:12px;height:2px;border-radius:99px;background:currentColor;flex-shrink:0}
+
+/* Field list - clean table style */
+.pm-field-list{display:flex;flex-direction:column;gap:0}
+.pm-field-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid #F8FAFC;gap:12px}
+.pm-field-row:last-child{border-bottom:none}
+.pm-field-key{font-size:.75rem;color:#94A3B8;font-weight:500;flex-shrink:0;min-width:90px}
+.pm-field-val{font-size:.8125rem;color:#1E293B;font-weight:600;text-align:right;word-break:break-word}
+.pm-field-val.good{color:#059669}
+.pm-field-val.bad{color:#DC2626}
+.pm-field-val.tier-platinum{color:#7C3AED}
+.pm-field-val.tier-gold{color:#D97706}
+.pm-field-val.tier-silver{color:#475569}
+.pm-field-val.tier-bronze{color:#92400E}
+
+/* Tags */
+.pm-tags{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:14px}
+.pm-tag{font-size:.625rem;font-weight:700;padding:3px 9px;border-radius:99px;letter-spacing:.02em}
+
+/* Behaviour chart - mini bar chart */
+.pm-activity-bar{height:4px;background:#F1F5F9;border-radius:99px;overflow:hidden;margin-top:4px}
+.pm-activity-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#00D4B4,#3B82F6)}
+
+/* SI section inside right col */
+.si-btn{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;padding:10px 14px;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:9px;font-family:var(--fb);font-size:.8125rem;font-weight:600;color:#475569;cursor:pointer;transition:all .2s;margin-top:14px}
+.si-btn:hover{background:#EFF6FF;border-color:#93C5FD;color:#1D4ED8}
+.si-btn:disabled{opacity:.5;cursor:not-allowed}
+.si-btn-loading{background:#EFF6FF;border-color:#93C5FD;color:#1D4ED8}
+.si-section{margin-top:14px;padding-top:14px;border-top:1px solid #F1F5F9;display:none}
+.si-section.show{display:block}
+.si-section-title{font-size:.5625rem;font-weight:800;color:#94A3B8;text-transform:uppercase;letter-spacing:.12em;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.si-section-title::after{content:'AI';font-size:.5rem;background:#EFF6FF;color:#3B82F6;padding:1px 5px;border-radius:3px;font-weight:700}
+.si-profile-summary{font-size:.8125rem;color:#334155;line-height:1.65;margin-bottom:10px;padding:10px 12px;background:#F8FAFC;border-radius:8px;border-left:3px solid #3B82F6}
+.si-tags-row{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px}
+.si-tag{font-size:.625rem;font-weight:600;padding:3px 8px;border-radius:99px}
+.si-grid{display:flex;flex-direction:column;gap:0;margin-bottom:10px}
+.si-field{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #F8FAFC;gap:8px}
+.si-field:last-child{border-bottom:none}
+.si-field-lbl{font-size:.75rem;color:#94A3B8;font-weight:500}
+.si-field-val{font-size:.8125rem;color:#1E293B;font-weight:600;text-align:right}
+.si-trigger-item{display:flex;align-items:flex-start;gap:7px;padding:7px 9px;background:#FFF7ED;border-radius:6px;margin-bottom:5px}
+.si-trigger-text{font-size:.75rem;color:#92400E;line-height:1.4}
+.si-channels{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px}
+.si-channel{font-size:.6875rem;font-weight:600;padding:4px 9px;border-radius:6px;background:#F1F5F9;color:#475569;display:flex;align-items:center;gap:4px}
+.si-disclaimer{font-size:.625rem;color:#94A3B8;line-height:1.5;padding:7px 9px;background:#F8FAFC;border-radius:5px}
+.si-error{font-size:.8125rem;color:#DC2626;padding:9px 12px;background:#FEF2F2;border:1px solid #FECACA;border-radius:7px;margin-top:10px;display:none}
+.si-error.show{display:block}
 
 
 /* DATA MANAGER MODAL */
@@ -1114,55 +1173,112 @@ function openProfileModal(p) {
   if (typeof p === 'string') { try { p = JSON.parse(p); } catch(e) { return; } }
   const overlay = document.getElementById('profile-modal-overlay');
   const avatarColors = ['#00D4B4','#3B82F6','#A855F7','#F59E0B','#22C55E','#EF4444'];
-  const nameStr = ((p.first_name||p.full_name||'?')[0]).toUpperCase() + ((p.last_name||' ')[0]).toUpperCase();
-  const bg = avatarColors[p.customer_id ? p.customer_id.charCodeAt(p.customer_id.length-1) % avatarColors.length : 0];
+  const nameStr = ((p.first_name||p.full_name||'?')[0]+(( p.last_name||' ')[0])).toUpperCase();
+  const colorIdx = p.customer_id ? p.customer_id.charCodeAt(p.customer_id.length-1) % avatarColors.length : 0;
+  const accentColor = avatarColors[colorIdx];
 
-  // Header
+  // ── HERO ──
   const avatar = document.getElementById('pm-avatar');
   avatar.textContent = nameStr;
-  avatar.style.background = bg+'22';
-  avatar.style.color = bg;
+  avatar.style.background = accentColor + '33';
+  avatar.style.color = accentColor;
   document.getElementById('pm-name').textContent = ((p.first_name||'')+' '+(p.last_name||'')).trim() || p.full_name || 'Unknown';
   document.getElementById('pm-email').textContent = p.email || p.customer_id || '—';
 
-  // KPIs
-  const kpis = document.getElementById('pm-kpis');
+  // Hero badges (loyalty tier + status tags)
+  const badges = document.getElementById('pm-badges');
+  const tierColors = { Platinum:['#7C3AED','rgba(124,58,237,0.25)'], Gold:['#F59E0B','rgba(245,158,11,0.25)'], Silver:['#94A3B8','rgba(148,163,184,0.2)'], Bronze:['#B45309','rgba(180,83,9,0.2)'] };
+  const tagDefs = { repeat_buyer:['#00D4B4','rgba(0,212,180,0.2)','Repeat Buyer'], at_risk:['#F87171','rgba(248,113,113,0.2)','At Risk'], high_value:['#FCD34D','rgba(252,211,77,0.2)','High Value'], recent:['#6EE7B7','rgba(110,231,183,0.2)','Active'], loyalty_member:['#A78BFA','rgba(167,139,250,0.2)','Loyalty Member'] };
+  const badgeHtml = [];
+  if (p.loyalty_tier && tierColors[p.loyalty_tier]) {
+    const [c,bg] = tierColors[p.loyalty_tier];
+    badgeHtml.push(`<span class="pm-badge" style="background:${bg};color:${c}">★ ${p.loyalty_tier}</span>`);
+  }
+  (p.tags||[]).forEach(t => {
+    if (tagDefs[t]) {
+      const [c,bg,label] = tagDefs[t];
+      badgeHtml.push(`<span class="pm-badge" style="background:${bg};color:${c}">${label}</span>`);
+    }
+  });
+  badges.innerHTML = badgeHtml.join('');
+
+  // ── KPIs ──
   const spend = p.totalSpend || 0;
   const orders = p.orderCount || 0;
-  const days = p.daysSinceLast !== undefined ? p.daysSinceLast : null;
-  kpis.innerHTML = `
-    <div class="pm-kpi"><div class="pm-kpi-val">$${spend > 1000 ? (spend/1000).toFixed(1)+'k' : spend}</div><div class="pm-kpi-lbl">Total spend</div></div>
-    <div class="pm-kpi"><div class="pm-kpi-val">${orders}</div><div class="pm-kpi-lbl">Orders</div></div>
-    <div class="pm-kpi"><div class="pm-kpi-val">${days !== null ? days+'d' : '—'}</div><div class="pm-kpi-lbl">Days since order</div></div>`;
+  const avgOrder = p.avgOrder || 0;
+  const days = p.daysSinceLast !== null && p.daysSinceLast !== undefined ? p.daysSinceLast : null;
+  const daysClass = days !== null ? (days <= 30 ? 'highlight' : days > 90 ? 'danger' : '') : '';
+  const repeatRate = orders > 1 ? Math.min(100, Math.round((orders / 10) * 100)) : 0;
+  document.getElementById('pm-kpis').innerHTML = `
+    <div class="pm-kpi">
+      <div class="pm-kpi-val highlight">$${spend >= 1000 ? (spend/1000).toFixed(1)+'k' : spend}</div>
+      <div class="pm-kpi-lbl">Lifetime Value</div>
+    </div>
+    <div class="pm-kpi">
+      <div class="pm-kpi-val">${orders}</div>
+      <div class="pm-kpi-lbl">Total Orders</div>
+    </div>
+    <div class="pm-kpi">
+      <div class="pm-kpi-val">$${avgOrder}</div>
+      <div class="pm-kpi-lbl">Avg Order</div>
+    </div>
+    <div class="pm-kpi">
+      <div class="pm-kpi-val ${daysClass}">${days !== null ? days+'d' : '—'}</div>
+      <div class="pm-kpi-lbl">Since Last Order</div>
+    </div>`;
 
-  // Tags
-  const tags = p.tags || [];
+  // ── LEFT COL: Profile tags + fields ──
   const tagEl = document.getElementById('pm-tags');
-  const tagLabel = document.getElementById('pm-tags-label');
-  if (tags.length) {
-    tagLabel.style.display = 'block';
-    const tagColors = { repeat_buyer:['rgba(0,212,180,.1)','#00D4B4'], recent:['rgba(34,197,94,.1)','#22C55E'], at_risk:['rgba(239,68,68,.1)','#EF4444'], high_value:['rgba(245,158,11,.1)','#F59E0B'], loyalty_member:['rgba(168,85,247,.1)','#A855F7'] };
-    tagEl.innerHTML = tags.map(t => { const [bg,c] = tagColors[t] || ['rgba(255,255,255,.05)','#7A90B0']; return `<span class="pm-tag" style="background:${bg};color:${c}">${t.replace(/_/g,' ')}</span>`; }).join('');
-  } else { tagLabel.style.display = 'none'; tagEl.innerHTML = ''; }
+  const tagColors2 = { repeat_buyer:['#D1FAE5','#065F46'], recent:['#DCFCE7','#166534'], at_risk:['#FEE2E2','#991B1B'], high_value:['#FEF3C7','#92400E'], loyalty_member:['#EDE9FE','#5B21B6'] };
+  tagEl.innerHTML = (p.tags||[]).map(t => {
+    const [bg,c] = tagColors2[t] || ['#F1F5F9','#475569'];
+    return `<span class="pm-tag" style="background:${bg};color:${c}">${t.replace(/_/g,' ')}</span>`;
+  }).join('');
 
-  // Customer fields
-  const skipFields = new Set(['totalSpend','orderCount','avgOrder','daysSinceLast','preferredChannels','preferredPayments','deliveryCities','tags','first_name','last_name','email','customer_id','full_name']);
-  const fieldLabels = { phone:'Phone', gender:'Gender', date_of_birth:'Date of Birth', age:'Age', city:'City', state:'State', country:'Country', pincode:'Pincode', signup_date:'Signup Date', acquisition_channel:'Acquired via', loyalty_tier:'Loyalty Tier', loyalty_points:'Loyalty Points', preferred_channel:'Preferred Channel', email_opt_in:'Email Opt-in', is_active:'Active' };
-  const fields = Object.entries(p).filter(([k,v]) => !skipFields.has(k) && v !== null && v !== undefined && String(v).trim());
-  document.getElementById('pm-fields').innerHTML = fields.map(([k,v]) => `<div class="pm-field"><div class="pm-field-lbl">${fieldLabels[k]||k.replace(/_/g,' ')}</div><div class="pm-field-val">${escH(String(v))}</div></div>`).join('') || '<div style="color:var(--t2);font-size:.8125rem">No additional data available</div>';
+  // Profile fields — clean key:value rows
+  const skipFields = new Set(['totalSpend','orderCount','avgOrder','daysSinceLast','preferredChannels','preferredPayments','deliveryCities','tags','first_name','last_name','email','customer_id','full_name','lastOrderDate']);
+  const fieldLabels = {
+    phone:'Phone', gender:'Gender', date_of_birth:'Date of birth', age:'Age',
+    city:'City', state:'State', country:'Country', pincode:'Pincode',
+    signup_date:'Member since', acquisition_channel:'Acquired via',
+    loyalty_tier:'Loyalty tier', loyalty_points:'Points balance',
+    preferred_channel:'Pref. channel', email_opt_in:'Email consent',
+    is_active:'Account status'
+  };
+  const fieldValueClass = (k,v) => {
+    if (k==='loyalty_tier') return 'tier-'+String(v).toLowerCase();
+    if (k==='email_opt_in'||k==='is_active') return String(v)==='true'?'good':'bad';
+    return '';
+  };
+  const formatVal = (k,v) => {
+    if (k==='email_opt_in') return v==='true'||v===true ? '✓ Opted in' : '✗ Opted out';
+    if (k==='is_active') return v==='true'||v===true ? '✓ Active' : '✗ Inactive';
+    if (k==='loyalty_points') return Number(v).toLocaleString()+' pts';
+    return escH(String(v));
+  };
+  const fields = Object.entries(p).filter(([k,v]) => !skipFields.has(k) && v!==null && v!==undefined && String(v).trim() && !k.startsWith('_'));
+  document.getElementById('pm-fields').innerHTML = fields.map(([k,v]) => `
+    <div class="pm-field-row">
+      <span class="pm-field-key">${fieldLabels[k]||k.replace(/_/g,' ')}</span>
+      <span class="pm-field-val ${fieldValueClass(k,v)}">${formatVal(k,v)}</span>
+    </div>`).join('') || '<div style="color:#94A3B8;font-size:.8125rem;padding:8px 0">No additional profile data</div>';
 
-  // Transaction behaviour
-  const txnFields = [];
-  if (p.avgOrder) txnFields.push(['Avg Order Value', '$'+p.avgOrder]);
-  if (p.preferredChannels?.length) txnFields.push(['Preferred Channel', p.preferredChannels.join(', ')]);
-  if (p.preferredPayments?.length) txnFields.push(['Payment Method', p.preferredPayments.join(', ')]);
-  if (p.deliveryCities?.length) txnFields.push(['Delivery Cities', p.deliveryCities.slice(0,3).join(', ')]);
-  const txnEl = document.getElementById('pm-txn-fields');
-  const txnLabel = document.getElementById('pm-txn-label');
-  if (txnFields.length) {
-    txnLabel.style.display = 'block';
-    txnEl.innerHTML = txnFields.map(([l,v]) => `<div class="pm-field"><div class="pm-field-lbl">${l}</div><div class="pm-field-val">${escH(String(v))}</div></div>`).join('');
-  } else { txnLabel.style.display = 'none'; txnEl.innerHTML = ''; }
+  // ── RIGHT COL: Behaviour ──
+  const channels = (p.preferredChannels||[]).join(', ') || '—';
+  const payments = (p.preferredPayments||[]).join(', ') || '—';
+  const cities = (p.deliveryCities||[]).slice(0,3).join(', ') || '—';
+  const lastOrder = p.lastOrderDate || '—';
+  const churnRisk = days !== null ? (days > 180 ? 'High' : days > 90 ? 'Medium' : 'Low') : '—';
+  const churnColor = days !== null ? (days > 180 ? '#DC2626' : days > 90 ? '#D97706' : '#059669') : '#94A3B8';
+  const repeatLabel = orders > 5 ? 'Champion' : orders > 2 ? 'Repeat' : orders === 1 ? 'One-time' : 'New';
+
+  document.getElementById('pm-txn-fields').innerHTML = `
+    <div class="pm-field-row"><span class="pm-field-key">Last order</span><span class="pm-field-val">${escH(String(lastOrder))}</span></div>
+    <div class="pm-field-row"><span class="pm-field-key">Buyer type</span><span class="pm-field-val">${repeatLabel}</span></div>
+    <div class="pm-field-row"><span class="pm-field-key">Churn risk</span><span class="pm-field-val" style="color:${churnColor}">${churnRisk}</span></div>
+    <div class="pm-field-row"><span class="pm-field-key">Channel</span><span class="pm-field-val">${escH(channels)}</span></div>
+    <div class="pm-field-row"><span class="pm-field-key">Payment</span><span class="pm-field-val">${escH(payments)}</span></div>
+    <div class="pm-field-row"><span class="pm-field-key">Ships to</span><span class="pm-field-val">${escH(cities)}</span></div>`;
 
   overlay.classList.add('open');
   initSocialSection(p);
@@ -1343,8 +1459,8 @@ function renderSocialIntelligence(r, name) {
   }
   details.innerHTML = detailItems.map(([l,v]) => `
     <div class="si-field">
-      <div class="si-field-lbl">${l}</div>
-      <div class="si-field-val">${escH(String(v))}</div>
+      <span class="si-field-lbl">${l}</span>
+      <span class="si-field-val">${escH(String(v))}</span>
     </div>`).join('');
 
   // Trigger events
@@ -1397,48 +1513,62 @@ function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;')
 
 </script>
 
-<!-- CUSTOMER PROFILE MODAL -->
+<!-- CUSTOMER PROFILE MODAL — Redesigned -->
 <div class="profile-modal-overlay" id="profile-modal-overlay" onclick="closeProfileModal(event)">
   <div class="profile-modal" id="profile-modal">
-    <div class="pm-header">
-      <div class="pm-avatar" id="pm-avatar">AT</div>
-      <div>
-        <div class="pm-name" id="pm-name">Customer Name</div>
-        <div class="pm-email" id="pm-email">email@example.com</div>
-      </div>
-      <button class="pm-close" onclick="document.getElementById('profile-modal-overlay').classList.remove('open')" style="color:#475569">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
-    </div>
-    <div class="pm-divider"></div>
-    <div class="pm-body">
-      <div class="pm-kpis" id="pm-kpis"></div>
-      <div class="pm-section-title" id="pm-tags-label" style="display:none">Tags</div>
-      <div class="pm-tags" id="pm-tags"></div>
-      <div class="pm-section-title">Customer Details</div>
-      <div class="pm-fields" id="pm-fields"></div>
-      <div class="pm-section-title" id="pm-txn-label" style="display:none">Transaction Behaviour</div>
-      <div class="pm-fields" id="pm-txn-fields"></div>
 
-      <!-- SOCIAL INTELLIGENCE BUTTON + RESULTS -->
-      <button class="si-btn" id="si-research-btn" onclick="runSocialResearch()">
-        🔍 Research this customer online
-      </button>
-      <div class="si-error" id="si-error"></div>
-      <div class="si-section" id="si-section">
-        <div class="si-section-title">Social Intelligence</div>
-        <div class="si-profile-summary" id="si-summary"></div>
-        <div class="si-tags-row" id="si-lifestyle-tags"></div>
-        <div class="si-grid" id="si-details"></div>
-        <div id="si-triggers-wrap" style="display:none">
-          <div style="font-size:.625rem;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px">⚡ Life Events / Trigger Moments</div>
-          <div id="si-triggers"></div>
+    <!-- HERO HEADER — dark gradient -->
+    <div class="pm-hero">
+      <div class="pm-hero-bg"></div>
+      <div class="pm-hero-top">
+        <div class="pm-avatar" id="pm-avatar">AT</div>
+        <div class="pm-hero-info">
+          <div class="pm-name" id="pm-name">Customer Name</div>
+          <div class="pm-email" id="pm-email">email@example.com</div>
+          <div class="pm-hero-badges" id="pm-badges"></div>
         </div>
-        <div id="si-channels-wrap" style="display:none">
-          <div style="font-size:.625rem;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px">Best Channels to Reach</div>
-          <div class="si-channels" id="si-channels"></div>
+        <button class="pm-close" onclick="document.getElementById('profile-modal-overlay').classList.remove('open')">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <!-- KPI strip -->
+      <div class="pm-kpis" id="pm-kpis"></div>
+    </div>
+
+    <!-- BODY — 2 columns -->
+    <div class="pm-body">
+      <!-- LEFT: Customer details -->
+      <div class="pm-left">
+        <div class="pm-col-title">Profile</div>
+        <div class="pm-tags" id="pm-tags"></div>
+        <div class="pm-field-list" id="pm-fields"></div>
+      </div>
+
+      <!-- RIGHT: Behaviour + Social Intelligence -->
+      <div class="pm-right">
+        <div class="pm-col-title">Behaviour</div>
+        <div class="pm-field-list" id="pm-txn-fields"></div>
+
+        <!-- Social Intelligence -->
+        <button class="si-btn" id="si-research-btn" onclick="runSocialResearch()">
+          🔍 Research this customer online
+        </button>
+        <div class="si-error" id="si-error"></div>
+        <div class="si-section" id="si-section">
+          <div class="si-section-title">Social Intelligence</div>
+          <div class="si-profile-summary" id="si-summary"></div>
+          <div class="si-tags-row" id="si-lifestyle-tags"></div>
+          <div class="si-grid" id="si-details"></div>
+          <div id="si-triggers-wrap" style="display:none">
+            <div style="font-size:.5625rem;font-weight:800;color:#94A3B8;text-transform:uppercase;letter-spacing:.1em;margin-bottom:7px">⚡ Trigger Moments</div>
+            <div id="si-triggers"></div>
+          </div>
+          <div id="si-channels-wrap" style="display:none">
+            <div style="font-size:.5625rem;font-weight:800;color:#94A3B8;text-transform:uppercase;letter-spacing:.1em;margin-bottom:7px">Best Channels</div>
+            <div class="si-channels" id="si-channels"></div>
+          </div>
+          <div class="si-disclaimer">⚠ Inferred from demographics — not sourced from personal data. Use as soft signals only.</div>
         </div>
-        <div class="si-disclaimer">⚠ Based on publicly available information only. Results are probabilistic and should be used as soft signals, not definitive facts. Always respect customer privacy and applicable data protection laws.</div>
       </div>
     </div>
   </div>
