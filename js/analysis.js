@@ -944,15 +944,248 @@ async function loadExistingAnalysis() {
 }
 
 // ── RESEARCH MODE ──
+// ── BRAND RESEARCH MODE ──
 async function runResearch() {
   const brand = document.getElementById('brand-name').value.trim();
+  const url = document.getElementById('brand-url')?.value.trim() || '';
   const industry = document.getElementById('brand-industry').value;
-  if (!brand) { alert('Please enter a brand name'); return; }
+  if (!brand) { showResearchError('Please enter a brand name'); return; }
+  if (!industry) { showResearchError('Please select an industry'); return; }
   const apiKey = localStorage.getItem('clarix_api_key');
-  if (!apiKey) { alert('Please add your Claude API key in Settings'); return; }
+  if (!apiKey) { showResearchError('Please add your Claude API key in Settings first'); return; }
 
-  // TODO: Implement brand research mode (Session 3)
-  alert('Brand research mode coming in the next session!');
+  isRunning = true;
+  setResearchLoading(true);
+
+  // Create analysis record
+  try {
+    const name = `${brand} — Brand Research`;
+    if (!analysisId) {
+      const { data } = await supabaseClient.from('analyses').insert({
+        user_id: session.user.id,
+        name,
+        mode: 'research',
+        brand_name: brand,
+        brand_url: url,
+        industry,
+        status: 'processing',
+      }).select().single();
+      if (data) {
+        analysisId = data.id;
+        history.pushState({}, '', `?id=${analysisId}`);
+        document.getElementById('proj-title').value = name;
+      }
+    }
+
+    // Switch to overview and show processing state
+    switchResearchProcessing(brand);
+
+    // Run all 6 research modules in parallel
+    const modules = ['segments','upsell','crosssell','churn','loyalty','campaigns'];
+    const results = await runBrandResearchModules(brand, industry, url, apiKey);
+
+    // Save insights
+    for (const [module, output] of Object.entries(results)) {
+      await supabaseClient.from('insights').upsert({
+        analysis_id: analysisId, module, output
+      }, { onConflict: 'analysis_id,module' });
+    }
+
+    // Build a mock stats object for the overview
+    const mockStats = {
+      brand_name: brand,
+      industry,
+      customer_count: null,
+      transaction_count: null,
+      total_revenue: null,
+      is_research_mode: true,
+    };
+
+    await supabaseClient.from('analyses').update({
+      status: 'complete',
+      data_summary: mockStats,
+    }).eq('id', analysisId);
+
+    // Render results
+    renderResearchResults(results, brand, industry);
+    unlockTabs(modules);
+    document.querySelector('[data-panel="overview"]')?.click();
+
+  } catch(err) {
+    console.error(err);
+    showResearchError('Research failed: ' + err.message);
+    if (analysisId) await supabaseClient.from('analyses').update({ status:'error' }).eq('id', analysisId);
+  } finally {
+    isRunning = false;
+    setResearchLoading(false);
+    document.getElementById('panel-overview').querySelector('.processing-panel')?.remove();
+  }
+}
+
+async function runBrandResearchModules(brand, industry, url, apiKey) {
+  const context = `Brand: ${brand}\nIndustry: ${industry}\n${url ? 'Website: '+url : ''}`;
+
+  const prompts = {
+    segments: `You are a senior market analyst. Research and analyse the customer segments for ${brand} in the ${industry} industry.
+
+${context}
+
+Based on your knowledge of this brand and industry, provide detailed customer segmentation.
+Respond ONLY with valid JSON:
+{"segments":[{"name":"Segment Name","count":estimated_number,"pct":percentage,"avg_order_value":estimated_aov,"total_revenue":estimated_revenue,"days_since_last_purchase":"range description","preferred_categories":["category"],"recommended_action":"specific action","why":"rationale"}],"key_insight":"one sharp insight about this brand's customer base","quick_wins":["actionable win 1","actionable win 2","actionable win 3"]}`,
+
+    upsell: `You are a growth strategist analysing ${brand} in the ${industry} industry.
+
+${context}
+
+Identify the top upsell opportunities for this brand based on typical customer behaviour in this sector.
+Respond ONLY with valid JSON:
+{"opportunities":[{"rank":1,"from_product_type":"entry product","to_product_type":"premium product","eligible_customers":estimated_count,"revenue_potential":estimated_value,"conversion_rate_estimate":percentage,"email_subject":"compelling subject line","push_copy":"push notification copy","why":"rationale"}],"total_upsell_potential":estimated_total,"key_insight":"sharp upsell insight"}`,
+
+    crosssell: `You are a retail analytics expert analysing ${brand} in ${industry}.
+
+${context}
+
+Identify cross-sell opportunities and product affinity pairs typical for this brand/industry.
+Respond ONLY with valid JSON:
+{"pairs":[{"product_a":"product type","product_b":"complementary product","confidence_score":0.0_to_1.0,"eligible_customers":estimated_count,"revenue_potential":estimated_value,"campaign_angle":"how to pitch this pair"}],"category_gaps":[{"segment":"segment name","has_category":"category they buy","missing_category":"category they should buy","opportunity_size":estimated_value}],"key_insight":"cross-sell insight"}`,
+
+    churn: `You are a retention specialist analysing ${brand} in ${industry}.
+
+${context}
+
+Based on industry benchmarks and this brand's positioning, analyse churn risk and win-back opportunities.
+Respond ONLY with valid JSON:
+{"churn_summary":{"at_risk_count":estimated_count,"revenue_at_stake":estimated_value,"primary_trigger":"main churn driver for this type of brand"},"win_back_campaigns":[{"segment":"segment","trigger":"churn trigger","offer":"specific win-back offer","email_subject":"subject line","expected_recovery_rate":percentage,"revenue_potential":estimated_value}],"retention_tactics":["tactic 1","tactic 2","tactic 3"],"key_insight":"retention insight"}`,
+
+    loyalty: `You are a loyalty programme strategist analysing ${brand} in ${industry}.
+
+${context}
+
+Analyse the loyalty landscape and programme opportunities for this brand.
+Respond ONLY with valid JSON:
+{"tier_analysis":[{"tier":"tier name","customer_count":estimated_count,"revenue_contribution_pct":percentage,"avg_order_value":estimated_aov,"insight":"what drives this tier"}],"near_upgrade_count":estimated_count,"near_upgrade_opportunity":estimated_value,"discount_cannibalization":{"risk_level":"low/medium/high","explanation":"explanation","recommendation":"recommendation"},"recommendations":["rec 1","rec 2","rec 3"],"key_insight":"loyalty insight"}`,
+
+    campaigns: `You are a campaign strategist analysing ${brand} in ${industry}.
+
+${context}
+
+Create campaign playbooks tailored to this brand's customer segments and positioning.
+Respond ONLY with valid JSON:
+{"campaigns":[{"segment":"segment name","segment_size":estimated_size,"priority":"high/medium/low","email":{"subject":"compelling subject","preview_text":"preview","body_angle":"angle","cta":"call to action","best_time":"optimal send time","expected_open_rate":percentage},"push":{"copy":"notification copy","trigger":"trigger event","deep_link":"section","expected_ctr":percentage},"paid_social":{"audience_brief":"targeting brief","creative_angle":"creative direction","offer":"offer details"},"estimated_revenue":estimated_value}],"top_priority_campaign":"campaign name","key_insight":"campaign insight"}`,
+  };
+
+  const results = {};
+  await Promise.allSettled(Object.entries(prompts).map(async ([module, prompt]) => {
+    try {
+      const resp = await fetch('/api/claude', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey },
+        body: JSON.stringify({
+          model: 'claude-haiku-4-5-20251001',
+          max_tokens: 2000,
+          messages: [{ role: 'user', content: prompt + '\n\nRespond ONLY with valid JSON. No markdown, no explanation, no preamble.' }]
+        })
+      });
+      const data = await resp.json();
+      if (data.error) throw new Error(data.error.message);
+      const text = data.content[0].text.trim();
+      const jsonStart = text.indexOf('{');
+      const jsonEnd = text.lastIndexOf('}');
+      results[module] = JSON.parse(text.slice(jsonStart, jsonEnd + 1));
+    } catch(e) {
+      results[module] = { error: e.message };
+    }
+  }));
+  return results;
+}
+
+function switchResearchProcessing(brand) {
+  const overview = document.getElementById('panel-overview');
+  overview.innerHTML = `
+    <div class="processing-panel">
+      <div class="proc-ring"></div>
+      <div class="proc-label">Researching ${escHtml(brand)}...</div>
+      <div class="proc-sub">Claude is analysing this brand across 6 growth dimensions</div>
+      <div class="processing-steps">
+        <div class="proc-step active" id="ps-research">
+          <div class="proc-step-icon">🔍</div>
+          <div class="proc-step-text"><strong>Running 6 parallel analyses</strong>Segments · Upsell · Cross-sell · Churn · Loyalty · Campaigns</div>
+        </div>
+      </div>
+    </div>`;
+  document.getElementById('welcome-state') && (document.getElementById('welcome-state').style.display = 'none');
+  document.querySelector('[data-panel="overview"]')?.click();
+}
+
+function renderResearchResults(results, brand, industry) {
+  // Build a research-mode overview
+  const overview = document.getElementById('panel-overview');
+  const insight = results.segments?.key_insight || results.campaigns?.key_insight || `Brand intelligence report for ${brand} complete.`;
+
+  overview.innerHTML = `
+    <div class="kpi-strip" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px">
+      <div class="kpi-card" style="grid-column:1/-1;background:linear-gradient(135deg,var(--s1),var(--s2));border-color:rgba(0,212,180,.2)">
+        <div class="kpi-label" style="color:var(--teal)">Brand Intelligence Report</div>
+        <div class="kpi-val" style="font-size:1.25rem">${escHtml(brand)}</div>
+        <div class="kpi-sub">${escHtml(industry)} · AI-powered market analysis</div>
+      </div>
+    </div>
+    <div class="top-insight" style="display:block">
+      <div class="top-insight-label">✦ Key Insight</div>
+      <div class="top-insight-text">${escHtml(insight)}</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px">
+      ${(results.segments?.segments || results.segments?.quick_wins ? `
+        <div class="insight-card" style="padding:14px 16px;border-left:3px solid var(--teal)">
+          <div style="font-size:.75rem;font-weight:700;color:var(--teal);margin-bottom:6px">Customer Segments</div>
+          <div style="font-size:.8125rem;color:var(--t2)">${(results.segments?.segments||[]).slice(0,2).map(s=>`<div style="margin-bottom:4px">→ <strong style="color:var(--t1)">${escHtml(s.name)}</strong>: ${escHtml(s.recommended_action||'')}</div>`).join('')}</div>
+        </div>` : '')}
+      ${(results.campaigns?.top_priority_campaign ? `
+        <div class="insight-card" style="padding:14px 16px;border-left:3px solid var(--blue)">
+          <div style="font-size:.75rem;font-weight:700;color:var(--blue);margin-bottom:6px">Top Priority Campaign</div>
+          <div style="font-size:.8125rem;color:var(--t1)">${escHtml(results.campaigns.top_priority_campaign)}</div>
+          <div style="font-size:.75rem;color:var(--t2);margin-top:4px">${escHtml(results.campaigns.key_insight||'')}</div>
+        </div>` : '')}
+      ${(results.churn?.churn_summary ? `
+        <div class="insight-card" style="padding:14px 16px;border-left:3px solid var(--red)">
+          <div style="font-size:.75rem;font-weight:700;color:var(--red);margin-bottom:6px">Churn Risk</div>
+          <div style="font-size:.8125rem;color:var(--t1)">${escHtml(results.churn.churn_summary.primary_trigger||'')}</div>
+        </div>` : '')}
+      ${(results.upsell?.key_insight ? `
+        <div class="insight-card" style="padding:14px 16px;border-left:3px solid var(--amber)">
+          <div style="font-size:.75rem;font-weight:700;color:var(--amber);margin-bottom:6px">Upsell Opportunity</div>
+          <div style="font-size:.8125rem;color:var(--t1)">${escHtml(results.upsell.key_insight||'')}</div>
+        </div>` : '')}
+    </div>`;
+
+  // Render all module tabs (reuses existing render functions)
+  if (results.segments) renderSegments(results.segments);
+  if (results.upsell) renderUpsell(results.upsell);
+  if (results.crosssell) renderCrossSell(results.crosssell);
+  if (results.churn) renderChurn(results.churn);
+  if (results.loyalty) renderLoyalty(results.loyalty);
+  if (results.campaigns) renderCampaigns(results.campaigns);
+}
+
+function setResearchLoading(v) {
+  const btn = document.querySelector('#research-mode-panel .run-btn');
+  if (!btn) return;
+  btn.disabled = v;
+  btn.innerHTML = v
+    ? '<div class="spinner" style="display:block;width:14px;height:14px;border:2px solid rgba(6,11,18,.3);border-top-color:#060B12;border-radius:50%;animation:spin .6s linear infinite"></div> Researching...'
+    : '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> Research Brand';
+}
+
+function showResearchError(msg) {
+  const existing = document.getElementById('research-error-msg');
+  if (existing) existing.remove();
+  const el = document.createElement('div');
+  el.id = 'research-error-msg';
+  el.style.cssText = 'background:var(--red-faint);border:1px solid rgba(239,68,68,.2);border-radius:8px;padding:10px 12px;font-size:.8125rem;color:var(--red);margin-top:8px';
+  el.textContent = msg;
+  document.querySelector('#research-mode-panel .run-btn')?.after(el);
+  setTimeout(() => el.remove(), 5000);
 }
 
 // ── UTILS ──

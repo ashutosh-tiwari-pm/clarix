@@ -570,7 +570,8 @@ a{text-decoration:none;color:var(--teal)}
     <div id="research-mode-panel" style="display:none">
       <div class="sidebar-section">
         <div class="sidebar-label">Brand Details</div>
-        <input type="text" id="brand-name" placeholder="Brand name (e.g. ASOS, Zara)" style="width:100%;padding:9px 12px;background:var(--s1);border:1px solid var(--border2);border-radius:8px;color:var(--t1);font-family:var(--fb);font-size:.8125rem;outline:none;margin-bottom:7px;transition:border-color .15s" onfocus="this.style.borderColor='var(--teal)'" onblur="this.style.borderColor='var(--border2)'">
+        <div style="font-size:.6875rem;color:var(--t2);margin-bottom:12px;line-height:1.5">Enter a brand name and Clarix AI will generate a complete growth intelligence report — segments, upsell plays, campaign briefs and more.</div>
+        <input type="text" id="brand-name" placeholder="e.g. Myntra, ASOS, Nykaa" style="width:100%;padding:9px 12px;background:var(--s1);border:1px solid var(--border2);border-radius:8px;color:var(--t1);font-family:var(--fb);font-size:.8125rem;outline:none;margin-bottom:7px;transition:border-color .15s" onfocus="this.style.borderColor='var(--teal)'" onblur="this.style.borderColor='var(--border2)'" onkeydown="if(event.key==='Enter')runResearch()">
         <input type="text" id="brand-url" placeholder="https://brand.com (optional)" style="width:100%;padding:9px 12px;background:var(--s1);border:1px solid var(--border2);border-radius:8px;color:var(--t1);font-family:var(--fb);font-size:.8125rem;outline:none;margin-bottom:7px;transition:border-color .15s" onfocus="this.style.borderColor='var(--teal)'" onblur="this.style.borderColor='var(--border2)'">
         <select id="brand-industry" style="width:100%;padding:9px 12px;background:var(--s1);border:1px solid var(--border2);border-radius:8px;color:var(--t2);font-family:var(--fb);font-size:.8125rem;outline:none;margin-bottom:14px;cursor:pointer">
           <option value="">Select industry...</option>
@@ -581,12 +582,19 @@ a{text-decoration:none;color:var(--teal)}
           <option>Home & Furniture</option>
           <option>Sports & Fitness</option>
           <option>Jewellery & Accessories</option>
+          <option>SaaS / Software</option>
+          <option>Travel & Hospitality</option>
+          <option>Health & Wellness</option>
           <option>Other</option>
         </select>
         <button class="run-btn" onclick="runResearch()">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           Research Brand
         </button>
+        <div style="margin-top:10px;background:var(--teal-faint);border:1px solid rgba(0,212,180,.15);border-radius:8px;padding:10px 12px">
+          <div style="font-size:.625rem;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px">What you get</div>
+          <div style="font-size:.6875rem;color:var(--t2);line-height:1.6">6 AI-generated modules: customer segments, upsell plays, cross-sell pairs, churn analysis, loyalty strategy, and ready-to-use campaign briefs — all tailored to the brand.</div>
+        </div>
       </div>
     </div>
   </div>
