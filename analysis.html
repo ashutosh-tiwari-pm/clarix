@@ -819,6 +819,39 @@ a{text-decoration:none;color:var(--teal)}
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// Kill Supabase immediately if demo mode — runs before supabase-client.js
+(function() {
+  if (new URLSearchParams(location.search).get('demo') !== 'true') return;
+  const chain = {};
+  const methods = ['select','insert','update','upsert','delete','eq','neq','in',
+                   'order','limit','single','maybeSingle','match','filter','not',
+                   'is','contains','overlaps','textSearch','range','auth'];
+  methods.forEach(m => { chain[m] = () => chain; });
+  chain.then = (fn) => Promise.resolve({ data: null, error: null }).then(fn);
+  // Patch createClient to return a neutered client
+  const origSupabase = window.supabase;
+  Object.defineProperty(window, 'supabase', {
+    get() { return origSupabase; },
+    set(lib) {
+      const origCreate = lib.createClient;
+      lib.createClient = function(url, key) {
+        const client = origCreate.call(lib, url, key);
+        client.from = () => chain;
+        client.auth.getSession = async () => ({ data: { session: null }, error: null });
+        client.auth.onAuthStateChange = (cb) => {
+          cb('SIGNED_OUT', null);
+          return { data: { subscription: { unsubscribe: () => {} } } };
+        };
+        client.auth.signOut = async () => {};
+        return client;
+      };
+      Object.defineProperty(window, 'supabase', { value: lib, writable: true });
+    },
+    configurable: true
+  });
+})();
+</script>
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script src="js/supabase-client.js"></script>
 <script src="js/csv-engine.js"></script>

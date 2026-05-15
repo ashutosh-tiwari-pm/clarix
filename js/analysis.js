@@ -30,6 +30,7 @@ function showStoragePanel() {
 let _dataSaved = false; // track if already saved this session
 
 async function saveRawDataImmediately() {
+  if (IS_DEMO) return; // never touch Supabase in demo
   if (_dataSaved) return; // already saved, skip
 
   const raw = ClarixEngine.getRaw();
@@ -41,8 +42,9 @@ async function saveRawDataImmediately() {
     return;
   }
 
-  // Need an analysis ID first — create a draft record
+  // Need an analysis ID — skip in demo mode
   if (!analysisId) {
+    if (IS_DEMO) { analysisId = 'demo-' + Date.now(); return; }
     const name = document.getElementById('proj-title')?.value || 'New Analysis';
     const { data } = await supabaseClient.from('analyses').insert({
       user_id: session.user.id,
@@ -64,6 +66,7 @@ async function saveRawDataImmediately() {
 
 // ── SAVE RAW DATA TO DB ──
 async function saveRawDataToDB(analysisId) {
+  if (IS_DEMO) return;
   if (storageMode !== 'save') return;
   if (_dataSaved) return; // already saved
 
@@ -307,6 +310,47 @@ let isRunning = false;
 const params = new URLSearchParams(location.search);
 const IS_DEMO = params.get('demo') === 'true';
 
+// In demo mode, replace supabaseClient with a safe no-op proxy
+// so ANY supabase call silently returns null without network requests
+if (IS_DEMO) {
+  const noop = () => ({
+    select: () => noopChain,
+    insert: () => noopChain,
+    update: () => noopChain,
+    upsert: () => noopChain,
+    delete: () => noopChain,
+    eq: () => noopChain,
+    single: async () => ({ data: null, error: null }),
+    then: (fn) => Promise.resolve(fn({ data: null, error: null })),
+  });
+  const noopChain = {
+    select: () => noopChain,
+    insert: () => noopChain,
+    update: () => noopChain,
+    upsert: () => noopChain,
+    delete: () => noopChain,
+    eq: () => noopChain,
+    order: () => noopChain,
+    limit: () => noopChain,
+    single: async () => ({ data: null, error: null }),
+    then: (fn) => Promise.resolve(fn({ data: null, error: null })),
+    [Symbol.iterator]: undefined,
+  };
+  // Override applied in initDemoMode() before any Supabase calls
+}
+
+function killSupabaseForDemo() {
+  const noopChain2 = {};
+  ['select','insert','update','upsert','delete','eq','order','limit','neq','in','single','maybeSingle'].forEach(m => {
+    noopChain2[m] = () => noopChain2;
+  });
+  noopChain2.then = (fn) => Promise.resolve({ data: null, error: null }).then(fn);
+  noopChain2[Symbol.asyncIterator] = undefined;
+  if (typeof supabaseClient !== 'undefined') {
+    supabaseClient.from = () => noopChain2;
+  }
+}
+
 async function init() {
   if (IS_DEMO) {
     await initDemoMode();
@@ -324,6 +368,9 @@ async function init() {
 
 // ── CLARIX DEMO MODE ──
 async function initDemoMode() {
+  // Kill Supabase first — before anything else runs
+  killSupabaseForDemo();
+
   // Fake session for UI
   session = { user: { id: 'demo', email: 'demo@clarix.app' } };
 
@@ -339,10 +386,10 @@ async function initDemoMode() {
   document.body.prepend(banner);
   document.body.style.paddingTop = '44px';
 
-  showStoragePanel();
+  // Force session-only storage — never touch Supabase in demo
+  storageMode = 'session';
 
   // Auto-load all 4 sample CSVs
-  const files = ['customers', 'transactions', 'products', 'lineitems'];
   const fileNames = {
     customers: 'sample-data/customers.csv',
     transactions: 'sample-data/transactions.csv',
@@ -350,9 +397,10 @@ async function initDemoMode() {
     lineitems: 'sample-data/line_items.csv'
   };
 
-  for (const type of files) {
+  for (const [type, path] of Object.entries(fileNames)) {
     try {
-      const resp = await fetch(fileNames[type]);
+      const resp = await fetch(path);
+      if (!resp.ok) throw new Error(resp.status);
       const text = await resp.text();
       const blob = new Blob([text], { type: 'text/csv' });
       const file = new File([blob], type + '.csv', { type: 'text/csv' });
@@ -363,7 +411,6 @@ async function initDemoMode() {
   }
 
   updateRunButton();
-  showStoragePanel();
 
   // Show demo hint
   const modulesReady = document.getElementById('modules-ready');
@@ -372,18 +419,22 @@ async function initDemoMode() {
     modulesReady.style.color = 'var(--teal)';
   }
 
+  // Hide storage mode panel — not relevant in demo
+  const storagePanel = document.getElementById('storage-mode-panel');
+  if (storagePanel) storagePanel.style.display = 'none';
+
   // If API key exists, auto-run after short delay
   const existingKey = localStorage.getItem('clarix_api_key');
-  if (existingKey) {
-    setTimeout(() => runAnalysis(), 1000);
+  if (existingKey && existingKey !== 'demo-mode') {
+    setTimeout(() => runAnalysis(), 1200);
   } else {
     setTimeout(() => {
-      const key = prompt('To see AI analysis results, enter your Claude API key:\n(Free at console.anthropic.com)\n\nOr Cancel to browse the demo UI.');
+      const key = prompt('To see AI analysis results, enter your Claude API key:\n(Free at console.anthropic.com)\n\nOr press Cancel to browse the demo UI.');
       if (key && key.startsWith('sk-')) {
         localStorage.setItem('clarix_api_key', key);
-        setTimeout(() => runAnalysis(), 300);
+        setTimeout(() => runAnalysis(), 400);
       }
-    }, 600);
+    }, 800);
   }
 }
 
@@ -509,7 +560,10 @@ async function runAnalysis() {
     // Create or update analysis record
     updateProcStep(1, 'active');
     const name = document.getElementById('proj-title').value || 'New Analysis';
-    if (!analysisId) {
+    if (IS_DEMO) {
+      // Demo mode — skip all Supabase, use local ID
+      analysisId = analysisId || 'demo-' + Date.now();
+    } else if (!analysisId) {
       const { data } = await supabaseClient.from('analyses').insert({
         user_id: session.user.id,
         name,
@@ -530,21 +584,18 @@ async function runAnalysis() {
     const results = await runModules(modulesToRun, stats.forClaude, apiKey);
     updateProcStep(2, 'done');
 
-    // Save results to Supabase
+    // Save results to Supabase (skip in demo)
     updateProcStep(3, 'active');
-    for (const [module, output] of Object.entries(results)) {
-      await supabaseClient.from('insights').upsert({
-        analysis_id: analysisId, module, output
-      }, { onConflict: 'analysis_id,module' });
+    if (!IS_DEMO) {
+      for (const [module, output] of Object.entries(results)) {
+        await supabaseClient.from('insights').upsert({
+          analysis_id: analysisId, module, output
+        }, { onConflict: 'analysis_id,module' });
+      }
+      await saveCustomerProfilesToDB(analysisId, stats.full);
+      if (!_dataSaved) await saveRawDataToDB(analysisId);
+      await supabaseClient.from('analyses').update({ status: 'complete' }).eq('id', analysisId);
     }
-
-    // Save customer profiles to DB
-    await saveCustomerProfilesToDB(analysisId, stats.full);
-
-    // Save raw data if not already saved (safety net — primary trigger is on mode selection)
-    if (!_dataSaved) await saveRawDataToDB(analysisId);
-
-    if (!IS_DEMO) await supabaseClient.from('analyses').update({ status: 'complete' }).eq('id', analysisId);
     updateProcStep(3, 'done');
 
     // Render results
@@ -1032,19 +1083,24 @@ async function runResearch() {
   try {
     const name = `${brand} — Brand Research`;
     if (!analysisId) {
-      const { data } = await supabaseClient.from('analyses').insert({
-        user_id: session.user.id,
-        name,
-        mode: 'research',
-        brand_name: brand,
-        brand_url: url,
-        industry,
-        status: 'processing',
-      }).select().single();
-      if (data) {
-        analysisId = data.id;
-        history.pushState({}, '', `?id=${analysisId}`);
+      if (IS_DEMO) {
+        analysisId = 'demo-research-' + Date.now();
         document.getElementById('proj-title').value = name;
+      } else {
+        const { data } = await supabaseClient.from('analyses').insert({
+          user_id: session.user.id,
+          name,
+          mode: 'research',
+          brand_name: brand,
+          brand_url: url,
+          industry,
+          status: 'processing',
+        }).select().single();
+        if (data) {
+          analysisId = data.id;
+          history.pushState({}, '', `?id=${analysisId}`);
+          document.getElementById('proj-title').value = name;
+        }
       }
     }
 
