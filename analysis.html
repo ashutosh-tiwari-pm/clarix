@@ -466,7 +466,10 @@ a{text-decoration:none;color:var(--teal)}
 
     <div id="data-mode-panel">
       <div class="sidebar-section">
-        <div class="sidebar-label">Upload CSV Files</div>
+        <div class="sidebar-label" style="display:flex;align-items:center;justify-content:space-between">
+          Upload CSV Files
+          <a href="#" onclick="showSampleFormat(event)" style="font-size:.625rem;font-weight:600;color:var(--teal);text-decoration:none;letter-spacing:0;text-transform:none">📄 Format guide</a>
+        </div>
 
         <div class="upload-zone" id="uz-customers" ondragover="dragOver(event,'uz-customers')" ondragleave="dragLeave('uz-customers')" ondrop="handleDrop(event,'customers')">
           <input type="file" accept=".csv" id="file-customers" onchange="handleFile(event,'customers')">
@@ -819,39 +822,7 @@ a{text-decoration:none;color:var(--teal)}
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-// Kill Supabase immediately if demo mode — runs before supabase-client.js
-(function() {
-  if (new URLSearchParams(location.search).get('demo') !== 'true') return;
-  const chain = {};
-  const methods = ['select','insert','update','upsert','delete','eq','neq','in',
-                   'order','limit','single','maybeSingle','match','filter','not',
-                   'is','contains','overlaps','textSearch','range','auth'];
-  methods.forEach(m => { chain[m] = () => chain; });
-  chain.then = (fn) => Promise.resolve({ data: null, error: null }).then(fn);
-  // Patch createClient to return a neutered client
-  const origSupabase = window.supabase;
-  Object.defineProperty(window, 'supabase', {
-    get() { return origSupabase; },
-    set(lib) {
-      const origCreate = lib.createClient;
-      lib.createClient = function(url, key) {
-        const client = origCreate.call(lib, url, key);
-        client.from = () => chain;
-        client.auth.getSession = async () => ({ data: { session: null }, error: null });
-        client.auth.onAuthStateChange = (cb) => {
-          cb('SIGNED_OUT', null);
-          return { data: { subscription: { unsubscribe: () => {} } } };
-        };
-        client.auth.signOut = async () => {};
-        return client;
-      };
-      Object.defineProperty(window, 'supabase', { value: lib, writable: true });
-    },
-    configurable: true
-  });
-})();
-</script>
+
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script src="js/supabase-client.js"></script>
 <script src="js/csv-engine.js"></script>
@@ -1550,6 +1521,13 @@ function showSIError(msg) {
   el.classList.add('show');
 }
 
+
+function showSampleFormat(e) {
+  e.preventDefault();
+  const modal = document.getElementById('sample-modal');
+  if (modal) modal.style.display = 'flex';
+}
+
 function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
 </script>
@@ -1627,6 +1605,87 @@ function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;')
       </button>
     </div>
     <div class="dm-body" id="data-manager-body"></div>
+  </div>
+</div>
+
+
+<!-- SAMPLE FORMAT MODAL -->
+<div id="sample-modal" style="display:none;position:fixed;inset:0;background:rgba(6,11,18,.75);z-index:800;align-items:center;justify-content:center;backdrop-filter:blur(8px);padding:20px" onclick="if(event.target===this)this.style.display='none'">
+  <div style="background:var(--s1);border:1px solid var(--border2);border-radius:18px;width:100%;max-width:580px;max-height:88vh;overflow-y:auto;box-shadow:0 24px 60px rgba(0,0,0,.5)">
+    <div style="padding:22px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+      <div style="font-family:var(--fd);font-weight:700;font-size:1.125rem;color:var(--t1);letter-spacing:-.03em">CSV Format Guide</div>
+      <button onclick="document.getElementById('sample-modal').style.display='none'" style="background:var(--s2);border:none;width:28px;height:28px;border-radius:7px;color:var(--t2);cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center">✕</button>
+    </div>
+    <div style="padding:20px 24px">
+
+      <!-- Download sample files -->
+      <div style="background:var(--teal-faint);border:1px solid rgba(0,212,180,.2);border-radius:10px;padding:14px 16px;margin-bottom:20px">
+        <div style="font-size:.75rem;font-weight:700;color:var(--teal);margin-bottom:8px">⬇ Download Sample Files</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <a href="sample-data/customers.csv" download style="font-size:.75rem;font-weight:600;padding:5px 12px;background:var(--s1);border:1px solid var(--border2);border-radius:6px;color:var(--t1);text-decoration:none;transition:all .15s">customers.csv</a>
+          <a href="sample-data/transactions.csv" download style="font-size:.75rem;font-weight:600;padding:5px 12px;background:var(--s1);border:1px solid var(--border2);border-radius:6px;color:var(--t1);text-decoration:none">transactions.csv</a>
+          <a href="sample-data/products.csv" download style="font-size:.75rem;font-weight:600;padding:5px 12px;background:var(--s1);border:1px solid var(--border2);border-radius:6px;color:var(--t1);text-decoration:none">products.csv</a>
+          <a href="sample-data/line_items.csv" download style="font-size:.75rem;font-weight:600;padding:5px 12px;background:var(--s1);border:1px solid var(--border2);border-radius:6px;color:var(--t1);text-decoration:none">line_items.csv</a>
+        </div>
+        <div style="font-size:.6875rem;color:var(--t2);margin-top:8px">40 customers · 94 transactions · 30 products · 224 line items — realistic demo data</div>
+      </div>
+
+      <!-- Format specs -->
+      ${['customers','transactions','products','line_items'].map ? '' : ''}
+
+      <div style="font-size:.75rem;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px">Required Columns per File</div>
+
+      <div style="margin-bottom:16px">
+        <div style="font-size:.875rem;font-weight:700;color:var(--t1);margin-bottom:6px">👤 customers.csv</div>
+        <div style="background:var(--s2);border-radius:8px;padding:10px 12px;font-family:monospace;font-size:.75rem;color:var(--t2);line-height:1.8">
+          <span style="color:var(--teal)">customer_id</span> — unique ID (required)<br>
+          <span style="color:var(--teal)">email</span> — customer email<br>
+          <span style="color:var(--t2)">first_name, last_name, phone, city, state, country</span><br>
+          <span style="color:var(--t2)">date_of_birth, gender, loyalty_tier, loyalty_points</span><br>
+          <span style="color:var(--t2)">signup_date, preferred_channel, email_opt_in</span>
+        </div>
+      </div>
+
+      <div style="margin-bottom:16px">
+        <div style="font-size:.875rem;font-weight:700;color:var(--t1);margin-bottom:6px">💳 transactions.csv</div>
+        <div style="background:var(--s2);border-radius:8px;padding:10px 12px;font-family:monospace;font-size:.75rem;color:var(--t2);line-height:1.8">
+          <span style="color:var(--teal)">transaction_id</span> — unique ID (required)<br>
+          <span style="color:var(--teal)">customer_id</span> — links to customers.csv (required)<br>
+          <span style="color:var(--teal)">total_amount</span> — order value (required)<br>
+          <span style="color:var(--t2)">transaction_date, channel, payment_method</span><br>
+          <span style="color:var(--t2)">delivery_city, delivery_country, status</span>
+        </div>
+      </div>
+
+      <div style="margin-bottom:16px">
+        <div style="font-size:.875rem;font-weight:700;color:var(--t1);margin-bottom:6px">📦 products.csv</div>
+        <div style="background:var(--s2);border-radius:8px;padding:10px 12px;font-family:monospace;font-size:.75rem;color:var(--t2);line-height:1.8">
+          <span style="color:var(--teal)">product_id</span> — unique ID (required)<br>
+          <span style="color:var(--t2)">product_name, category, brand</span><br>
+          <span style="color:var(--t2)">selling_price, cost_price, sku</span>
+        </div>
+      </div>
+
+      <div style="margin-bottom:20px">
+        <div style="font-size:.875rem;font-weight:700;color:var(--t1);margin-bottom:6px">📋 line_items.csv <span style="font-size:.75rem;font-weight:500;color:var(--t3)">(optional but recommended)</span></div>
+        <div style="background:var(--s2);border-radius:8px;padding:10px 12px;font-family:monospace;font-size:.75rem;color:var(--t2);line-height:1.8">
+          <span style="color:var(--teal)">transaction_id</span> — links to transactions.csv (required)<br>
+          <span style="color:var(--teal)">product_id</span> — links to products.csv (required)<br>
+          <span style="color:var(--t2)">quantity, unit_price, discount</span>
+        </div>
+      </div>
+
+      <div style="background:var(--s2);border-radius:8px;padding:12px 14px">
+        <div style="font-size:.75rem;font-weight:700;color:var(--amber);margin-bottom:5px">💡 Tips</div>
+        <div style="font-size:.75rem;color:var(--t2);line-height:1.7">
+          • Column names are flexible — Clarix auto-detects variations like <code style="background:var(--s3);padding:1px 5px;border-radius:3px">cust_id</code>, <code style="background:var(--s3);padding:1px 5px;border-radius:3px">order_total</code>, <code style="background:var(--s3);padding:1px 5px;border-radius:3px">purchase_date</code><br>
+          • Minimum 10 customers recommended for meaningful insights<br>
+          • Only customers.csv is required — the more files, the richer the analysis<br>
+          • Dates can be any standard format (YYYY-MM-DD, DD/MM/YYYY, etc.)
+        </div>
+      </div>
+
+    </div>
   </div>
 </div>
 
